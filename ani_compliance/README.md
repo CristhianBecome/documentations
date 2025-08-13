@@ -20,4 +20,4 @@
 
 1. [Obtener credenciales de acceso](authentication.md)
 2. [Realizar primera verificación](endpoints/verification.md)
-3. [Manejar respuestas y errores](error-codes.md)
+
