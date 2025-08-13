@@ -1,14 +1,14 @@
 # Endpoints
 
-La API de Verificación ANI Compliance cuenta con los siguientes endpoints principales:
+La API de Verificación ANI Compliance proporciona los siguientes endpoints principales:
 
 ## Autenticación
 - **POST** `/auth` - Obtener token de acceso JWT
 
 ## Verificación
-- **POST** `/aniCompliance` - Verificar identidad con registros oficiales
+- **POST** `/aniCompliance` - Verificar identidad consultando registros oficiales
 
-## Base URLs
+## URLs base por ambiente
 
 | Ambiente | URL Base |
 |----------|----------|
@@ -17,8 +17,9 @@ La API de Verificación ANI Compliance cuenta con los siguientes endpoints princ
 
 ## Headers requeridos
 
-Todas las requests (excepto `/auth`) deben incluir:
+Todas las solicitudes (excepto `/auth`) deben incluir:
 
 ```http
 Content-Type: application/json
 Authorization: Bearer <tu_jwt_token>
+```

@@ -1,2 +1,0 @@
-# Códigos de Error
-

@@ -4,14 +4,14 @@ Endpoint para obtener el token de acceso requerido para todas las operaciones de
 
 ## POST `/auth`
 
-### Request
+### Headers requeridos
 
-**Headers:**
 ```http
 Content-Type: application/json
 ```
 
-**Body:**
+### Parámetros del request
+
 ```json
 {
   "client_id": "tu_client_id",
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 ```
 
-### Ejemplo de Request
+### Ejemplo de solicitud
 
 ```bash
 curl --location 'https://api.svi.becomedigital.net/api/v1/auth' \
@@ -30,14 +30,71 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/auth' \
 }'
 ```
 
-### Response
+### Respuestas de la API
 
-*Agregar ejemplo de respuesta*
+#### ✅ **200 - Autenticación exitosa**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "exp": 1703123456,
+  "iat": 1703119856
+}
+```
 
-### Errores comunes
+#### ⚠️ **200 - Credenciales inactivas**
+```json
+{
+  "msg": "credential inactive"
+}
+```
 
-| Código | Descripción |
-|--------|-------------|
-| 401 | Credenciales inválidas |
-| 400 | Formato de request inválido |
-| 429 | Demasiadas requests |
+### Manejo de errores
+
+#### **400 - Bad Request**
+
+**Solicitud no es JSON:**
+```json
+{ "msg": "Missing JSON in request" }
+```
+
+**Falta client_id:**
+```json
+{ "msg": "Missing client_id parameter" }
+```
+
+**Falta client_secret:**
+```json
+{ "msg": "Missing client_secret parameter" }
+```
+
+#### **401 - Unauthorized**
+
+**Credenciales inválidas:**
+```json
+{ "msg": "Invalid login details" }
+```
+
+#### **404 - Not Found**
+
+**Empresa no encontrada:**
+```json
+{ "error": "Not Found" }
+```
+
+### Proceso de validación
+
+La API sigue este flujo de validación:
+
+1. **Validación de formato JSON** → Error 400 si la solicitud no es JSON válido
+2. **Validación de parámetros** → Error 400 si faltan client_id o client_secret
+3. **Validación de cliente** → Error 401 si el client_id no existe
+4. **Validación de estado activo** → Respuesta 200 si las credenciales están inactivas
+5. **Validación de empresa** → Error 404 si la empresa no existe
+6. **Validación de contraseña** → Error 401 si el client_secret es incorrecto
+7. **Autenticación exitosa** → Respuesta 200 con token JWT
+
+### Información importante
+
+- El token JWT contiene información del cliente, empresa y permisos necesarios
+- Los campos `exp` e `iat` son timestamps Unix para fecha de expiración y emisión
+- Guarda el `access_token` para incluirlo en las solicitudes posteriores a la API

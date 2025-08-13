@@ -1,19 +1,19 @@
 # Autenticación
 
-Para acceder a la API de Verificación ANI Compliance, es necesario autenticarse utilizando un token de acceso. Este endpoint de autenticación valida las credenciales del cliente y retorna un token JWT que debe ser incluido en todas las solicitudes posteriores.
+Para acceder a la API de Verificación ANI Compliance, es necesario autenticarse utilizando un token de acceso. El endpoint de autenticación valida las credenciales del cliente y retorna un token JWT que debe incluirse en todas las solicitudes posteriores.
 
-## Flujo de autenticación
+## Proceso de autenticación
 
 1. **Obtener credenciales:** Solicita tu `client_id` y `client_secret` al equipo de soporte
-2. **Generar token:** Usa el endpoint `/auth` para obtener un JWT
-3. **Usar token:** Incluye el JWT en el header `Authorization` de todas las requests
+2. **Generar token:** Utiliza el endpoint `/auth` para obtener un token JWT
+3. **Usar token:** Incluye el JWT en el header `Authorization` de todas las solicitudes
 
-## Seguridad
+## Consideraciones de seguridad
 
-- ⚠️ **Nunca expongas** el `client_secret` en código frontend
+- ⚠️ **Nunca expongas** el `client_secret` en código del lado del cliente
 - 🔒 **Almacena de forma segura** los tokens de acceso
-- ⏰ **Los tokens expiran** cada 1 hora, renuévalos automáticamente
-- 🔄 **Implementa retry logic** para renovación automática
+- ⏰ **Los tokens expiran** cada hora, implementa renovación automática
+- 🔄 **Implementa lógica de reintento** para la renovación automática de tokens
 
 ## Siguientes pasos
 
