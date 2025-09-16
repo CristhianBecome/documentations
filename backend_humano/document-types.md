@@ -52,17 +52,14 @@ Esta guía te explica **qué tipos de documentos** acepta el sistema y **cómo l
 ### Cédula de Ciudadanía (CC)
 - **Código**: `TYPE_ID` (cuando país = Colombia)
 - **Para**: Ciudadanos colombianos mayores de 18 años
-- **Versiones**: 2000, 2010, 2020
 
 ### Cédula de Extranjería (CE)
 - **Código**: `TYPE_ALIEN_ID` (cuando país = Colombia)
 - **Para**: Extranjeros residentes en Colombia
-- **Versiones**: 2010, 2020
 
 ### Tarjeta de Identidad (TI)
 - **Código**: `TYPE_ID` (cuando país = Colombia y edad < 18)
 - **Para**: Ciudadanos colombianos menores de 18 años
-- **Versiones**: 2010, 2020
 
 ## 🔍 ¿Por qué es importante saber esto?
 
