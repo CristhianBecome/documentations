@@ -201,7 +201,3 @@ Este documento detalla las razones específicas de alteración que pueden causar
 | `LICENSE` | Licencia de Conducir | Verde |
 | `UNKNOWN` | Template no reconocido | Rojo |
 
-## Próximos Pasos
-
-- [Reglas de Escalamiento](escalation-rules.md)
-- [Gestión de Casos](case-management.md)

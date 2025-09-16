@@ -1,55 +1,46 @@
 # Tipos de Documentos Aceptados
 
-## Descripción General
+## ¿Qué es esto?
 
-Este documento detalla todos los tipos de documentos que acepta el sistema de verificación, organizados por categorías y con sus códigos específicos.
+Esta guía te explica **qué tipos de documentos** acepta el sistema y **cómo los interpreta**. Es importante que sepas esto para entender por qué algunos documentos van a revisión.
 
-## 📊 Resumen por Categorías
+## 📊 Resumen
 
-| Categoría | Cantidad | Códigos |
-|-----------|----------|---------|
-| **Documentos de Identidad Nacional** | 10 | `TYPE_ID`, `TYPE_ALIEN_ID`, `TYPE_RESIDENT_ID`, etc. |
-| **Licencias de Conducir** | 4 | `TYPE_DRIVER_CARD`, `TYPE_DRIVING_PRIVILEGE_CARD`, etc. |
-| **Pasaportes** | 5 | `TYPE_PASSPORT_CARD`, `TYPE_CONSULAR_PASSPORT`, etc. |
+| Categoría | Cantidad | Para qué sirve |
+|-----------|----------|----------------|
+| **Documentos de Identidad** | 10 | Identificación oficial |
+| **Licencias de Conducir** | 4 | Permiso para conducir |
+| **Pasaportes** | 5 | Documento de viaje |
 | **Total** | **19** | **19 tipos diferentes** |
 
-## 🆔 Documentos de Identidad Nacional (national-id)
+## 🆔 Documentos de Identidad Nacional
 
-### Documentos Generales
-| Código | Descripción | País | Uso Principal |
-|--------|-------------|------|---------------|
+| Código | Descripción | País | Para qué sirve |
+|--------|-------------|------|----------------|
 | `TYPE_ID` | Documento de Identidad General | Internacional | Identificación oficial estándar |
 | `TYPE_ALIEN_ID` | Documento de Identidad de Extranjero | Internacional | Identificación para extranjeros |
 | `TYPE_RESIDENT_ID` | Documento de Identidad de Residente | Internacional | Identificación para residentes |
-
-### Permisos de Residencia
-| Código | Descripción | País | Uso Principal |
-|--------|-------------|------|---------------|
 | `TYPE_RESIDENCE_PERMIT` | Permiso de Residencia | Internacional | Permiso oficial de residencia |
 | `TYPE_TEMPORARY_RESIDENCE_PERMIT` | Permiso de Residencia Temporal | Internacional | Permiso temporal de residencia |
-
-### Certificados y Documentos Especiales
-| Código | Descripción | País | Uso Principal |
-|--------|-------------|------|---------------|
 | `TYPE_CITIZENSHIP_CERTIFICATE` | Certificado de Ciudadanía | Internacional | Certificado oficial de ciudadanía |
 | `TYPE_MULTIPURPOSE_ID` | Documento de Identidad Multiuso | Internacional | Documento con múltiples propósitos |
 | `TYPE_VOTER_ID` | Documento de Identidad Electoral | Internacional | Identificación para votación |
 | `TYPE_PROOF_OF_AGE_CARD` | Tarjeta de Prueba de Edad | Internacional | Documento que prueba la edad |
 | `TYPE_GREEN_CARD` | Tarjeta Verde (Green Card) | Estados Unidos | Permiso de residencia permanente en EE.UU. |
 
-## 🚗 Licencias de Conducir (driving-license)
+## 🚗 Licencias de Conducir
 
-| Código | Descripción | País | Uso Principal |
-|--------|-------------|------|---------------|
+| Código | Descripción | País | Para qué sirve |
+|--------|-------------|------|----------------|
 | `TYPE_DRIVER_CARD` | Tarjeta de Conductor | Internacional | Licencia de conducir estándar |
 | `TYPE_DRIVING_PRIVILEGE_CARD` | Tarjeta de Privilegio de Conducir | Estados Unidos | Permiso especial para conducir |
 | `TYPE_DL` | Licencia de Conducir (Driver's License) | Internacional | Licencia de conducir tradicional |
 | `TYPE_DL_PUBLIC_SERVICES_CARD` | Tarjeta de Servicios Públicos con DL | Internacional | Licencia con servicios públicos integrados |
 
-## 🛂 Pasaportes (passport)
+## 🛂 Pasaportes
 
-| Código | Descripción | País | Uso Principal |
-|--------|-------------|------|---------------|
+| Código | Descripción | País | Para qué sirve |
+|--------|-------------|------|----------------|
 | `TYPE_PASSPORT_CARD` | Tarjeta de Pasaporte | Estados Unidos | Pasaporte en formato de tarjeta |
 | `TYPE_CONSULAR_PASSPORT` | Pasaporte Consular | Internacional | Pasaporte emitido por consulado |
 | `TYPE_MINORS_PASSPORT` | Pasaporte de Menores | Internacional | Pasaporte específico para menores de edad |
@@ -60,53 +51,34 @@ Este documento detalla todos los tipos de documentos que acepta el sistema de ve
 
 ### Cédula de Ciudadanía (CC)
 - **Código**: `TYPE_ID` (cuando país = Colombia)
-- **Versiones soportadas**:
-  - CC versión 2000
-  - CC versión 2010
-  - CC versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
-  - Código de barras
+- **Para**: Ciudadanos colombianos mayores de 18 años
+- **Versiones**: 2000, 2010, 2020
 
 ### Cédula de Extranjería (CE)
 - **Código**: `TYPE_ALIEN_ID` (cuando país = Colombia)
-- **Versiones soportadas**:
-  - CE versión 2010
-  - CE versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
+- **Para**: Extranjeros residentes en Colombia
+- **Versiones**: 2010, 2020
 
 ### Tarjeta de Identidad (TI)
 - **Código**: `TYPE_ID` (cuando país = Colombia y edad < 18)
-- **Versiones soportadas**:
-  - TI versión 2010
-  - TI versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
+- **Para**: Ciudadanos colombianos menores de 18 años
+- **Versiones**: 2010, 2020
 
-## 🔍 Validación de Tipos de Documento
+## 🔍 ¿Por qué es importante saber esto?
 
-### Criterios de Validación
-1. **Tipo de documento** debe estar en la lista de tipos aceptados
-2. **País** debe coincidir con el tipo de documento
-3. **Formato** debe ser reconocido por el sistema
-4. **Elementos de seguridad** deben estar presentes
+### Para revisores de BH:
+1. **Entender el contexto** - Saber qué tipo de documento estás revisando
+2. **Aplicar reglas correctas** - Algunas reglas solo aplican para documentos colombianos
+3. **Identificar problemas** - Saber si el tipo de documento es correcto
+4. **Tomar decisiones** - Entender por qué el sistema envió el caso a revisión
 
-### Errores Comunes
-- **`tipo incorrecto`** - Tipo de documento incorrecto
-- **`tipo de documento incorrecto`** - Tipo de documento incorrecto
-- **`Tipo de documento no está en la lista de tipos aceptados del contrato`** - Tipo no aceptado por el contrato
-- **`Tipo de documento no especificado`** - No se especificó el tipo de documento
-
+### Errores comunes que verás:
+- **`tipo incorrecto`** - El usuario seleccionó el tipo de documento equivocado
+- **`tipo de documento incorrecto`** - El sistema no reconoce el tipo
+- **`Tipo de documento no está en la lista de tipos aceptados del contrato`** - Tipo no permitido
+- **`Tipo de documento no especificado`** - No se especificó el tipo
 
 ## Próximos Pasos
 
-- [Razones de Alteración y Templates](alteration-reasons.md)
-- [Reglas de Escalamiento](escalation-rules.md)
-- [Gestión de Casos](case-management.md)
+- [Cuándo revisar un caso](escalation-rules.md)
+- [Qué buscar en los documentos](alteration-reasons.md)

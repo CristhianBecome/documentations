@@ -76,5 +76,5 @@ Esta guía te explica **cuándo** un caso llega a tu mesa para que lo revises. L
 
 ## Próximos Pasos
 
-- [Cómo gestionar casos](case-management.md)
+- [Tipos de documentos aceptados](document-types.md)
 - [Qué buscar en los documentos](alteration-reasons.md)

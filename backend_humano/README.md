@@ -54,9 +54,7 @@ Para evitar que pasen documentos falsos, personas que no son quienes dicen ser, 
 
 ## 🚀 Guías para Revisores
 
-1. [Cómo usar el sistema](setup.md)
-2. [Panel de revisión](admin-panel.md)
-3. [Cuándo revisar un caso](escalation-rules.md)
-4. [Qué buscar en los documentos](alteration-reasons.md)
-5. [Cómo gestionar casos](case-management.md)
+1. [Cuándo revisar un caso](escalation-rules.md)
+2. [Tipos de documentos aceptados](document-types.md)
+3. [Qué buscar en los documentos](alteration-reasons.md)
 
