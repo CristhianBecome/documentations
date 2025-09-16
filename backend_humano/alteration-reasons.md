@@ -29,7 +29,7 @@ Este documento detalla las razones específicas de alteración que pueden causar
 #### 📊 Data Match
 9. **`Data Match`** - No coincide información de frente con reverso (puede deberse a falla en OCR)
 
-## 📄 Razones de Template (TemplateReason)
+## 📄 Razones de Template (Rev. tipo documento)
 
 ### 🔴 Razones de Template - Flag en Rojo
 
@@ -60,75 +60,6 @@ Este documento detalla las razones específicas de alteración que pueden causar
 #### ⚠️ Problemas de Validación (1)
 15. **`Tipo de documento no especificado`** - No se especificó el tipo de documento
 
-## 📋 Tipos de Documentos Aceptados
-
-### 🆔 Documentos de Identidad Nacional (national-id)
-
-| Código | Descripción | País | Uso |
-|--------|-------------|------|-----|
-| `TYPE_ID` | Documento de Identidad General | Internacional | Identificación oficial estándar |
-| `TYPE_ALIEN_ID` | Documento de Identidad de Extranjero | Internacional | Identificación para extranjeros |
-| `TYPE_RESIDENT_ID` | Documento de Identidad de Residente | Internacional | Identificación para residentes |
-| `TYPE_RESIDENCE_PERMIT` | Permiso de Residencia | Internacional | Permiso oficial de residencia |
-| `TYPE_TEMPORARY_RESIDENCE_PERMIT` | Permiso de Residencia Temporal | Internacional | Permiso temporal de residencia |
-| `TYPE_CITIZENSHIP_CERTIFICATE` | Certificado de Ciudadanía | Internacional | Certificado oficial de ciudadanía |
-| `TYPE_MULTIPURPOSE_ID` | Documento de Identidad Multiuso | Internacional | Documento con múltiples propósitos |
-| `TYPE_VOTER_ID` | Documento de Identidad Electoral | Internacional | Identificación para votación |
-| `TYPE_PROOF_OF_AGE_CARD` | Tarjeta de Prueba de Edad | Internacional | Documento que prueba la edad |
-| `TYPE_GREEN_CARD` | Tarjeta Verde (Green Card) | Estados Unidos | Permiso de residencia permanente en EE.UU. |
-
-### 🚗 Licencias de Conducir (driving-license)
-
-| Código | Descripción | País | Uso |
-|--------|-------------|------|-----|
-| `TYPE_DRIVER_CARD` | Tarjeta de Conductor | Internacional | Licencia de conducir estándar |
-| `TYPE_DRIVING_PRIVILEGE_CARD` | Tarjeta de Privilegio de Conducir | Estados Unidos | Permiso especial para conducir |
-| `TYPE_DL` | Licencia de Conducir (Driver's License) | Internacional | Licencia de conducir tradicional |
-| `TYPE_DL_PUBLIC_SERVICES_CARD` | Tarjeta de Servicios Públicos con DL | Internacional | Licencia con servicios públicos integrados |
-
-### 🛂 Pasaportes (passport)
-
-| Código | Descripción | País | Uso |
-|--------|-------------|------|-----|
-| `TYPE_PASSPORT_CARD` | Tarjeta de Pasaporte | Estados Unidos | Pasaporte en formato de tarjeta |
-| `TYPE_CONSULAR_PASSPORT` | Pasaporte Consular | Internacional | Pasaporte emitido por consulado |
-| `TYPE_MINORS_PASSPORT` | Pasaporte de Menores | Internacional | Pasaporte específico para menores de edad |
-| `TYPE_ALIEN_PASSPORT` | Pasaporte de Extranjero | Internacional | Pasaporte para extranjeros |
-| `TYPE_PASSPORT` | Pasaporte Estándar | Internacional | Pasaporte tradicional estándar |
-
-## 🇨🇴 Documentos Colombianos Específicos
-
-### Cédula de Ciudadanía (CC)
-- **Código**: `TYPE_ID` (cuando país = Colombia)
-- **Versiones soportadas**:
-  - CC versión 2000
-  - CC versión 2010
-  - CC versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
-  - Código de barras
-
-### Cédula de Extranjería (CE)
-- **Código**: `TYPE_ALIEN_ID` (cuando país = Colombia)
-- **Versiones soportadas**:
-  - CE versión 2010
-  - CE versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
-
-### Tarjeta de Identidad (TI)
-- **Código**: `TYPE_ID` (cuando país = Colombia y edad < 18)
-- **Versiones soportadas**:
-  - TI versión 2010
-  - TI versión 2020
-- **Elementos de seguridad**:
-  - Hologramas
-  - Microtexto
-  - Marcas de agua
 
 ## 📊 Resumen por Categorías
 
@@ -186,18 +117,4 @@ Este documento detalla las razones específicas de alteración que pueden causar
 | `Tipo de documento no especificado` | No se especificó el tipo de documento | Baja |
 | `Error en procesamiento OCR - falla en análisis del documento` | Error en procesamiento OCR | Baja |
 
-### Códigos de Template
-
-| Código | Descripción | Estado |
-|--------|-------------|---------|
-| `CC_2000` | Cédula Ciudadanía 2000 | Verde |
-| `CC_2010` | Cédula Ciudadanía 2010 | Verde |
-| `CC_2020` | Cédula Ciudadanía 2020 | Verde |
-| `CE_2010` | Cédula Extranjería 2010 | Verde |
-| `CE_2020` | Cédula Extranjería 2020 | Verde |
-| `TI_2010` | Tarjeta Identidad 2010 | Verde |
-| `TI_2020` | Tarjeta Identidad 2020 | Verde |
-| `PASSPORT` | Pasaporte | Verde |
-| `LICENSE` | Licencia de Conducir | Verde |
-| `UNKNOWN` | Template no reconocido | Rojo |
 
