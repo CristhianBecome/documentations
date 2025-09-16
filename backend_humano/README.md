@@ -1,43 +1,62 @@
-# Backend Humano - Sistema de Gestión de Identidades
+# Backend Humano (BH) - Guía para Revisores
 
-**Bienvenido a la documentación del Backend Humano de BECOME Digital.** Este sistema centraliza la gestión de identidades y proporciona herramientas de administración para equipos que manejan verificaciones de identidad.
+**Bienvenido a la guía del Backend Humano.** Aquí aprenderás cómo revisar los casos que la máquina no puede aprobar automáticamente.
 
 ## 🎯 ¿Qué es Backend Humano?
 
-Backend Humano es un sistema de gestión que permite a los equipos administrativos:
+Backend Humano es el **equipo de revisores** que revisa los casos cuando la máquina no está segura. Es como cuando en el banco necesitan que un supervisor revise algo.
 
-- **Gestionar identidades** de usuarios verificados
-- **Revisar y aprobar** verificaciones pendientes
-- **Monitorear** el flujo de verificaciones
-- **Integrar** con servicios de verificación como ANI Compliance
+### ¿Cómo funciona?
 
-## 🔗 Integración con ANI Compliance
+1. **Primero** la máquina revisa el documento automáticamente
+2. **Después** decide: ¿Puedo aprobar esto o necesito que un humano lo revise?
 
-Este sistema se integra directamente con nuestra [API de Verificación ANI Compliance](../ani_compliance/README.md) para:
+### ✅ Casos que la máquina aprueba sola:
+- Todo se ve bien y normal
+- El documento parece real
+- La foto coincide con la persona
+- No hay nada sospechoso
 
-- Recibir notificaciones de verificaciones completadas
-- Gestionar identidades verificadas
-- Proporcionar un panel de control para administradores
+### ⚠️ Casos que van a revisión humana:
+- **📄 El documento se ve raro** - La máquina no está segura si es real o falso
+- **👤 La foto no coincide** - La persona en el documento no se parece a la foto que subió
+- **📱 No pasó la prueba de vida** - No pudo verificar que es una persona real
+- **🚨 Hay problemas anteriores** - Ya había reportes de este usuario
+- **🇨🇴 Es de Colombia y algo falló** - Para usuarios colombianos hay reglas más estrictas
+- **🔍 El sistema detectó algo sospechoso** - Cualquier cosa que haga que la máquina dude
 
-## 📋 Características Principales
+## 📱 ¿Qué pasa cuando llega un caso?
 
-- ✅ **Panel de Administración**: Interfaz web para gestión de identidades
-- ✅ **Integración API**: Conexión directa con servicios de verificación
-- ✅ **Gestión de Usuarios**: Administración de identidades verificadas
-- ✅ **Reportes**: Generación de reportes de verificaciones
-- ✅ **Auditoría**: Trazabilidad completa de acciones
+1. **Recibes una alerta** por WhatsApp/Telegram
+2. **Revisas** toda la información del caso
+3. **Decides** si apruebas o rechazas
+4. **Se notifica** al usuario el resultado
 
-## 🚀 Primeros Pasos
+## 📋 Lo que necesitas saber
 
-1. [Configuración del Sistema](setup.md)
-2. [Panel de Administración](admin-panel.md)
-3. [Gestión de Identidades](identity-management.md)
-4. [Integración con APIs](api-integration.md)
+- ✅ **Recibes alertas** automáticas por WhatsApp/Telegram
+- ✅ **Tienes un panel** para revisar casos
+- ✅ **Puedes gestionar** verificaciones pendientes
+- ✅ **Hay reglas claras** sobre cuándo revisar
+- ✅ **Se registra** todo lo que haces
 
-## 📞 Soporte
+## 💡 En palabras simples:
 
-¿Necesitas ayuda con Backend Humano? Contacta a nuestro equipo de soporte técnico.
+**BH (Backend Humano) es como el "equipo de supervisión"** - cuando la máquina no está 100% segura de que todo está bien, lo manda a que un humano lo revise.
 
----
+Es como cuando compras algo caro y el cajero llama al supervisor - no es que esté mal, solo necesita una segunda opinión humana.
 
-*Esta documentación está en desarrollo. Próximamente se agregarán más secciones detalladas.*
+### ¿Por qué existe?
+Para evitar que pasen documentos falsos, personas que no son quienes dicen ser, o cualquier cosa sospechosa.
+
+### ¿Es malo ir a BH?
+**No necesariamente** - a veces es solo porque la foto salió borrosa o el documento se ve un poco gastado, pero está bien.
+
+## 🚀 Guías para Revisores
+
+1. [Cómo usar el sistema](setup.md)
+2. [Panel de revisión](admin-panel.md)
+3. [Cuándo revisar un caso](escalation-rules.md)
+4. [Qué buscar en los documentos](alteration-reasons.md)
+5. [Cómo gestionar casos](case-management.md)
+
