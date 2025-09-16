@@ -57,8 +57,9 @@ Este documento detalla las razones específicas de alteración que pueden causar
 #### 📊 Problemas de Data Match (1)
 14. **`Data match fallido - información del documento inconsistente`** - Data match fallido, información inconsistente
 
-#### ⚠️ Problemas de Validación (1)
+#### ⚠️ Problemas de Validación (2)
 15. **`Tipo de documento no especificado`** - No se especificó el tipo de documento
+16. **`Tipo de documento no reconocido`** - El tipo de documento no es reconocido por el sistema
 
 
 ## 📊 Resumen por Categorías
@@ -71,15 +72,15 @@ Este documento detalla las razones específicas de alteración que pueden causar
 - **Model AI (1 tipo)**
 - **Data Match (1 tipo)**
 
-### 📄 Razones de Template (15)
+### 📄 Razones de Template (16)
 - **Problemas de OCR (2)**
 - **Problemas de país (4)**
 - **Problemas de tipo de documento (3)**
 - **Problemas de template/formato (4)**
 - **Problemas de data match (1)**
-- **Problemas de validación (1)**
+- **Problemas de validación (2)**
 
-### 📊 **Total: 24 razones diferentes**
+### 📊 **Total: 25 razones diferentes**
 
 ## 🔍 Códigos de Error
 
@@ -115,6 +116,7 @@ Este documento detalla las razones específicas de alteración que pueden causar
 | `Template del documento no válido - formato no reconocido` | Template no válido, formato no reconocido | Alta |
 | `Data match fallido - información del documento inconsistente` | Data match fallido, información inconsistente | Media |
 | `Tipo de documento no especificado` | No se especificó el tipo de documento | Baja |
+| `Tipo de documento no reconocido` | El tipo de documento no es reconocido por el sistema | Media |
 | `Error en procesamiento OCR - falla en análisis del documento` | Error en procesamiento OCR | Baja |
 
 
