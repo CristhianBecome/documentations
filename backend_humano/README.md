@@ -27,23 +27,25 @@ Backend Humano es el **equipo de revisores** que revisa los casos cuando la máq
 
 - **🚨 Historial con incidencias previas** – El usuario presenta alertas o reportes en procesos anteriores.
 
-- **co Excepción en documentos colombianos** – Para cédulas de Colombia aplican validaciones más estrictas; si alguna regla falla, se envía a BH.
+- **🇨🇴 Excepción en documentos colombianos** – Para cédulas de Colombia aplican validaciones más estrictas; si alguna regla falla, se envía a BH.
 
 - **🔍 Detección de patrones sospechosos** – El sistema identifica señales de riesgo o comportamientos inusuales que generan duda en la validación automática.
 
 ## 📱 ¿Qué pasa cuando llega un caso?
 
-1. **Recibes una alerta** por WhatsApp/Telegram
-2. **Revisas** toda la información del caso
-3. **Decides** si apruebas o rechazas
-4. **Se notifica** al usuario el resultado
+1. **Para clientes según configuración del contrato**: Se envía alerta al grupo de Telegram centralizado
+2. **Para otros casos**: Aparecen como pendientes en el dashboard
+3. **El líder de BH** decide quién tiene acceso a las notificaciones
+4. **Revisas** toda la información del caso
+5. **Decides** si apruebas o rechazas
+6. **Se notifica** al usuario el resultado
 
 ## 📋 Lo que necesitas saber
 
-- ✅ **Recibes alertas** automáticas por WhatsApp/Telegram
-- ✅ **Tienes un panel** para revisar casos
-- ✅ **Puedes gestionar** verificaciones pendientes
-- ✅ **Hay reglas claras** sobre cuándo revisar
+- ✅ **Alertas centralizadas** en grupo de Telegram (solo clientes según configuración del contrato)
+- ✅ **Dashboard** para ver casos pendientes
+- ✅ **Acceso controlado** por el líder de BH
+- ✅ **Reglas claras** sobre cuándo revisar
 - ✅ **Se registra** todo lo que haces
 
 ## 💡 En palabras simples:
