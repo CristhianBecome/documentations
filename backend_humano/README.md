@@ -17,13 +17,19 @@ Backend Humano es el **equipo de revisores** que revisa los casos cuando la máq
 - La foto coincide con la persona
 - No hay nada sospechoso
 
-### ⚠️ Casos que van a revisión humana:
-- **📄 El documento se ve raro** - La máquina no está segura si es real o falso
-- **👤 La foto no coincide** - La persona en el documento no se parece a la foto que subió
-- **📱 No pasó la prueba de vida** - No pudo verificar que es una persona real
-- **🚨 Hay problemas anteriores** - Ya había reportes de este usuario
-- **🇨🇴 Es de Colombia y algo falló** - Para usuarios colombianos hay reglas más estrictas
-- **🔍 El sistema detectó algo sospechoso** - Cualquier cosa que haga que la máquina dude
+### ⚠️ Casos que requieren Revisión Humana (BH):
+
+- **📄 Documento con anomalías** – El sistema no logra confirmar la autenticidad del documento (posible alteración, baja calidad o patrones fuera de lo esperado).
+
+- **👤 Desajuste en biometría facial** – La imagen del documento no coincide con la selfie capturada.
+
+- **📱 Falla en prueba de vida** – No se validó satisfactoriamente que la persona esté presente y sea real.
+
+- **🚨 Historial con incidencias previas** – El usuario presenta alertas o reportes en procesos anteriores.
+
+- **co Excepción en documentos colombianos** – Para cédulas de Colombia aplican validaciones más estrictas; si alguna regla falla, se envía a BH.
+
+- **🔍 Detección de patrones sospechosos** – El sistema identifica señales de riesgo o comportamientos inusuales que generan duda en la validación automática.
 
 ## 📱 ¿Qué pasa cuando llega un caso?
 
