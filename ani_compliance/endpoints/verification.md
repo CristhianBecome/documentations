@@ -44,7 +44,7 @@ Authorization: Bearer <tu_jwt_token>
 ### Ejemplo de request
 
 ```bash
-curl --location 'https://api.dev.svi.becomedigital.net/api/v1/aniCompliance' \
+curl --location 'https://api.svi.becomedigital.net/api/v1/aniCompliance' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer tu_jwt_token_aqui' \
 --data '{
