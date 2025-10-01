@@ -73,7 +73,7 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/aniCompliance' \
   "segundoNombre_match": true,
   "primerNombre_match": true,
   "segundoApellido_match": true,
-  "nuip_status": "ACTIVO",
+  "nuip_status": "VIGENTE",
   "nuip_status_code": "1"
 }
 ```
@@ -166,12 +166,12 @@ La respuesta exitosa incluye campos de comparación que indican si cada dato pro
 - `segundoNombre_match` - Indica si el segundo nombre coincide
 - `primerNombre_match` - Indica si el primer nombre coincide
 - `segundoApellido_match` - Indica si el segundo apellido coincide
-- `nuip_status` - Estado descriptivo de la cédula (ej: "ACTIVO")
+- `nuip_status` - Estado descriptivo de la cédula en formato texto legible (ej: "VIGENTE", "CANCELADA", "PENDIENTE")
 - `nuip_status_code` - Código numérico del estado de la cédula
 
 ### Estados de cédula de ciudadanía
 
-El campo `nuip_status_code` puede retornar los siguientes códigos según el estado del documento:
+El campo `nuip_status_code` retorna un código numérico que indica el estado actual de la cédula de ciudadanía en los registros oficiales de la Registraduría Nacional. A continuación se detallan todos los códigos posibles y su significado:
 
 | **Código** | **Descripción del estado** |
 |------------|----------------------------|
@@ -198,7 +198,7 @@ El campo `nuip_status_code` puede retornar los siguientes códigos según el est
 
 ### Clasificación de estados
 
-**Estados válidos y activos:** Códigos 0, 1, 12, 14
+**Estados válidos y vigentes:** Códigos 0, 1, 12, 14
 - La cédula está vigente y puede ser utilizada para identificación
 
 **Estados cancelados:** Códigos 21-28, 51-56  
