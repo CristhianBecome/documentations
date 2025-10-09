@@ -373,31 +373,9 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
 }
 ```
 
-**Nota:** Los valores de `status` en el objeto `registry` son los mismos que se utilizan en la documentación de `ani_compliance`. Consulta esa documentación para ver todos los códigos de estado disponibles: [Ver códigos de estado ANI Compliance](./ani_compliance/endpoints/verification.md)
+**Nota:** Los valores de `status` en el objeto `registry` son los mismos que se utilizan en la documentación de ANI Compliance. Consulta esa documentación para ver todos los códigos de estado disponibles: [Ver códigos de estado ANI Compliance](ani-compliance.md)
 
-**Objeto `ubica_response` (Validación RUES empresarial):**
-
-```json
-{
-  "ubica_response": {
-    "full_name": "JUAN CARLOS GARCIA LOPEZ",
-    "document_number": "1012345678",
-    "document_status": "ACTIVA"
-  }
-}
-```
-
-
-
-**Campos:**
-- `result` - `true` si está en lista negra
-- `score` - Similitud (0-1, donde 1 es coincidencia exacta)
-- `id` - ID del registro coincidente (si aplica)
-
-
-
-### Validación Ubica georefenciacion (Detallada)
-
+**Objeto `ubica_response`:**
 Incluye historial de direcciones, teléfonos y emails:
 
 ```json
@@ -442,9 +420,6 @@ Incluye historial de direcciones, teléfonos y emails:
   }
 }
 ```
-
-
-
 
 ## Tipos de documento detectados
 
