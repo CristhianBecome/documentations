@@ -201,7 +201,7 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
 | `alteration` | Detección de alteraciones | `true`, `false`, `null` |
 | `template` | Validación de plantilla | `true`, `false`, `null` |
 | `estimated_age` | Edad estimada coincide | `true`, `false`, `null` |
-| `one_to_many_result` | Coincidencia en lista negra | `true`, `false`, `null` |
+| `one_to_many_result` | Coincidencia 1:N (duplicado encontrado) | `true`, `false`, `null` |
 | `watch_list` | En listas de vigilancia | `true`, `false`, `null` |
 | `ip_validation` | Validación de IP | `true`, `false`, `null` |
 
@@ -211,11 +211,40 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
 - ⚠️ **`false`** = Se detectó un problema o alerta
 - ℹ️ **`null`** = No aplica o no configurada en el contrato
 
+### Razones de alteración y template
+
+**Cuando `alteration: false` o `template: false`**, el sistema ha detectado problemas específicos que pueden incluir:
+
+**Razones de Alteración (`alteration: false`):**
+- **Problemas de Registraduría (ANI):** Estado inválido, nombres faltantes o inconsistentes
+- **Lista Negra:** Usuario detectado en listas de vigilancia
+- **Validación de Documento:** Fallos en la validación del número de documento
+- **Estado del Documento:** Fotocopias, fotos de pantallas, o documentos manipulados
+- **Modelo de IA:** Detección de alteraciones con alta probabilidad (90%+)
+- **Data Match:** Inconsistencias entre información del frente y reverso del documento
+
+**Razones de Template (`template: false`):**
+- **Problemas de OCR:** Datos vacíos o falla en identificación de campos
+- **Calidad de Imagen:** Documento muy deteriorado, borroso o ilegible
+- **Problemas de País:** País no coincide, no está en lista de países aceptados por el cliente
+- **Problemas de Tipo:** Tipo de documento incorrecto o no reconocido
+- **Problemas de Formato:** Template no reconocido, formato no válido, o error en procesamiento
+- **Problemas de Validación:** Documento expirado o información inconsistente
+
+**Importante:** 
+
+- **Solo verás el flag:** El API únicamente retorna `alteration: false` o `template: false` cuando detecta problemas
+- **Razón específica:** Para conocer la razón exacta (código específico) se requiere **revisión manual** por parte del equipo de Become Digital
+- **Propósito:** El flag sirve como alerta inmediata para que el cliente sepa que hay un problema y tome acción (rechazar, escalar, etc.)
+- **Revisión posterior:** Si necesitas la razón específica para casos legales o auditoría, contacta al equipo de soporte con el `user_id` correspondiente
+
 **Ejemplos:**
 - `alteration: true` → **No** se detectaron alteraciones ✅
 - `alteration: false` → **Sí** se detectaron alteraciones ⚠️
 - `watch_list: false` → **No** está en listas de vigilancia ✅
 - `watch_list: true` → **Sí** está en listas de vigilancia ⚠️
+- `one_to_many_result: false` → **Sí** se encontró duplicado en la cuenta ⚠️
+- `one_to_many_result: true` → **No** se encontró duplicado en la cuenta ✅
 
 ### Nota sobre Liveness
 
@@ -236,11 +265,19 @@ URLs para acceder a las imágenes procesadas:
 
 ### Coincidencia 1:N (One-to-Many)
 
+**⚠️ Importante:** Este servicio compara el rostro actual con **todas las validaciones previas de la misma cuenta del cliente**.
+
 Si el servicio 1:N está habilitado y encuentra coincidencia:
 
-- `one_to_many_result` - `true` si hay coincidencia en lista negra biométrica
-- `one_to_many_user_id_matched` - User ID con el que coincidió
+- `one_to_many_result` - `false` si el rostro coincide con una validación previa de la misma cuenta (se encontró duplicado)
+- `one_to_many_user_id_matched` - User ID de la validación previa con la que coincidió
 - `one_to_many_score` - Puntuación de similitud (0-1, donde 1 es idéntico)
+
+**Cómo funciona:**
+- ✅ Compara el rostro actual con validaciones anteriores **de la misma cuenta**
+- ✅ Si encuentra coincidencia con un `user_id` diferente de la misma cuenta → `one_to_many_result: false` (duplicado detectado)
+- ❌ **NO** cruza información con otras cuentas/clientes internos
+- ❌ **NO** accede a bases de datos externas
 
 ### Objeto `userAgent`
 
