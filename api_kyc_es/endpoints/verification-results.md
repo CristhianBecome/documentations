@@ -500,7 +500,7 @@ Nuestro equipo comercial puede ayudarte a:
     "liveness": true,
     "alteration": true,
     "template": true,
-    "watch_list": false,
+    "watch_list": true,
     "one_to_many_result": false
   },
   "face_match_score": 95.5
@@ -510,7 +510,7 @@ Nuestro equipo comercial puede ayudarte a:
 - ✅ Cotejo facial exitoso (`face_match: true`)
 - ✅ Prueba de vida superada (`liveness: true`)
 - ✅ Sin alteraciones detectadas (`alteration: true`)
-- ✅ No está en listas de vigilancia (`watch_list: false`)
+- ✅ No está en listas de vigilancia (`watch_list: true`)
 
 ### ⚠️ Cotejo facial fallido
 
@@ -554,12 +554,12 @@ Nuestro equipo comercial puede ayudarte a:
     "verification_status": "completed",
     "face_match": true,
     "liveness": true,
-    "watch_list": true
+    "watch_list": false
   }
 }
 ```
 **Interpretación:**
-- ⚠️ La persona está en listas de vigilancia (`watch_list: true`)
+- ⚠️ La persona está en listas de vigilancia (`watch_list: false`)
 - Requiere revisión adicional o escalación según tus políticas
 
 ## Errores comunes
