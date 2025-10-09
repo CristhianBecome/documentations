@@ -79,10 +79,6 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
   },
   "one_to_many_score": 0.0,
   "one_to_many_user_id_matched": null,
-  "comply_advantage": {
-    "comply_advantage_result": null,
-    "comply_advantage_url": null
-  },
   "media": {
     "selfiImageUrl": "https://api.svi.becomedigital.net/api/v1/media/abc123-def456-ghi789/selfieImg",
     "frontImgUrl": "https://api.svi.becomedigital.net/api/v1/media/abc123-def456-ghi789/frontImg",
@@ -301,13 +297,6 @@ Resultados de coincidencia de datos del documento:
 
 - Estados posibles: `SUCCESS`, `FAILED`, `NOT_PERFORMED`
 - Valida: `dateOfBirth`, `dateOfExpiry`, `documentNumber`, etc.
-
-### Objeto `comply_advantage`
-
-Verificación contra listas de sanciones internacionales:
-
-- `comply_advantage_result` - `true` si hay coincidencia, `false` si no, `null` si no aplica
-- `comply_advantage_url` - URL del reporte completo (si aplica)
 
 ## Campos adicionales condicionales
 
