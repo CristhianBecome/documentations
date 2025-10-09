@@ -23,6 +23,32 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
 --header 'Authorization: Bearer <tu_jwt_token>'
 ```
 
+## Tiempos de procesamiento
+
+El tiempo de procesamiento puede variar dependiendo de múltiples factores:
+
+- **Verificaciones estándar:** 10-30 segundos
+- **Verificaciones con validaciones adicionales:** 30-60 segundos
+- **Verificaciones complejas o con alertas de riesgo:** Hasta 2 minutos
+
+**Factores que afectan el tiempo de procesamiento:**
+
+**Calidad técnica:**
+- Resolución de las imágenes
+- Claridad y nitidez del documento
+- Calidad del video/selfie
+
+**Detección de riesgo y fraude:**
+- Detección de pantallas (foto de una pantalla)
+- Detección de fotocopias
+- Detección de alteraciones en el documento
+- Análisis de patrones de fraude
+- Validaciones contra listas de riesgo
+
+**Configuración:**
+- Cantidad de validaciones habilitadas en el contrato
+- Servicios adicionales (ANI, Telco, Email, etc.)
+
 ### Respuestas de la API
 
 #### ✅ **200 OK - Verificación completada**

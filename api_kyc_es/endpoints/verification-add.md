@@ -69,7 +69,27 @@ La petición debe enviarse como `multipart/form-data` e incluir campos de texto 
 - Para pasaportes, **NO se debe enviar `document2`**
 - El campo `video` puede ser imagen o video según configuración del contrato
 
-### Ejemplo de request
+### Requisitos de calidad
+
+#### Imágenes (document1, document2)
+- **Formatos:** `.jpg`, `.jpeg`, `.png`
+- **Resolución:** Mínimo 800x600 píxeles
+- **Peso máximo:** 5 MB
+- **Documento completo visible, buena iluminación, imagen nítida**
+
+#### Videos/Selfie (video)
+- **Formatos:** `.mp4`, `.mov`, `.wmv` (video) o `.jpg`, `.png` (imagen)
+- **Peso máximo:** 10 MB
+- **Duración:** 3-7 segundos (si es video)
+- **Rostro centrado, buena iluminación, solo una persona**
+
+#### user_id recomendado
+- **Sin caracteres especiales:** Solo letras, números, guiones (`-`) y guiones bajos (`_`)
+- **Longitud máxima:** 50 caracteres
+- **Ejemplos válidos:** `user-12345-abc`, `550e8400-e29b-41d4`, `usuario_789_1699123456`
+- **Ejemplos inválidos:** `user@123#invalid!`, `juan.perez@gmail.com`
+
+### Ejemplos de request
 
 **Verificación de Cédula Colombiana:**
 
@@ -148,165 +168,30 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/newIdentity' \
 
 **Explicación:** Si ya existe una verificación con el mismo `user_id` para la empresa, se retorna el recurso existente sin crear uno nuevo
 
-### Requisitos de Archivos
+### Errores comunes
 
-#### Imágenes (document1, document2)
+**400 - Campos inválidos:**
+- `"Falta el 'user_id'"` - Campo obligatorio faltante
+- `"El user_id no debe contener caracteres especiales"` - Usar solo letras, números, `-` y `_`
+- `"Debe enviar el estado si selecciona US"` - Falta campo `state` para country=US
+- `"El file_type no es válido"` - Usar: national-id, passport, driving-license, proof-of-residency
 
-- **Formatos aceptados:** `.jpg`, `.jpeg`, `.png`
-- **Resolución recomendada:** Mínimo 800x600 píxeles
-- **Peso máximo recomendado:** 5 MB por archivo
-- **Calidad:**
-  - Documento completo visible en el encuadre
-  - Buena iluminación sin reflejos
-  - Imagen nítida y enfocada
-  - Sin sombras excesivas
+**400 - Archivos:**
+- `"Hubo un problema con el envío de los archivos"` - Documento no detectado o formato incorrecto
+- `documentError: 1` - No se detectó documento frontal
+- `documentError: 2` - No se detectó documento trasero
 
-#### Videos/Selfie (video)
-
-- **Formatos aceptados:** `.mp4`, `.mov`, `.wmv`, `.jpg`, `.png`
-- **Peso máximo recomendado:** 10 MB
-- **Para video:**
-  - Duración recomendada: 3-7 segundos
-  - Rostro centrado y completamente visible
-  - Buena iluminación
-  - Solo un rostro en el encuadre
-- **Para imagen:**
-  - Rostro frontal y completo
-  - Sin accesorios que obstruyan (gafas oscuras, mascarillas)
-
-### Recomendaciones para user_id
-
-- **Sin caracteres especiales:** Evitar `~!@#$%^&*()_+{}":/;'`
-- **Longitud máxima:** 50 caracteres
-- **Usar identificadores únicos:** UUIDs, timestamps concatenados
-- **Ejemplos válidos:**
-  - `user-12345-abc` ✅
-  - `usuario_789_1699123456` ✅
-  - `550e8400-e29b-41d4-a716-446655440000` ✅
-- **Ejemplos inválidos:**
-  - `user@123#invalid!` ❌
-  - `juan.perez@gmail.com` ❌
-
-### Manejo de errores
-
-#### **400 - Bad Request**
-
-**Campo faltante o inválido:**
-
-```json
-{ "error": "Falta el 'user_id'" }
-```
-
-```json
-{ "error": "El user_id no debe contener caracteres especiales o espacios" }
-```
-
-```json
-{ "error": "El file_type no es válido" }
-```
-
-```json
-{ "error": "Debe enviar el estado si selecciona US" }
-```
-
-```json
-{ "error": "El código del país está malo" }
-```
-
-```json
-{ "error": "El campo document1 solo acepta archivos de extensión *.png, *.jpg, *.jpeg" }
-```
-
-**Error en archivos:**
-
-```json
-{
-  "code": 400,
-  "message": "Hubo un problema con el envío de los archivos",
-  "error": [
-    {
-      "documentError": 1,
-      "code": "noDocument"
-    }
-  ]
-}
-```
+**401 - Autenticación:**
+- `"Missing Authorization Header"` - Falta token JWT
+- `"Token has expired"` - Token expirado, renovar
 
 **Errores de contrato:**
-
-```json
-{ "code": 200, "message": "No se encontró el contrato" }
-```
-
-```json
-{ "code": 200, "message": "Verifica tu cupo" }
-```
-
-```json
-{ "code": 200, "message": "Su contrato no admite video ni fotos" }
-```
-
-```json
-{ "code": 200, "message": "Debe adjuntar un video o imagen" }
-```
-
-#### **401 - Unauthorized**
-
-```json
-{ "msg": "Missing Authorization Header" }
-```
-
-```json
-{ "msg": "Token has expired" }
-```
-
-```json
-{ "msg": "Usuario no autorizado para enviar validaciones" }
-```
-
-### Proceso de validación
-
-La API sigue este flujo:
-
-1. **Validación de autenticación** → Error 401 si falta o es inválido el token
-2. **Validación de formato** → Error si no es `multipart/form-data`
-3. **Validación de campos obligatorios** → Error si faltan campos requeridos (`user_id`, `contract_id`, `file_type`, `country`)
-4. **Validación de user_id existente** → Si existe, retorna recurso existente
-5. **Validación de contrato** → Error si el contrato no existe, está inactivo o sin cupo
-6. **Validación de archivos** → Error si faltan archivos requeridos o tienen formato incorrecto
-7. **Procesamiento y almacenamiento** → Validación de documentos y subida de archivos
-8. **Creación del recurso** → Respuesta 201 con URL del recurso creado
-9. **Procesamiento asíncrono** → OCR, cotejo facial, validaciones adicionales
+- `"No se encontró el contrato"` - contract_id inválido
+- `"Verifica tu cupo"` - Límite de verificaciones alcanzado
 
 ## Flujo asíncrono
 
-> **Importante:** El proceso de verificación es **asíncrono**. La respuesta 201 indica que la verificación fue creada y está en proceso, pero los resultados finales estarán disponibles después de que se completen las validaciones.
-
-### Tiempos de procesamiento
-
-El tiempo de procesamiento puede variar dependiendo de múltiples factores:
-
-- **Verificaciones estándar:** 10-30 segundos
-- **Verificaciones con validaciones adicionales:** 30-60 segundos
-- **Verificaciones complejas o con alertas de riesgo:** Hasta 2 minutos
-
-**Factores que afectan el tiempo de procesamiento:**
-
-**Calidad técnica:**
-- Resolución de las imágenes
-- Claridad y nitidez del documento
-- Calidad del video/selfie
-
-**Detección de riesgo y fraude:**
-- Detección de pantallas (foto de una pantalla)
-- Detección de fotocopias
-- Detección de alteraciones en el documento
-- Análisis de patrones de fraude
-- Validaciones contra listas de riesgo
-
-**Configuración:**
-- Cantidad de validaciones habilitadas en el contrato
-- Servicios adicionales (ANI, Telco, Email, etc.)
+> **Importante:** El proceso de verificación es **asíncrono**. La respuesta 201 indica que la verificación fue creada exitosamente y está en proceso de validación. Los resultados finales estarán disponibles una vez se completen todas las validaciones.
 
 ### Obtención de resultados
 
@@ -314,35 +199,26 @@ Una vez creada la verificación, tienes dos opciones para obtener los resultados
 
 **Opción 1: Consulta manual (Polling)**
 - Consulta periódicamente el estado usando el endpoint [GET /identity/\<user_id\>](verification-results.md)
-- Ver documentación completa en: [Consultar Resultados →](verification-results.md)
+- Ver tiempos de procesamiento y documentación completa en: [Consultar Resultados →](verification-results.md)
 
 **Opción 2: Webhook (Recomendado)**
-- Configura un webhook para recibir notificaciones automáticas
+- Configura un webhook para recibir notificaciones automáticas cuando se complete la verificación
 - Ver configuración detallada en la sección [Webhooks](#webhooks) más abajo
 
 ## Webhooks
 
-### Configuración de Webhook
+Los webhooks permiten recibir notificaciones automáticas cuando se completa una verificación, eliminando la necesidad de hacer polling constante.
 
-Become Digital permite configurar una URL de webhook para recibir notificaciones automáticas cuando se completa una verificación. Esto elimina la necesidad de hacer polling constante.
+### Configuración
 
-#### Cómo configurar
-
-1. **Proporciona tu URL de webhook** al equipo de soporte de Become Digital
-2. **La URL debe ser:**
-   - Método: `POST`
-   - Protocolo: `HTTPS` (recomendado)
+1. **Proporciona tu URL** al equipo de soporte de Become Digital
+2. **Requisitos de la URL:**
+   - Método POST, protocolo HTTPS
    - Accesible públicamente
-   - Capaz de responder con código 200 OK
-3. **El webhook se configura** internamente en tu `contract_id`
-4. **Una vez configurado**, cada verificación enviará automáticamente los resultados a tu URL
+   - Responder con código 200 OK en menos de 30 segundos
+3. **Se configura** internamente en tu `contract_id`
 
-#### Ejemplo de URL de webhook
-
-```
-https://tusitio.com/api/webhooks/become-verification
-https://api.tuempresa.com/callbacks/kyc-results
-```
+**Ejemplo:** `https://tusitio.com/api/webhooks/become-verification`
 
 ### Payload del Webhook
 
@@ -382,105 +258,52 @@ Recibirás un POST con el siguiente formato:
 ```
 
 **Llaves principales:**
+- `event` - Siempre `"verification_completed"`
+- `user_id` - Tu identificador único
+- `identity_id` - ID interno de Become Digital
+- `contract_id` - ID del contrato
+- `data` - Información del documento y resultados
+- `data.verification` - Validaciones realizadas (face_match, liveness, alteration, etc.)
 
-- **`event`:** Tipo de evento, siempre `"verification_completed"`
-- **`user_id`:** Identificador único del usuario enviado en la petición
-- **`identity_id`:** ID interno de la verificación
-- **`contract_id`:** ID del contrato utilizado
-- **`data`:** Objeto con información extraída del documento (nombre, fecha de nacimiento, número de documento, etc.) y resultados de verificación
-- **`data.verification`:** Objeto con resultados de las validaciones realizadas (face_match, liveness, alteration, template, etc.)
+> **Nota:** Descripción completa de campos en [GET /identity](verification-results.md)
 
-> **Nota:** Para la descripción completa de todos los campos y resultados de verificación, consulta la documentación de [GET /identity/\<user_id\>](verification-results.md)
+### Flujo con Webhook
 
-### Validación del Webhook
+**⚠️ Importante:** El webhook es una **notificación**. Después de recibirlo, **debes consultar** [GET /identity](verification-results.md) para obtener los datos completos.
 
-**Tu endpoint debe:**
+**Flujo:**
+1. Recibir webhook → Notificación de completado
+2. Consultar GET /identity/\<user_id\> → Datos completos (OBLIGATORIO)
+3. Procesar y almacenar
 
-1. **Validar el origen** de la petición (opcional pero recomendado)
-2. **Procesar el payload** y almacenar/actualizar los resultados
-3. **Responder con código 200 OK** para confirmar recepción
-4. **Responder en menos de 30 segundos** para evitar timeouts
-
-
-
-### Consulta manual posterior
-
-**⚠️ Importante:** Una vez recibido el webhook, **debes realizar una consulta manual** al endpoint [GET /identity/\<user_id\>](verification-results.md) para obtener toda la información completamente actualizada y completa.
-
-**¿Por qué es necesario?**
-- El webhook es una **notificación**, no contiene todos los detalles
-- La consulta manual garantiza obtener la información completa
-- Asegura sincronización total de datos
-
-**Flujo correcto:**
-
-1. **Recibir webhook** → Notificación de que se completó
-2. **Consultar GET /identity/\<user_id\>** → Obtener datos completos actualizados (OBLIGATORIO)
-3. **Procesar y almacenar** → Guardar toda la información en tu sistema
-
-### Si el webhook falla
-
-**⚠️ No hay reintentos automáticos.** Si tu endpoint no está disponible o falla:
-
-- El webhook no se reenviará
-- Deberás usar **consulta manual (polling)** para obtener los resultados
-- Implementa monitoreo para detectar webhooks fallidos
-- Considera tener un proceso de respaldo que consulte periódicamente
-
-### Ventajas del Webhook + Consulta Manual
-
-- ✅ **Notificación inmediata** cuando se completa la verificación
-- ✅ **Datos completos y actualizados** mediante consulta posterior
-- ✅ **No requiere polling constante** durante el procesamiento
-- ✅ **Mejor sincronización** de datos
-- ✅ **Mayor confiabilidad** al combinar ambos métodos
+**Si el webhook falla:**
+- ⚠️ No hay reintentos automáticos
+- Usar polling como respaldo
+- Implementar monitoreo de webhooks
 
 ## Mejores prácticas
 
-### ✅ Recomendaciones
+**Calidad de archivos:**
+- Mejor calidad de imagen = Procesamiento más rápido
+- Comprimir antes de enviar (máximo 5MB por archivo)
+- Verificar iluminación y nitidez antes de subir
 
-**1. Generación de user_id:**
-- Usar UUIDs o IDs únicos generados por tu sistema
-- Evitar datos sensibles (correo, teléfono, documento)
-- Ejemplo: `user-550e8400-e29b-41d4-a716-446655440000`
-
-**2. Calidad de imágenes:**
-- Resolución mínima: 800x600 píxeles
-- Formato recomendado: JPEG
-- Iluminación adecuada y uniforme
-- Documento completo en el encuadre
-- Sin reflejos ni sombras excesivas
-- **Mejor calidad = Procesamiento más rápido**
-
-**3. Calidad de video/selfie:**
-- Capturar en buena iluminación
-- Rostro centrado y sin obstrucciones
-- Solo un rostro en el encuadre
-- Evitar movimientos bruscos
-
-**4. Obtención de resultados:**
-- **Recomendado:** Configurar webhook para notificaciones automáticas
-- **Alternativa:** Implementar polling con intervalos de 10-15 segundos
-- Esperar al menos 15-30 segundos antes del primer polling
-- Timeout máximo: 2 minutos
-
-**5. Manejo de errores:**
-- Implementar reintentos automáticos para errores 500
-- Validar datos antes de enviar
-- Capturar y registrar respuestas de error para debugging
-- Manejar timeouts en webhooks
-
-**6. Performance:**
-- Comprimir imágenes antes de enviar (máximo 5MB recomendado)
-- Implementar timeouts adecuados (60-90 segundos para creación)
-- Usar el mismo token JWT para múltiples requests
-- Configurar webhook para evitar polling constante
-
-**7. Seguridad:**
+**Seguridad:**
 - Renovar tokens JWT regularmente
 - No exponer tokens en logs o URLs
-- Transmitir solo por HTTPS
-- Validar origen de webhooks en tu servidor
+- Transmitir únicamente por HTTPS
+- Validar origen de webhooks
+
+**Performance:**
+- Configurar webhook en lugar de polling constante
+- Reutilizar el mismo token JWT para múltiples requests
+- Implementar timeouts adecuados (60-90 segundos)
+- Validar datos antes de enviar para evitar errores
+
+**Manejo de errores:**
+- Implementar reintentos automáticos para errores 500
+- Registrar respuestas de error para debugging
+- Tener proceso de respaldo si el webhook falla
 
 ## Siguientes pasos
 
