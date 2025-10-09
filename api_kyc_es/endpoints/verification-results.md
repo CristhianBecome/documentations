@@ -19,7 +19,7 @@ Authorization: Bearer <tu_jwt_token>
 ### Ejemplo de solicitud
 
 ```bash
-curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345_1699123456' \
+curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_demo_20250115' \
 --header 'Authorization: Bearer <tu_jwt_token>'
 ```
 
@@ -47,20 +47,20 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
   "contract_id": 100,
   "company": "Empresa Demo",
   "created_at": "Sat, 25 Jul 2020 15:40:00 GMT",
-  "fullname": "JUAN CARLOS GARCIA LOPEZ",
-  "first_name": "JUAN CARLOS",
-  "last_name": "GARCIA LOPEZ",
-  "birth": "1990-05-15",
-  "birth_place": "BOGOTA (CUNDINAMARCA)",
+  "fullname": "MARIA ELENA RODRIGUEZ SANTOS",
+  "first_name": "MARIA ELENA",
+  "last_name": "RODRIGUEZ SANTOS",
+  "birth": "1985-12-03",
+  "birth_place": "MEDELLIN (ANTIOQUIA)",
   "document_type": "national-id",
-  "document_number": "1012345678",
-  "dni_number": "1012345678",
-  "gender": "M",
-  "emission_date": "Mon, 10 Mar 2015 00:00:00 GMT",
-  "expiration_date": "Thu, 15 May 2030 00:00:00 GMT",
+  "document_number": "9876543210",
+  "dni_number": "9876543210",
+  "gender": "F",
+  "emission_date": "Tue, 22 Aug 2018 00:00:00 GMT",
+  "expiration_date": "Wed, 22 Aug 2033 00:00:00 GMT",
   "type_id": "TYPE_ID",
   "face_match_score": 95.5,
-  "estimated_age": 34,
+  "estimated_age": 38,
   "processingStatus": "SUCCESS",
   "frontProcessingStatus": "SUCCESS",
   "backProcessingStatus": "SUCCESS",
@@ -72,7 +72,7 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
     "alteration": true,
     "template": true,
     "estimated_age": true,
-    "one_to_many_result": false,
+    "one_to_many_result": true,
     "watch_list": false,
     "liveness_doc": null,
     "ubica": null
@@ -98,7 +98,7 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
     "dateOfBirth": "SUCCESS",
     "documentNumber": "SUCCESS"
   },
-  "ip": "192.168.1.100",
+  "ip": "203.45.67.123",
   "data_policy_consent": "S",
   "status": "1",
   "uuid": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2"
@@ -112,7 +112,7 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
   "id": 12346,
   "contract_id": "23",
   "company": "Mi Empresa",
-  "created_at": "2025-10-09T14:35:00Z",
+  "created_at": "2025-01-15T09:22:00Z",
   "fullname": null,
   "document_type": "national-id",
   "document_number": null,
@@ -237,8 +237,8 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_12345
 **Ejemplos:**
 - `alteration: true` → **No** se detectaron alteraciones ✅
 - `alteration: false` → **Sí** se detectaron alteraciones ⚠️
-- `watch_list: false` → **No** está en listas de vigilancia ✅
-- `watch_list: true` → **Sí** está en listas de vigilancia ⚠️
+- `watch_list: true` → **No** está en listas de vigilancia ✅
+- `watch_list: false` → **Sí** está en listas de vigilancia ⚠️
 - `one_to_many_result: false` → **Sí** se encontró duplicado en la cuenta ⚠️
 - `one_to_many_result: true` → **No** se encontró duplicado en la cuenta ✅
 
@@ -320,7 +320,7 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
     "suspect": false,
     "spam_trap_score": "none",
     "risky_tld": false,
-    "sanitized_email": "user@example.com"
+    "sanitized_email": "maria.rodriguez@empresa.com"
   },
   "verification": {
     "email_deliverable": true,
@@ -340,7 +340,7 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
     "sim_swap_date": null,
     "sim_swap_score": 1
   },
-  "phone_number": "573117631081",
+  "phone_number": "573002345678",
   "phone_score_validation": {
     "phone_score": 301
   }
@@ -353,8 +353,8 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
 {
   "ip_validation": {
     "country": "Colombia",
-    "region": "Cundinamarca",
-    "city": "Bogotá",
+    "region": "Antioquia",
+    "city": "Medellín",
     "is_safe": true
   }
 }
@@ -368,7 +368,7 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
 {
   "registry": {
     "status": "ACTIVA",
-    "nuip": "1012345678"
+    "nuip": "9876543210"
   }
 }
 ```
@@ -381,14 +381,14 @@ Incluye historial de direcciones, teléfonos y emails:
 ```json
 {
   "ubica_response": {
-    "full_name": "GARCIA LOPEZ JUAN CARLOS",
-    "document_number": "1012345678",
+    "full_name": "RODRIGUEZ SANTOS MARIA ELENA",
+    "document_number": "9876543210",
     "document_status": "VIGENTE",
-    "age_range": "30-35",
+    "age_range": "35-40",
     "addreses": [
       {
-        "addresses": "CL 100 # 15 - 20",
-        "city": "BOGOTA (CUNDINAMARCA)",
+        "addresses": "CR 45 # 78 - 90",
+        "city": "MEDELLIN (ANTIOQUIA)",
         "location_type": "RES",
         "first_report": "Mon, 15 Jan 2020 00:00:00 GMT",
         "last_report": "Tue, 30 Sep 2024 00:00:00 GMT"
@@ -396,7 +396,7 @@ Incluye historial de direcciones, teléfonos y emails:
     ],
     "cellphones": [
       {
-        "cellphone_number": "3001234567",
+        "cellphone_number": "3009876543",
         "is_activate": "SI",
         "first_report": "Wed, 20 Mar 2021 00:00:00 GMT",
         "last_report": "Mon, 15 Oct 2024 00:00:00 GMT"
@@ -404,16 +404,16 @@ Incluye historial de direcciones, teléfonos y emails:
     ],
     "mails": [
       {
-        "email": "JUAN.GARCIA@EXAMPLE.COM",
+        "email": "MARIA.RODRIGUEZ@EMPRESA.COM",
         "first_report": "Fri, 10 Jun 2022 00:00:00 GMT",
         "last_report": "Wed, 01 Oct 2024 00:00:00 GMT"
       }
     ],
     "phones": [
       {
-        "phone_number": "6012345678",
-        "prefix": "601",
-        "city": "BOGOTA (CUNDINAMARCA)",
+        "phone_number": "6045678901",
+        "prefix": "604",
+        "city": "MEDELLIN (ANTIOQUIA)",
         "is_activate": "SI"
       }
     ]
@@ -500,8 +500,8 @@ Nuestro equipo comercial puede ayudarte a:
     "liveness": true,
     "alteration": true,
     "template": true,
-    "watch_list": true,
-    "one_to_many_result": false
+    "watch_list": false,
+    "one_to_many_result": true
   },
   "face_match_score": 95.5
 }
@@ -510,7 +510,8 @@ Nuestro equipo comercial puede ayudarte a:
 - ✅ Cotejo facial exitoso (`face_match: true`)
 - ✅ Prueba de vida superada (`liveness: true`)
 - ✅ Sin alteraciones detectadas (`alteration: true`)
-- ✅ No está en listas de vigilancia (`watch_list: true`)
+- ✅ No está en listas de vigilancia (`watch_list: false`)
+- ✅ No se encontró duplicado en la cuenta (`one_to_many_result: true`)
 
 ### ⚠️ Cotejo facial fallido
 
