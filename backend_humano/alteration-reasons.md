@@ -56,10 +56,11 @@ Este documento detalla las razones específicas de alteración que pueden causar
 
 #### 📊 Problemas de Data Match (1)
 14. **`Data match fallido - información del documento inconsistente`** - Data match fallido, información inconsistente
+15. **`documento expirado`** -la fecha de vencimiento de el documento se encuentra en el paso respecto al dia de actual de la validacion.
 
 #### ⚠️ Problemas de Validación (2)
-15. **`Tipo de documento no especificado`** - No se especificó el tipo de documento
-16. **`Tipo de documento no reconocido`** - El tipo de documento no es reconocido por el sistema
+16. **`Tipo de documento no especificado`** - No se especificó el tipo de documento
+17. **`Tipo de documento no reconocido`** - El tipo de documento no es reconocido por el sistema
 
 
 ## 📊 Resumen por Categorías
