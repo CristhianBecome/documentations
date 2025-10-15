@@ -65,14 +65,14 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/aniCompliance' \
 #### ✅ **200 - Verificación exitosa**
 ```json
 {
-  "document_number_match": true,
-  "departamentoExpedicion_match": true,
-  "fechaExpedicion_match": false,
-  "municipioExpedicion_match": true,
-  "primerApellido_match": true,
-  "segundoNombre_match": true,
-  "primerNombre_match": true,
-  "segundoApellido_match": true,
+  "document_number": true,
+  "departamentoExpedicion": true,
+  "fechaExpedicion": false,
+  "municipioExpedicion": true,
+  "primerApellido": true,
+  "segundoNombre": true,
+  "primerNombre": true,
+  "segundoApellido": true,
   "nuip_status": "VIGENTE",
   "nuip_status_code": "1"
 }
