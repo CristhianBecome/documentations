@@ -158,14 +158,14 @@ La API sigue este flujo de validación:
 
 La respuesta exitosa incluye campos de comparación que indican si cada dato proporcionado coincide con los registros oficiales:
 
-- `document_number_match` - Indica si el número de documento coincide
-- `departamentoExpedicion_match` - Indica si el departamento de expedición coincide  
-- `fechaExpedicion_match` - Indica si la fecha de expedición coincide
-- `municipioExpedicion_match` - Indica si el municipio de expedición coincide
-- `primerApellido_match` - Indica si el primer apellido coincide
-- `segundoNombre_match` - Indica si el segundo nombre coincide
-- `primerNombre_match` - Indica si el primer nombre coincide
-- `segundoApellido_match` - Indica si el segundo apellido coincide
+- `document_number` - Indica si el número de documento coincide
+- `departamentoExpedicion` - Indica si el departamento de expedición coincide  
+- `fechaExpedicion` - Indica si la fecha de expedición coincide
+- `municipioExpedicion` - Indica si el municipio de expedición coincide
+- `primerApellido` - Indica si el primer apellido coincide
+- `segundoNombre` - Indica si el segundo nombre coincide
+- `primerNombre` - Indica si el primer nombre coincide
+- `segundoApellido` - Indica si el segundo apellido coincide
 - `nuip_status` - Estado descriptivo de la cédula en formato texto legible (ej: "VIGENTE", "CANCELADA", "PENDIENTE")
 - `nuip_status_code` - Código numérico del estado de la cédula
 
