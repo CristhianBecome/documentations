@@ -1,4 +1,4 @@
-# Verificación de Identidad - Consultar Resultados
+# KYC - Consulta de Resultados
 
 Consulta el estado y resultado completo de una verificación de identidad previamente creada.
 
@@ -12,9 +12,9 @@ Authorization: Bearer <tu_jwt_token>
 
 ### Parámetros
 
-| Parámetro | Ubicación | Tipo | Descripción |
-|-----------|-----------|------|-------------|
-| `user_id` | URL | string | Identificador único del usuario definido al crear la verificación |
+| Parámetro | Ubicación | Tipo   | Descripción                                                       |
+| --------- | --------- | ------ | ----------------------------------------------------------------- |
+| `user_id` | URL       | string | Identificador único del usuario definido al crear la verificación |
 
 ### Ejemplo de solicitud
 
@@ -26,14 +26,16 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_demo_
 ## Tiempos de procesamiento
 
 **Tiempos típicos:**
-- Verificaciones estándar: 10-30 segundos
-- Con validaciones adicionales: 30-60 segundos
-- Con alertas de riesgo: Hasta 2 minutos
+
+* Verificaciones estándar: 10-30 segundos
+* Con validaciones adicionales: 30-60 segundos
+* Con alertas de riesgo: Hasta 2 minutos
 
 **Factores que afectan:**
-- Calidad de imágenes (resolución, nitidez, iluminación)
-- Detección de fraude (pantallas, fotocopias, alteraciones)
-- Servicios adicionales (ANI, Telco, Email)
+
+* Calidad de imágenes (resolución, nitidez, iluminación)
+* Detección de fraude (pantallas, fotocopias, alteraciones)
+* Servicios adicionales (ANI, Telco, Email)
 
 **Recomendación:** Espera 15-30 segundos antes de la primera consulta. Si está `pending`, consulta cada 10-15 segundos hasta completar (máximo 2 minutos).
 
@@ -133,121 +135,130 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/identity/usuario_demo_
 ### Campos principales
 
 **Información básica:**
-- `id` - ID interno de la verificación
-- `contract_id` - ID del contrato utilizado
-- `company` - Nombre de la empresa
-- `created_at` - Fecha y hora de creación
-- `uuid` - Hash único del estado de verificación (cambia con cada actualización)
+
+* `id` - ID interno de la verificación
+* `contract_id` - ID del contrato utilizado
+* `company` - Nombre de la empresa
+* `created_at` - Fecha y hora de creación
+* `uuid` - Hash único del estado de verificación (cambia con cada actualización)
 
 **Datos extraídos del documento (OCR):**
-- `fullname` - Nombre completo
-- `first_name` - Primer nombre
-- `last_name` - Apellidos
-- `document_type` - Tipo: `national-id`, `passport`, `driving-license`
-- `document_number` - Número del documento
-- `dni_number` - Número DNI/NUIP
-- `birth` - Fecha de nacimiento
-- `birth_place` - Lugar de nacimiento
-- `gender` - Género (M/F)
-- `emission_date` - Fecha de emisión del documento
-- `expiration_date` - Fecha de expiración del documento
+
+* `fullname` - Nombre completo
+* `first_name` - Primer nombre
+* `last_name` - Apellidos
+* `document_type` - Tipo: `national-id`, `passport`, `driving-license`
+* `document_number` - Número del documento
+* `dni_number` - Número DNI/NUIP
+* `birth` - Fecha de nacimiento
+* `birth_place` - Lugar de nacimiento
+* `gender` - Género (M/F)
+* `emission_date` - Fecha de emisión del documento
+* `expiration_date` - Fecha de expiración del documento
 
 **Resultados biométricos:**
-- `face_match_score` - Puntuación de cotejo facial (0-100)
-- `estimated_age` - Edad estimada del rostro
+
+* `face_match_score` - Puntuación de cotejo facial (0-100)
+* `estimated_age` - Edad estimada del rostro
 
 **Estados de procesamiento OCR (informativos):**
-- `processingStatus` - Estado general del OCR
-- `frontProcessingStatus` - Estado del OCR en imagen frontal
-- `backProcessingStatus` - Estado del OCR en imagen trasera
-- `error_code` - Código de error (ej: "1000 - OK")
+
+* `processingStatus` - Estado general del OCR
+* `frontProcessingStatus` - Estado del OCR en imagen frontal
+* `backProcessingStatus` - Estado del OCR en imagen trasera
+* `error_code` - Código de error (ej: "1000 - OK")
 
 **Valores posibles para processingStatus:**
-- `SUCCESS` - Procesamiento exitoso
-- `INVALID_CHARACTERS_FOUND` - Se encontraron caracteres inválidos
-- `Exception` - Error general de procesamiento
-- `AWAITING_OTHER_SIDE` - Esperando procesar el otro lado del documento
-- `Recognition process failed to complete in time.` - El proceso de reconocimiento no se completó a tiempo
-- `SCANNING_WRONG_SIDE` - Se está escaneando el lado incorrecto del documento
-- `RequestException` - Error en la solicitud
-- `UNSUPPORTED_CLASS` - Tipo de documento no soportado
-- `Unsupported image type` - Tipo de imagen no soportado
-- `LOW_CONFIDENCE` - Baja confianza en el reconocimiento
-- `BARCODE_RECOGNITION_FAILED` - Falló la lectura del código de barras
-- `MRZ_PARSING_FAILED` - Falló el análisis de la zona de lectura mecánica
-- `FIELD_IDENTIFICATION_FAILED` - Falló la identificación de campos
-- `MANDATORY_FIELD_MISSING` - Campo obligatorio faltante
-- `IMAGE_PREPROCESSING_FAILED` - Falló el preprocesamiento de la imagen
+
+* `SUCCESS` - Procesamiento exitoso
+* `INVALID_CHARACTERS_FOUND` - Se encontraron caracteres inválidos
+* `Exception` - Error general de procesamiento
+* `AWAITING_OTHER_SIDE` - Esperando procesar el otro lado del documento
+* `Recognition process failed to complete in time.` - El proceso de reconocimiento no se completó a tiempo
+* `SCANNING_WRONG_SIDE` - Se está escaneando el lado incorrecto del documento
+* `RequestException` - Error en la solicitud
+* `UNSUPPORTED_CLASS` - Tipo de documento no soportado
+* `Unsupported image type` - Tipo de imagen no soportado
+* `LOW_CONFIDENCE` - Baja confianza en el reconocimiento
+* `BARCODE_RECOGNITION_FAILED` - Falló la lectura del código de barras
+* `MRZ_PARSING_FAILED` - Falló el análisis de la zona de lectura mecánica
+* `FIELD_IDENTIFICATION_FAILED` - Falló la identificación de campos
+* `MANDATORY_FIELD_MISSING` - Campo obligatorio faltante
+* `IMAGE_PREPROCESSING_FAILED` - Falló el preprocesamiento de la imagen
 
 **Otros campos:**
-- `type_id` - Tipo de ID detectado (ver [Tipos de documento](#tipos-de-documento-detectados))
-- `status` - Estado numérico
-- `ip` - Dirección IP del usuario
-- `data_policy_consent` - Consentimiento de políticas (S/N)
+
+* `type_id` - Tipo de ID detectado (ver [Tipos de documento](verification-results.md#tipos-de-documento-detectados))
+* `status` - Estado numérico
+* `ip` - Dirección IP del usuario
+* `data_policy_consent` - Consentimiento de políticas (S/N)
 
 ### Objeto `verification` (Resumen de validaciones)
 
 **⚠️ Importante:** Este objeto es un **resumen rápido** de las validaciones principales.
 
-| Campo | Descripción | Valores |
-|-------|-------------|---------|
-| `verification_status` | Estado general | `pending`, `completed`, `error` |
-| `face_match` | Cotejo facial selfie vs documento | `true`, `false`, `null` |
-| `liveness` | Prueba de vida (solo con SDK) | `true`, `false`, `null` |
-| `alteration` | Detección de alteraciones | `true`, `false`, `null` |
-| `template` | Validación de plantilla | `true`, `false`, `null` |
-| `estimated_age` | Edad estimada coincide | `true`, `false`, `null` |
-| `one_to_many_result` | Coincidencia 1:N (duplicado encontrado) | `true`, `false`, `null` |
-| `watch_list` | En listas de vigilancia | `true`, `false`, `null` |
-| `ip_validation` | Validación de IP | `true`, `false`, `null` |
+| Campo                 | Descripción                             | Valores                         |
+| --------------------- | --------------------------------------- | ------------------------------- |
+| `verification_status` | Estado general                          | `pending`, `completed`, `error` |
+| `face_match`          | Cotejo facial selfie vs documento       | `true`, `false`, `null`         |
+| `liveness`            | Prueba de vida (solo con SDK)           | `true`, `false`, `null`         |
+| `alteration`          | Detección de alteraciones               | `true`, `false`, `null`         |
+| `template`            | Validación de plantilla                 | `true`, `false`, `null`         |
+| `estimated_age`       | Edad estimada coincide                  | `true`, `false`, `null`         |
+| `one_to_many_result`  | Coincidencia 1:N (duplicado encontrado) | `true`, `false`, `null`         |
+| `watch_list`          | En listas de vigilancia                 | `true`, `false`, `null`         |
+| `ip_validation`       | Validación de IP                        | `true`, `false`, `null`         |
 
 **Interpretación de valores:**
 
-- ✅ **`true`** = Validación exitosa, todo seguro
-- ⚠️ **`false`** = Se detectó un problema o alerta
-- ℹ️ **`null`** = No aplica o no configurada en el contrato
+* ✅ **`true`** = Validación exitosa, todo seguro
+* ⚠️ **`false`** = Se detectó un problema o alerta
+* ℹ️ **`null`** = No aplica o no configurada en el contrato
 
 ### Razones de alteración y template
 
 **Cuando `alteration: false` o `template: false`**, el sistema ha detectado problemas específicos que pueden incluir:
 
 **Razones de Alteración (`alteration: false`):**
-- **Problemas de Registraduría (ANI):** Estado inválido, nombres faltantes o inconsistentes
-- **Lista Negra:** Usuario detectado en listas de vigilancia
-- **Validación de Documento:** Fallos en la validación del número de documento
-- **Estado del Documento:** Fotocopias, fotos de pantallas, o documentos manipulados
-- **Modelo de IA:** Detección de alteraciones con alta probabilidad (90%+)
-- **Data Match:** Inconsistencias entre información del frente y reverso del documento
+
+* **Problemas de Registraduría (ANI):** Estado inválido, nombres faltantes o inconsistentes
+* **Lista Negra:** Usuario detectado en listas de vigilancia
+* **Validación de Documento:** Fallos en la validación del número de documento
+* **Estado del Documento:** Fotocopias, fotos de pantallas, o documentos manipulados
+* **Modelo de IA:** Detección de alteraciones con alta probabilidad (90%+)
+* **Data Match:** Inconsistencias entre información del frente y reverso del documento
 
 **Razones de Template (`template: false`):**
-- **Problemas de OCR:** Datos vacíos o falla en identificación de campos
-- **Calidad de Imagen:** Documento muy deteriorado, borroso o ilegible
-- **Problemas de País:** País no coincide, no está en lista de países aceptados por el cliente
-- **Problemas de Tipo:** Tipo de documento incorrecto o no reconocido
-- **Problemas de Formato:** Template no reconocido, formato no válido, o error en procesamiento
-- **Problemas de Validación:** Documento expirado o información inconsistente
 
-**Importante:** 
+* **Problemas de OCR:** Datos vacíos o falla en identificación de campos
+* **Calidad de Imagen:** Documento muy deteriorado, borroso o ilegible
+* **Problemas de País:** País no coincide, no está en lista de países aceptados por el cliente
+* **Problemas de Tipo:** Tipo de documento incorrecto o no reconocido
+* **Problemas de Formato:** Template no reconocido, formato no válido, o error en procesamiento
+* **Problemas de Validación:** Documento expirado o información inconsistente
 
-- **Solo verás el flag:** El API únicamente retorna `alteration: false` o `template: false` cuando detecta problemas
-- **Razón específica:** Para conocer la razón exacta (código específico) se requiere **revisión manual** por parte del equipo de Become Digital
-- **Propósito:** El flag sirve como alerta inmediata para que el cliente sepa que hay un problema y tome acción (rechazar, escalar, etc.)
-- **Revisión posterior:** Si necesitas la razón específica para casos legales o auditoría, contacta al equipo de soporte con el `user_id` correspondiente
+**Importante:**
+
+* **Solo verás el flag:** El API únicamente retorna `alteration: false` o `template: false` cuando detecta problemas
+* **Razón específica:** Para conocer la razón exacta (código específico) se requiere **revisión manual** por parte del equipo de Become Digital
+* **Propósito:** El flag sirve como alerta inmediata para que el cliente sepa que hay un problema y tome acción (rechazar, escalar, etc.)
+* **Revisión posterior:** Si necesitas la razón específica para casos legales o auditoría, contacta al equipo de soporte con el `user_id` correspondiente
 
 **Ejemplos:**
-- `alteration: true` → **No** se detectaron alteraciones ✅
-- `alteration: false` → **Sí** se detectaron alteraciones ⚠️
-- `watch_list: true` → **No** está en listas de vigilancia ✅
-- `watch_list: false` → **Sí** está en listas de vigilancia ⚠️
-- `one_to_many_result: false` → **Sí** se encontró duplicado en la cuenta ⚠️
-- `one_to_many_result: true` → **No** se encontró duplicado en la cuenta ✅
+
+* `alteration: true` → **No** se detectaron alteraciones ✅
+* `alteration: false` → **Sí** se detectaron alteraciones ⚠️
+* `watch_list: true` → **No** está en listas de vigilancia ✅
+* `watch_list: false` → **Sí** está en listas de vigilancia ⚠️
+* `one_to_many_result: false` → **Sí** se encontró duplicado en la cuenta ⚠️
+* `one_to_many_result: true` → **No** se encontró duplicado en la cuenta ✅
 
 ### Nota sobre Liveness
 
 **⚠️ El liveness es una característica exclusiva del SDK de Become Digital.**
 
-- **Peticiones vía SDK:** El flag `liveness` tendrá valor `true` o `false`
-- **Peticiones vía API directa:** El flag `liveness` será `null`
+* **Peticiones vía SDK:** El flag `liveness` tendrá valor `true` o `false`
+* **Peticiones vía API directa:** El flag `liveness` será `null`
 
 Si integras directamente vía API REST sin usar el SDK, no se realizará la validación de prueba de vida y este campo siempre retornará `null`.
 
@@ -255,9 +266,9 @@ Si integras directamente vía API REST sin usar el SDK, no se realizará la vali
 
 URLs para acceder a las imágenes procesadas:
 
-- `selfiImageUrl` - Selfie/video del usuario
-- `frontImgUrl` - Imagen frontal del documento
-- `backImgUrl` - Imagen trasera (no incluido en pasaportes)
+* `selfiImageUrl` - Selfie/video del usuario
+* `frontImgUrl` - Imagen frontal del documento
+* `backImgUrl` - Imagen trasera (no incluido en pasaportes)
 
 ### Coincidencia 1:N (One-to-Many)
 
@@ -265,15 +276,16 @@ URLs para acceder a las imágenes procesadas:
 
 Si el servicio 1:N está habilitado y encuentra coincidencia:
 
-- `one_to_many_result` - `false` si el rostro coincide con una validación previa de la misma cuenta (se encontró duplicado)
-- `one_to_many_user_id_matched` - User ID de la validación previa con la que coincidió
-- `one_to_many_score` - Puntuación de similitud (0-1, donde 1 es idéntico)
+* `one_to_many_result` - `false` si el rostro coincide con una validación previa de la misma cuenta (se encontró duplicado)
+* `one_to_many_user_id_matched` - User ID de la validación previa con la que coincidió
+* `one_to_many_score` - Puntuación de similitud (0-1, donde 1 es idéntico)
 
 **Cómo funciona:**
-- ✅ Compara el rostro actual con validaciones anteriores **de la misma cuenta**
-- ✅ Si encuentra coincidencia con un `user_id` diferente de la misma cuenta → `one_to_many_result: false` (duplicado detectado)
-- ❌ **NO** cruza información con otras cuentas/clientes internos
-- ❌ **NO** accede a bases de datos externas
+
+* ✅ Compara el rostro actual con validaciones anteriores **de la misma cuenta**
+* ✅ Si encuentra coincidencia con un `user_id` diferente de la misma cuenta → `one_to_many_result: false` (duplicado detectado)
+* ❌ **NO** cruza información con otras cuentas/clientes internos
+* ❌ **NO** accede a bases de datos externas
 
 ### Objeto `userAgent`
 
@@ -295,8 +307,8 @@ Información del dispositivo usado:
 
 Resultados de coincidencia de datos del documento:
 
-- Estados posibles: `SUCCESS`, `FAILED`, `NOT_PERFORMED`
-- Valida: `dateOfBirth`, `dateOfExpiry`, `documentNumber`, etc.
+* Estados posibles: `SUCCESS`, `FAILED`, `NOT_PERFORMED`
+* Valida: `dateOfBirth`, `dateOfExpiry`, `documentNumber`, etc.
 
 ## Campos adicionales condicionales
 
@@ -375,8 +387,7 @@ Dependiendo de la configuración del contrato y los servicios habilitados, la re
 
 **Nota:** Los valores de `status` en el objeto `registry` son los mismos que se utilizan en la documentación de ANI Compliance. Consulta esa documentación para ver todos los códigos de estado disponibles: [Ver códigos de estado ANI Compliance](ani-compliance.md)
 
-**Objeto `ubica_response`:**
-Incluye historial de direcciones, teléfonos y emails:
+**Objeto `ubica_response`:** Incluye historial de direcciones, teléfonos y emails:
 
 ```json
 {
@@ -427,38 +438,38 @@ El campo `type_id` indica el tipo específico de documento detectado por el moto
 
 ### Documentos de Identidad Nacional (national-id)
 
-| Tipo | Descripción |
-|------|-------------|
-| `TYPE_ID` | Cédula o documento nacional de identidad |
-| `TYPE_MINORS_ID` | Documento de identidad de menores de edad |
-| `TYPE_ALIEN_ID` | Documento de identidad para extranjeros residentes |
-| `TYPE_RESIDENT_ID` | Documento de identificación para residentes legales |
-| `TYPE_RESIDENCE_PERMIT` | Permiso de residencia |
-| `TYPE_TEMPORARY_RESIDENCE_PERMIT` | Permiso de residencia temporal |
-| `TYPE_CITIZENSHIP_CERTIFICATE` | Certificado de ciudadanía |
-| `TYPE_MULTIPURPOSE_ID` | Documento multipropósito (acceso a varios servicios) |
-| `TYPE_VOTER_ID` | Documento para votar |
-| `TYPE_PROOF_OF_AGE_CARD` | Tarjeta para acreditar mayoría de edad |
-| `TYPE_GREEN_CARD` | Residencia permanente (Green Card) |
+| Tipo                              | Descripción                                          |
+| --------------------------------- | ---------------------------------------------------- |
+| `TYPE_ID`                         | Cédula o documento nacional de identidad             |
+| `TYPE_MINORS_ID`                  | Documento de identidad de menores de edad            |
+| `TYPE_ALIEN_ID`                   | Documento de identidad para extranjeros residentes   |
+| `TYPE_RESIDENT_ID`                | Documento de identificación para residentes legales  |
+| `TYPE_RESIDENCE_PERMIT`           | Permiso de residencia                                |
+| `TYPE_TEMPORARY_RESIDENCE_PERMIT` | Permiso de residencia temporal                       |
+| `TYPE_CITIZENSHIP_CERTIFICATE`    | Certificado de ciudadanía                            |
+| `TYPE_MULTIPURPOSE_ID`            | Documento multipropósito (acceso a varios servicios) |
+| `TYPE_VOTER_ID`                   | Documento para votar                                 |
+| `TYPE_PROOF_OF_AGE_CARD`          | Tarjeta para acreditar mayoría de edad               |
+| `TYPE_GREEN_CARD`                 | Residencia permanente (Green Card)                   |
 
 ### Licencias de Conducción (driving-license)
 
-| Tipo | Descripción |
-|------|-------------|
-| `TYPE_DRIVER_CARD` | Tarjeta de conductor profesional |
-| `TYPE_DRIVING_PRIVILEGE_CARD` | Tarjeta de privilegios de conducción |
-| `TYPE_DL` | Licencia de conducción estándar |
+| Tipo                           | Descripción                                             |
+| ------------------------------ | ------------------------------------------------------- |
+| `TYPE_DRIVER_CARD`             | Tarjeta de conductor profesional                        |
+| `TYPE_DRIVING_PRIVILEGE_CARD`  | Tarjeta de privilegios de conducción                    |
+| `TYPE_DL`                      | Licencia de conducción estándar                         |
 | `TYPE_DL_PUBLIC_SERVICES_CARD` | Licencia para transporte público o servicios especiales |
 
 ### Pasaportes (passport)
 
-| Tipo | Descripción |
-|------|-------------|
-| `TYPE_PASSPORT_CARD` | Tarjeta de pasaporte (formato reducido) |
-| `TYPE_CONSULAR_PASSPORT` | Pasaporte expedido por consulados |
-| `TYPE_MINORS_PASSPORT` | Pasaporte especial para menores de edad |
-| `TYPE_ALIEN_PASSPORT` | Pasaporte para extranjeros apátridas o refugiados |
-| `TYPE_PASSPORT` | Pasaporte estándar de viaje |
+| Tipo                     | Descripción                                       |
+| ------------------------ | ------------------------------------------------- |
+| `TYPE_PASSPORT_CARD`     | Tarjeta de pasaporte (formato reducido)           |
+| `TYPE_CONSULAR_PASSPORT` | Pasaporte expedido por consulados                 |
+| `TYPE_MINORS_PASSPORT`   | Pasaporte especial para menores de edad           |
+| `TYPE_ALIEN_PASSPORT`    | Pasaporte para extranjeros apátridas o refugiados |
+| `TYPE_PASSPORT`          | Pasaporte estándar de viaje                       |
 
 Este valor es informativo y ayuda a identificar automáticamente qué tipo de documento fue procesado.
 
@@ -467,24 +478,27 @@ Este valor es informativo y ayuda a identificar automáticamente qué tipo de do
 **⚠️ Become Digital NO es un motor de decisión.**
 
 Nosotros proporcionamos:
-- ✅ Información detallada sobre la verificación
-- ✅ Resultados de validaciones técnicas (OCR, biometría, liveness, etc.)
-- ✅ Puntuaciones y flags de riesgo
-- ✅ Datos extraídos de registros oficiales
+
+* ✅ Información detallada sobre la verificación
+* ✅ Resultados de validaciones técnicas (OCR, biometría, liveness, etc.)
+* ✅ Puntuaciones y flags de riesgo
+* ✅ Datos extraídos de registros oficiales
 
 **Tu empresa debe:**
-- 🎯 Analizar los resultados proporcionados
-- 🎯 Definir tus propios umbrales y reglas de negocio
-- 🎯 Tomar decisiones de aprobación/rechazo según tu nivel de riesgo
-- 🎯 Implementar lógica de decisión según tus políticas internas
+
+* 🎯 Analizar los resultados proporcionados
+* 🎯 Definir tus propios umbrales y reglas de negocio
+* 🎯 Tomar decisiones de aprobación/rechazo según tu nivel de riesgo
+* 🎯 Implementar lógica de decisión según tus políticas internas
 
 ### Soporte del equipo comercial
 
 Nuestro equipo comercial puede ayudarte a:
-- 📊 Definir guías de interpretación de resultados
-- 🎯 Establecer umbrales según tu industria y nivel de riesgo
-- 📋 Crear flujos de decisión personalizados
-- 🔍 Analizar casos específicos y patrones
+
+* 📊 Definir guías de interpretación de resultados
+* 🎯 Establecer umbrales según tu industria y nivel de riesgo
+* 📋 Crear flujos de decisión personalizados
+* 🔍 Analizar casos específicos y patrones
 
 **Contacto:** Solicita asistencia al equipo de soporte de Become Digital.
 
@@ -506,12 +520,14 @@ Nuestro equipo comercial puede ayudarte a:
   "face_match_score": 95.5
 }
 ```
-**Interpretación:** 
-- ✅ Cotejo facial exitoso (`face_match: true`)
-- ✅ Prueba de vida superada (`liveness: true`)
-- ✅ Sin alteraciones detectadas (`alteration: true`)
-- ✅ No está en listas de vigilancia (`watch_list: false`)
-- ✅ No se encontró duplicado en la cuenta (`one_to_many_result: true`)
+
+**Interpretación:**
+
+* ✅ Cotejo facial exitoso (`face_match: true`)
+* ✅ Prueba de vida superada (`liveness: true`)
+* ✅ Sin alteraciones detectadas (`alteration: true`)
+* ✅ No está en listas de vigilancia (`watch_list: false`)
+* ✅ No se encontró duplicado en la cuenta (`one_to_many_result: true`)
 
 ### ⚠️ Cotejo facial fallido
 
@@ -526,9 +542,11 @@ Nuestro equipo comercial puede ayudarte a:
   "face_match_score": 45.2
 }
 ```
-**Interpretación:** 
-- ❌ La persona en el selfie NO coincide con la foto del documento (`face_match: false`)
-- Aunque la prueba de vida es válida, hay discrepancia en la identidad
+
+**Interpretación:**
+
+* ❌ La persona en el selfie NO coincide con la foto del documento (`face_match: false`)
+* Aunque la prueba de vida es válida, hay discrepancia en la identidad
 
 ### ❌ Documento alterado detectado
 
@@ -542,10 +560,12 @@ Nuestro equipo comercial puede ayudarte a:
   }
 }
 ```
-**Interpretación:** 
-- ❌ Se detectaron alteraciones en el documento (`alteration: false`)
-- Posible fraude o documento manipulado
-- Aunque el cotejo facial coincide, el documento no es confiable
+
+**Interpretación:**
+
+* ❌ Se detectaron alteraciones en el documento (`alteration: false`)
+* Posible fraude o documento manipulado
+* Aunque el cotejo facial coincide, el documento no es confiable
 
 ### ⚠️ En lista de vigilancia
 
@@ -559,34 +579,41 @@ Nuestro equipo comercial puede ayudarte a:
   }
 }
 ```
+
 **Interpretación:**
-- ⚠️ La persona está en listas de vigilancia (`watch_list: false`)
-- Requiere revisión adicional o escalación según tus políticas
+
+* ⚠️ La persona está en listas de vigilancia (`watch_list: false`)
+* Requiere revisión adicional o escalación según tus políticas
 
 ## Errores comunes
 
 **400 - Error en verificación:**
-- `"La verificacion tuvo un error"` - El procesamiento falló (OCR, liveness, servicios externos)
+
+* `"La verificacion tuvo un error"` - El procesamiento falló (OCR, liveness, servicios externos)
 
 **401 - Autenticación:**
-- `"Missing Authorization Header"` - Falta token JWT
-- `"Token has expired"` - Token expirado, renovar
+
+* `"Missing Authorization Header"` - Falta token JWT
+* `"Token has expired"` - Token expirado, renovar
 
 **404 - No encontrado:**
-- `"No se encontró el usuario con ID <user_id>"` - user_id no existe para la empresa
+
+* `"No se encontró el usuario con ID <user_id>"` - user\_id no existe para la empresa
 
 **Códigos HTTP:**
-- `200` - Verificación completada
-- `202` - Verificación en proceso (pending)
-- `400` - Error en el procesamiento
-- `401` - Token inválido
-- `404` - user_id no encontrado
 
-## Polling (Consulta periódica)
+* `200` - Verificación completada
+* `202` - Verificación en proceso (pending)
+* `400` - Error en el procesamiento
+* `401` - Token inválido
+* `404` - user\_id no encontrado
+
+## Polling Request(Consulta periódica)
 
 Si no usas webhook, consulta el estado periódicamente:
 
 **Estrategia:**
+
 1. Esperar 15-30 segundos después de crear la verificación
 2. Consultar este endpoint
 3. Si es 202 (pending), esperar 10-15 segundos y volver a consultar
@@ -594,6 +621,7 @@ Si no usas webhook, consulta el estado periódicamente:
 5. Timeout máximo: 2 minutos
 
 **Ejemplo (Python):**
+
 ```python
 import time, requests
 
@@ -616,7 +644,6 @@ def esperar_resultado(user_id, token, max_intentos=12):
 
 ## Siguientes pasos
 
-- [Listar todas las verificaciones →](verification-getall.md)
-- [Re-verificación (autenticación) →](re-verification.md)
-- [Crear nueva verificación →](verification-add.md)
-
+* [Listar todas las verificaciones →](verification-getall.md)
+* [Re-verificación (autenticación) →](re-verification.md)
+* [Crear nueva verificación →](verification-add.md)
