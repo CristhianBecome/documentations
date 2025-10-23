@@ -2,6 +2,20 @@
 
 Una vez que un usuario ha completado el proceso de **Onboarding** (verificación inicial de identidad), puede autenticarse de forma rápida y segura a través de un **cotejo facial** y una **prueba de vida (liveness detection)**. Este procedimiento elimina la necesidad de presentar nuevamente el documento de identidad en cada transacción.
 
+## Proceso de re-verificación
+
+1. **Obtener selfie:** Captura una nueva selfie del usuario
+2. **Enviar validación:** Utiliza el endpoint `/matches` con la imagen y datos del usuario
+3. **Procesar resultado:** Interpreta la respuesta según tus umbrales de confianza
+
+## Flujo de re-verificación
+
+```
+Cliente → [Captura selfie] → [POST /matches con imagen] → API
+API → [Compara con selfie registrada] → [Valida liveness] → Retorna resultado
+Cliente → [Procesa resultado] → [Aplica lógica de negocio]
+```
+
 ## POST `/matches`
 
 ### Descripción del servicio
@@ -25,26 +39,48 @@ Content-Type: multipart/form-data
 Authorization: Bearer <tu_jwt_token>
 ```
 
-### Parámetros del request (FormData)
+### Parámetros del Request
 
-| Parámetro | Tipo | Requerido | Descripción |
-|-----------|------|-----------|-------------|
-| **user_id** | string | ✅ | Identificador del usuario registrado en el onboarding |
-| **contract_id** | string | ✅ | ID del contrato a utilizar |
-| **image** | file | ✅ | Foto selfie actual del usuario |
-| **liveness** | object | No | Datos de prueba de vida provistos por el SDK (opcional) |
+La petición debe enviarse como `multipart/form-data` e incluir campos de texto y archivos.
 
-### Ejemplo de solicitud
+#### ✅ Campos OBLIGATORIOS
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `user_id` | string | Identificador del usuario registrado en el onboarding |
+| `contract_id` | string | ID del contrato a utilizar |
+| `image` | file | Foto selfie actual del usuario |
+
+#### 📱 Campos OPCIONALES
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `liveness` | object | Datos de prueba de vida provistos por el SDK |
+
+### Ejemplos de request
+
+**Re-verificación básica (solo cotejo facial):**
 
 ```bash
 curl --location 'https://api.svi.becomedigital.net/api/v1/matches' \
---header 'Authorization: Bearer <tu_jwt_token>' \
+--header 'Authorization: Bearer tu_jwt_token_aqui' \
 --form 'user_id="usuario_12345_1699123456"' \
 --form 'contract_id="1"' \
---form 'image=@"/ruta/selfie_actual.jpg"'
+--form 'image=@"selfie_actual.jpg"'
 ```
 
-### Respuesta de la API
+**Re-verificación con liveness (cotejo facial + prueba de vida):**
+
+```bash
+curl --location 'https://api.svi.becomedigital.net/api/v1/matches' \
+--header 'Authorization: Bearer tu_jwt_token_aqui' \
+--form 'user_id="usuario_12345_1699123456"' \
+--form 'contract_id="1"' \
+--form 'image=@"selfie_actual.jpg"' \
+--form 'liveness="{\"score\": 0.95, \"passed\": true}"'
+```
+
+### Respuestas de la API
 
 #### ✅ **200 OK - Re-verificación completada**
 
@@ -135,30 +171,45 @@ Si se omite el parámetro `liveness`:
 
 > **Nota:** Los umbrales exactos pueden ajustarse según las necesidades de seguridad de tu aplicación.
 
+## Consideraciones de seguridad
+
+- 🔒 **Almacena de forma segura** las selfies y datos biométricos
+- ⏰ **Los executionId expiran** después de un tiempo determinado
+- 🔄 **Implementa validación** de que el `user_id` pertenece a tu contrato
+- 🔑 **Nunca expongas** las selfies en logs o URLs públicas
+- 📝 **Registra todas las re-verificaciones** para auditoría de seguridad
+- 🛡️ **Valida umbrales de confianza** según políticas de riesgo
+
+## Uso de la imagen en las solicitudes
+
+La imagen debe enviarse como archivo en el campo `image` de la petición multipart/form-data:
+
+```bash
+--form 'image=@"selfie_actual.jpg"'
+```
+
+Todas las solicitudes al endpoint `/matches` deben incluir este archivo obligatorio.
+
 ## Proceso asíncrono
 
 Aunque este endpoint retorna una respuesta inmediata, también puedes consultar el resultado posteriormente usando el `executionId`:
 
 **Ver:** [Resultados de Re-verificación →](re-verification-results.md)
 
-## Consideraciones sobre la imagen
+### Requisitos de calidad
 
-### Requisitos de la selfie
-
-- **Formato:** JPG, JPEG, PNG
+#### Imágenes (image)
+- **Formatos:** `.jpg`, `.jpeg`, `.png`
 - **Resolución:** Mínimo 480x480 píxeles (recomendado: 720x720 o superior)
 - **Peso máximo:** 15 MB
-- **Iluminación:** Buena iluminación frontal
-- **Rostro:** Debe estar completamente visible, sin obstrucciones (gafas de sol, mascarilla, etc.)
+- **Rostro centrado, buena iluminación, solo una persona**
+- **Sin obstrucciones:** Sin gafas de sol, mascarilla, etc.
 
-### Causas comunes de falla
-
-- ❌ Imagen borrosa o de baja calidad
-- ❌ Mala iluminación (muy oscura o con sombras fuertes)
-- ❌ Rostro parcialmente oculto
-- ❌ Múltiples rostros en la imagen
-- ❌ Ningún rostro detectado
-- ❌ Uso de foto de una foto (falla en liveness)
+#### user_id recomendado
+- **Sin caracteres especiales:** Solo letras, números, guiones (`-`) y guiones bajos (`_`)
+- **Longitud máxima:** 50 caracteres
+- **Ejemplos válidos:** `user-12345-abc`, `550e8400-e29b-41d4`, `usuario_789_1699123456`
+- **Ejemplos inválidos:** `user@123#invalid!`, `juan.perez@gmail.com`
 
 ## Casos de uso
 
@@ -178,26 +229,52 @@ Verificar que la persona que realiza una operación es el titular de la cuenta.
 
 Solicitar autenticación biométrica periódicamente para mantener la sesión activa.
 
-## Manejo de errores
-
-### **401 - Unauthorized**
-
-```json
-{
-  "msg": "Missing Authorization Header"
-}
-```
-
-**Causa:** Token faltante o inválido.
-
 ### Errores comunes
 
-| Error | Causa | Solución |
-|-------|-------|----------|
-| No rostro detectado | La imagen no contiene un rostro visible | Solicitar nueva selfie con mejor calidad |
-| Múltiples rostros | Hay más de una persona en la imagen | Tomar selfie individual |
-| Baja calidad | Imagen borrosa o pixelada | Mejorar calidad de captura |
-| user_id no encontrado | No existe onboarding previo para ese user_id | Verificar que el usuario completó el onboarding |
+**400 - Campos inválidos:**
+- `"Falta el 'user_id'"` - Campo obligatorio faltante
+- `"Falta el 'contract_id'"` - Campo obligatorio faltante
+- `"Falta el archivo 'image'"` - Imagen selfie requerida
+- `"user_id no encontrado"` - No existe onboarding previo para ese user_id
+
+**400 - Archivos:**
+- `"No se detectó rostro en la imagen"` - La imagen no contiene un rostro visible
+- `"Múltiples rostros detectados"` - Hay más de una persona en la imagen
+- `"Imagen de baja calidad"` - Imagen borrosa o pixelada
+- `"Formato de imagen no válido"` - Usar JPG, JPEG o PNG
+
+**401 - Autenticación:**
+- `"Missing Authorization Header"` - Falta token JWT
+- `"Token has expired"` - Token expirado, renovar
+
+**Errores de contrato:**
+- `"No se encontró el contrato"` - contract_id inválido
+- `"Usuario no registrado"` - user_id no existe en el sistema
+
+## Mejores prácticas
+
+**Calidad de archivos:**
+- Mejor calidad de imagen = Procesamiento más rápido
+- Comprimir antes de enviar (máximo 15MB por archivo)
+- Verificar iluminación y nitidez antes de subir
+
+**Seguridad:**
+- Renovar tokens JWT regularmente
+- No exponer tokens en logs o URLs
+- Transmitir únicamente por HTTPS
+- Validar umbrales de confianza según políticas de seguridad
+
+**Performance:**
+- Reutilizar el mismo token JWT para múltiples requests
+- Implementar timeouts adecuados (60-90 segundos)
+- Validar datos antes de enviar para evitar errores
+- Configurar umbrales de confianza apropiados
+
+**Manejo de errores:**
+- Implementar reintentos automáticos para errores 500
+- Registrar respuestas de error para debugging
+- Manejar casos de baja confianza con flujos alternativos
+- Implementar notificaciones de fallo para el usuario
 
 ## Ventajas de la re-verificación
 

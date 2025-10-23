@@ -2,7 +2,26 @@
 
 Una vez enviada la solicitud de re-verificación (cotejo facial y opcionalmente liveness), puedes consultar el resultado definitivo utilizando el `executionId` proporcionado en la respuesta de la primera etapa.
 
+## Proceso de consulta de resultados
+
+1. **Obtener executionId:** Guarda el `executionId` retornado por el endpoint `/matches`
+2. **Consultar resultado:** Utiliza el endpoint `/matches/check` para obtener el resultado final
+3. **Procesar respuesta:** Interpreta los resultados según tus umbrales de confianza
+
+## Flujo de consulta de resultados
+
+```
+Cliente → [POST /matches con imagen] → API
+API → [Procesa validación] → Retorna executionId
+Cliente → [POST /matches/check con executionId] → API
+API → [Busca resultado] → Retorna datos de validación
+```
+
 ## POST `/matches/check`
+
+### Descripción del servicio
+
+Este endpoint permite consultar el resultado de una validación facial previamente realizada. Es un endpoint de consulta que busca una validación específica usando el `executionId` que se generó durante el proceso de comparación facial.
 
 ### Headers requeridos
 
@@ -11,7 +30,7 @@ Content-Type: application/json
 Authorization: Bearer <tu_jwt_token>
 ```
 
-### Parámetros del request
+### Parámetros del Request
 
 ```json
 {
@@ -25,17 +44,36 @@ Authorization: Bearer <tu_jwt_token>
 | **contract_id** | number | ✅ | ID del contrato utilizado en la re-verificación |
 | **executionId** | string | ✅ | Identificador único retornado en la respuesta del endpoint `/matches` |
 
-### Ejemplo de solicitud
+### Ejemplos de request
+
+**Consulta de resultados de re-verificación:**
 
 ```bash
 curl --location 'https://api.svi.becomedigital.net/api/v1/matches/check' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer <tu_jwt_token>' \
+--header 'Authorization: Bearer tu_jwt_token_aqui' \
 --data '{
     "contract_id": 1,
     "executionId": "fd5075b1-74e4-4b23-ac94-ddd9b36ecc33"
 }'
 ```
+
+## Consideraciones de seguridad
+
+- 🔒 **Almacena de forma segura** los `executionId` en tu base de datos
+- ⏰ **Los executionId expiran** después de un tiempo determinado
+- 🔄 **Implementa validación** de que el `executionId` pertenece a tu contrato
+- 🔑 **Nunca expongas** los `executionId` en URLs o logs públicos
+- 📝 **Registra todas las consultas** para auditoría de seguridad
+
+## Flujo del Proceso
+
+1. **Validación de parámetros** → 400 si faltan `contract_id` o `executionId`
+2. **Búsqueda del contrato** → 404 si no existe
+3. **Verificación de permisos** → 400 si el servicio no está activo
+4. **Búsqueda de validación** → 404 si no se encuentra la validación
+5. **Búsqueda de identidad** → Se obtiene el `user_id` asociado
+6. **Respuesta exitosa** → 200 con todos los datos de la validación
 
 ### Respuesta de la API
 
@@ -67,12 +105,16 @@ curl --location 'https://api.svi.becomedigital.net/api/v1/matches/check' \
 
 ## Diferencias con el endpoint `/matches`
 
-| Característica | `/matches` | `/matches/check` |
-|----------------|------------|------------------|
-| **Tipo de request** | FormData (con imagen) | JSON (sin imagen) |
-| **Cuándo usar** | Al realizar la verificación inicial | Para consultar resultados posteriormente |
-| **Respuesta** | Inmediata (puede ser preliminar) | Resultado final procesado |
-| **Campo adicional** | - | `timestamp` |
+| Aspecto | `/matches` | `/matches/check` |
+|---------|------------|------------------|
+| **Propósito** | Realizar validación | Consultar resultado |
+| **Entrada** | Imagen + datos | executionId + contract_id |
+| **Proceso** | Comparación facial | Búsqueda en BD |
+| **Resultado** | Nueva validación | Datos de validación existente |
+| **Content-Type** | multipart/form-data | application/json |
+| **Parámetros** | user_id, image, contract_id | executionId, contract_id |
+| **Cuándo usar** | Primera verificación | Consulta posterior |
+| **Incluye timestamp** | ❌ No | ✅ Sí |
 
 ## Interpretación de resultados
 
@@ -171,9 +213,7 @@ if (result === true && confidence >= 70 && liveness >= 85) {
 
 ## Casos de uso
 
-### 1. Consulta posterior
-
-Si necesitas guardar el `executionId` y consultar el resultado más tarde:
+### 1. Verificar el estado de una validación facial asíncrona
 
 ```python
 # Al momento de la re-verificación
@@ -181,17 +221,20 @@ response = requests.post("/matches", data=formdata)
 execution_id = response.json()["executionId"]
 
 # Guardar execution_id en base de datos...
+transaction.verification_execution_id = execution_id
+transaction.save()
 
 # Después, cuando necesites el resultado
 result = requests.post("/matches/check", json={
     "contract_id": 1,
     "executionId": execution_id
 })
+
+if result.json()["result"]:
+    print("Validación exitosa")
 ```
 
-### 2. Auditoría y registros
-
-Consultar resultados históricos de re-verificaciones para auditoría:
+### 2. Obtener resultados de validaciones previas
 
 ```python
 # Recuperar execution_id de logs o base de datos
@@ -203,29 +246,113 @@ result = requests.post("/matches/check", json={
     "executionId": execution_id
 })
 
-# Guardar en logs de auditoría
-save_audit_log(result.json())
+# Procesar resultado
+if result.json()["result"]:
+    approve_transaction()
+else:
+    reject_transaction()
 ```
 
-### 3. Verificación de transacciones pasadas
-
-Revisar si una transacción pasada fue autenticada correctamente:
+### 3. Auditoría de procesos de verificación
 
 ```python
-# Obtener execution_id asociado a la transacción
-execution_id = transaction.get_verification_id()
+# Consultar resultados históricos para auditoría
+execution_id = get_execution_id_from_audit_log(verification_id)
 
 # Consultar resultado
-verification = requests.post("/matches/check", json={
+result = requests.post("/matches/check", json={
     "contract_id": contract_id,
     "executionId": execution_id
 })
 
-if verification.json()["result"]:
-    print("Transacción autenticada correctamente")
+# Guardar en logs de auditoría
+save_audit_log({
+    "execution_id": execution_id,
+    "result": result.json()["result"],
+    "confidence": result.json()["confidence"],
+    "timestamp": result.json()["timestamp"]
+})
+```
+
+### 4. Integración con sistemas que necesitan consultar resultados
+
+```python
+# Sistema de monitoreo de transacciones
+def check_verification_status(execution_id, contract_id):
+    try:
+        result = requests.post("/matches/check", json={
+            "contract_id": contract_id,
+            "executionId": execution_id
+        }, timeout=30)
+        
+        return {
+            "status": "completed",
+            "result": result.json()["result"],
+            "confidence": result.json()["confidence"]
+        }
+    except requests.Timeout:
+        return {"status": "timeout"}
+    except requests.RequestException:
+        return {"status": "error"}
 ```
 
 ## Manejo de errores
+
+### **400 - Bad Request - Errores de Validación**
+
+#### 1. Campos requeridos faltantes
+
+```json
+{
+  "msg": "Faltan campos requeridos: contract_id, executionId"
+}
+```
+
+**Causa:** No se enviaron los campos obligatorios.
+
+#### 2. Servicio inactivo
+
+```json
+{
+  "msg": "El servicio de re-verificación no está activo para este contrato"
+}
+```
+
+**Causa:** El contrato no tiene habilitado el servicio de re-verificación.
+
+### **404 - Not Found - Recurso No Encontrado**
+
+#### 1. Contrato no encontrado
+
+```json
+{
+  "msg": "Contrato no encontrado"
+}
+```
+
+**Causa:** El `contract_id` no existe en el sistema.
+
+#### 2. Validación no encontrada
+
+```json
+{
+  "msg": "Execution ID no encontrado"
+}
+```
+
+**Causa:** El `executionId` no existe o es inválido.
+
+### **500 - Internal Server Error - Errores del Servidor**
+
+#### 1. Error general del servidor
+
+```json
+{
+  "msg": "Error interno del servidor"
+}
+```
+
+**Causa:** Error técnico durante el procesamiento.
 
 ### **401 - Unauthorized**
 
@@ -239,31 +366,31 @@ if verification.json()["result"]:
 
 **Solución:** Incluir header `Authorization: Bearer <token>` válido.
 
-### **404 - Not Found**
+## Uso del executionId en las consultas
+
+El `executionId` debe incluirse en el cuerpo de la petición JSON:
 
 ```json
 {
-  "msg": "Execution ID no encontrado"
+  "contract_id": 1,
+  "executionId": "fd5075b1-74e4-4b23-ac94-ddd9b36ecc33"
 }
 ```
 
-**Causa:** El `executionId` no existe o es inválido.
+Todas las consultas al endpoint `/matches/check` deben incluir estos campos obligatorios.
 
-**Solución:** Verificar que el `executionId` sea correcto.
+## Flujo asíncrono
 
-### **400 - Bad Request**
+Este endpoint es complementario al `/matches` y permite un flujo asíncrono donde puedes realizar la validación y luego consultar el resultado por separado.
 
-```json
-{
-  "msg": "Parámetros inválidos"
-}
-```
+### Flujo recomendado:
 
-**Causa:** Faltan campos requeridos o tienen formato incorrecto.
+1. **Realizar validación** → POST `/matches` (con imagen)
+2. **Obtener executionId** → Guardar en base de datos
+3. **Consultar resultado** → POST `/matches/check` (con executionId)
+4. **Procesar resultado** → Aplicar lógica de negocio
 
-**Solución:** Verificar que se envíen `contract_id` y `executionId`.
-
-## Buenas prácticas
+## Mejores prácticas
 
 ### 1. Almacenamiento de execution_id
 
@@ -311,6 +438,39 @@ result = requests.post("/matches/check", json=data)
 cache.set(cache_key, result.json(), timeout=3600)  # 1 hora
 ```
 
+### 5. Manejo de errores robusto
+
+```python
+# ✅ Implementar reintentos y manejo de errores
+def check_verification_with_retry(execution_id, contract_id, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            result = requests.post("/matches/check", json={
+                "contract_id": contract_id,
+                "executionId": execution_id
+            }, timeout=30)
+            
+            if result.status_code == 200:
+                return result.json()
+            elif result.status_code == 404:
+                # No existe la validación
+                return None
+            else:
+                # Error del servidor, reintentar
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Backoff exponencial
+                    continue
+                else:
+                    raise Exception(f"Error después de {max_retries} intentos")
+                    
+        except requests.Timeout:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            else:
+                raise Exception("Timeout después de múltiples intentos")
+```
+
 ## Campo timestamp
 
 El campo `timestamp` indica cuándo se procesó la verificación:
@@ -328,15 +488,6 @@ El campo `timestamp` indica cuándo se procesó la verificación:
 - Validar que la verificación es reciente
 - Detectar intentos de replay
 
-## Diferencias clave respecto a `/matches`
-
-| Aspecto | `/matches` | `/matches/check` |
-|---------|------------|------------------|
-| Envía imagen | ✅ Sí | ❌ No |
-| Content-Type | multipart/form-data | application/json |
-| Parámetros | user_id, image, contract_id | executionId, contract_id |
-| Cuándo usar | Primera verificación | Consulta posterior |
-| Incluye timestamp | ❌ No | ✅ Sí |
 
 ## Siguientes pasos
 
