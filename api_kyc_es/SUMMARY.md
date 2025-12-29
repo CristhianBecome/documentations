@@ -9,8 +9,6 @@
   * [KYC - Listar Todas las Verificaciones](endpoints/verification-getall.md)
   * [KYC - Re-verificación (Autenticación)](endpoints/re-verification.md)
   * [KYC - Resultados de Re-verificación](endpoints/re-verification-results.md)
-  * [KYC - Consulta de Contrato](endpoints/contract.md)
-  * [Gov Checks - ANI Colombia](endpoints/ani-compliance.md)
-  * [Telco - Validación Telefónica](endpoints/telco.md)
-  * [Email - Validación de Correo](endpoints/email.md)
+
+
 
