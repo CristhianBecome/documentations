@@ -2,7 +2,7 @@
 
 Una vez que un usuario ha completado el proceso de **Onboarding** (verificación inicial de identidad), puede autenticarse de forma rápida y segura a través de un **cotejo facial** y una **prueba de vida (liveness detection)**. Este procedimiento elimina la necesidad de presentar nuevamente el documento de identidad en cada transacción.
 
-> **Nota:** Este paso puede realizarse mediante el SDK web, el cual se encarga de todo el proceso de captura de selfie, liveness facial y validación. El SDK solo requiere que se le pase el token de acceso (`accessToken`) y el `userId`. Para más detalles sobre su implementación y uso, consulta la documentación completa en: https://becomedigital.gitbook.io/web_sdks/
+> **Nota:** Este paso puede realizarse mediante el SDK web, el cual se encarga de todo el proceso de captura de selfie, liveness facial y validación. El SDK solo requiere que se le pase el token de acceso (`accessToken`) y el `userId`. Para más detalles sobre su implementación y uso, consulta la [documentación completa del SDK](https://becomedigital.gitbook.io/web_sdks/).
 
 ## Proceso de re-verificación
 
