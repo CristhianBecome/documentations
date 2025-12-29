@@ -6,9 +6,6 @@
 
 - ✅ Verificación de documentos de identidad (cédulas, pasaportes, licencias de conducir)
 - ✅ Prueba de vida (liveness detection) y cotejo facial
-- ✅ Validación de números telefónicos con Telco
-- ✅ Verificación de correos electrónicos
-- ✅ Consultas a registros gubernamentales (ANI Colombia)
 - ✅ Detección de alteraciones y fraudes en documentos
 - ✅ Autenticación segura mediante tokens JWT
 - ✅ Proceso de verificación asíncrono
@@ -39,14 +36,6 @@ Ofrecemos dos maneras de ejecutar el flujo de verificación:
 - **Pasaporte**
 - **Licencia de Conducir**
 
-## Servicios Adicionales
-
-### Verificaciones Gubernamentales
-- **ANI Colombia:** Validación de cédulas de ciudadanía con registros de la Registraduría Nacional
-
-### Validaciones Complementarias
-- **Telco:** Verificación de números telefónicos, detección de cambios de SIM, análisis de riesgo
-- **Email:** Validación de correos electrónicos, detección de spam traps y riesgo de fraude
 
 ## Casos de Uso
 
