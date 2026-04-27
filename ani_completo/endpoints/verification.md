@@ -2,7 +2,6 @@
 
 Endpoint principal para consultar la identidad de una persona en los registros oficiales de la Registraduría Nacional del Estado Civil de Colombia (ANI).
 
-Referencia complementaria: [ANI REGISTRADURIA DE COLOMBIA (Postman)](https://documenter.getpostman.com/view/22917023/2sAY4xA1rZ).
 
 ## POST `/aniValidation`
 
