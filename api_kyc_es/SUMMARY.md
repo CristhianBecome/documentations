@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Introducción](README.md)
+* [Ambiente Sandbox](sandbox.md)
 * [Autenticación](authentication.md)
 * [Endpoints](endpoints/README.md)
   * [Autenticación JWT](endpoints/auth.md)

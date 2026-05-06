@@ -2,6 +2,8 @@
 
 Consulta el estado y resultado completo de una verificación de identidad previamente creada.
 
+> **Sandbox:** Las respuestas pueden ser simuladas según el sufijo `-TEST-1`, `-TEST-2` o `-TEST-3` en el `user_id` (sin datos reales de verificación). Ver [Ambiente Sandbox](../sandbox.md).
+
 ## GET `/identity/<user_id>`
 
 ### Headers requeridos

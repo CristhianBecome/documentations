@@ -33,6 +33,7 @@ La API de Verificación KYC de Become Digital proporciona los siguientes grupos 
 | Ambiente | URL Base |
 |----------|----------|
 | Producción | `https://api.svi.becomedigital.net/api/v1` |
+| Sandbox | La indica Become Digital (ejemplo de respuestas: `https://api.become-digital.com/v2`). Detalle en [Ambiente Sandbox](../sandbox.md). |
 
 ## Headers requeridos
 
@@ -67,8 +68,9 @@ Authorization: Bearer <tu_jwt_token>
 
 ### Primeros Pasos
 1. [Autenticación JWT](auth.md)
-2. [Crear verificación de identidad](verification-add.md)
-3. [Consultar resultados](verification-results.md)
+2. [Ambiente Sandbox](../sandbox.md) (pruebas con `-TEST-1` / `-TEST-2` / `-TEST-3`)
+3. [Crear verificación de identidad](verification-add.md)
+4. [Consultar resultados](verification-results.md)
 
 ### Verificación KYC
 - [Crear verificación](verification-add.md)

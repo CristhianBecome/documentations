@@ -14,6 +14,7 @@
 ## URLs base
 
 - **Producción:** `https://api.svi.becomedigital.net/api/v1`
+- **Sandbox:** URL y credenciales las proporciona Become Digital. Comportamiento de prueba sin procesamiento real de archivos: ver [Ambiente Sandbox](sandbox.md).
 
 ## Métodos de Verificación
 
@@ -51,8 +52,9 @@ Nuestra API está diseñada para ayudar a las empresas a:
 
 1. [Obtener credenciales de acceso](authentication.md)
 2. [Autenticarse y obtener token JWT](endpoints/auth.md)
-3. [Realizar primera verificación de identidad](endpoints/verification-add.md)
-4. [Consultar resultados de verificación](endpoints/verification-results.md)
+3. *(Opcional integración)* [Probar en Sandbox](sandbox.md) con `user_id` y sufijo `-TEST-1` / `-TEST-2` / `-TEST-3`
+4. [Realizar primera verificación de identidad](endpoints/verification-add.md)
+5. [Consultar resultados de verificación](endpoints/verification-results.md)
 
 ## Soporte
 
