@@ -17,15 +17,31 @@ Use el siguiente UUID como prefijo y añada `-TEST-1`, `-TEST-2` o `-TEST-3` seg
 
 ## URL base (Sandbox)
 
-Las respuestas de ejemplo utilizan la forma:
+Las respuestas de ejemplo utilizan esta base:
 
 `https://api.become-digital.com/v2`
 
 Ajuste la URL base si su proyecto Sandbox usa otro host o versión indicado por el equipo de soporte.
 
+### Rutas de los endpoints (iguales en forma que la API real)
+
+Los mismos paths que en la documentación general de KYC; solo cambia el **origen** (host + prefijo de versión) que le asigne Become Digital. La definición completa de cada uno está en los enlaces de la columna **Ruta**.
+
+| Método | Ruta (definición) | Producción (referencia) | Sandbox (ejemplo con base anterior) |
+|--------|-------------------|-------------------------|--------------------------------------|
+| **POST** | [`/auth`](endpoints/auth.md) | `https://api.svi.becomedigital.net/api/v1/auth` | `https://api.become-digital.com/v2/auth` |
+| **POST** | [`/newIdentity`](endpoints/verification-add.md) | `https://api.svi.becomedigital.net/api/v1/newIdentity` | `https://api.become-digital.com/v2/newIdentity` |
+| **GET** | [`/identity/<user_id>`](endpoints/verification-results.md) | `https://api.svi.becomedigital.net/api/v1/identity/<user_id>` | `https://api.become-digital.com/v2/identity/<user_id>` |
+
+Use **POST** [`/auth`](endpoints/auth.md) con la **URL base del mismo ambiente** (sandbox o producción); no mezcle credenciales entre ambientes. Flujo de credenciales: [Autenticación](authentication.md).
+
 ---
 
 ## POST `/newIdentity`
+
+**Definición del endpoint (parámetros, archivos, errores):** [Verificación de identidad — crear →](endpoints/verification-add.md)
+
+**URL completa (sandbox de ejemplo):** `POST https://api.become-digital.com/v2/newIdentity`
 
 Envíe `user_id` en **multipart/form-data** (igual que en producción). Los archivos pueden ser ficticios: **no se procesan**; la respuesta depende solo del sufijo `-TEST-N`.
 
@@ -37,7 +53,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 | `…-TEST-2` | **200** | Ya existe un registro con ese ID para la compañía |
 | `…-TEST-3` | **400** | Error en el envío de archivos (simulado) |
 
-### TEST-1 — 201 Creado
+### Sufijo `…-TEST-1` — 201 Creado
 
 ```json
 {
@@ -48,7 +64,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 }
 ```
 
-### TEST-2 — 200 Ya existe
+### Sufijo `…-TEST-2` — 200 Ya existe
 
 ```json
 {
@@ -58,7 +74,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 }
 ```
 
-### TEST-3 — 400 Error
+### Sufijo `…-TEST-3` — 400 Error
 
 ```json
 {
@@ -71,6 +87,10 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 
 ## GET `/identity/<user_id>`
 
+**Definición del endpoint (respuestas, campos de la respuesta, errores):** [Consulta de resultados →](endpoints/verification-results.md)
+
+**URL completa (sandbox de ejemplo):** `GET https://api.become-digital.com/v2/identity/<user_id>`
+
 Mismo contrato que producción: header `Authorization: Bearer <token>`. El resultado está determinado por el sufijo del `user_id`.
 
 ### Escenarios
@@ -78,7 +98,7 @@ Mismo contrato que producción: header `Authorization: Bearer <token>`. El resul
 | `user_id` (termina en) | HTTP | Descripción |
 |------------------------|------|-------------|
 | `…-TEST-1` | **200** | Verificación `completed` — datos **aleatorios** en cada llamada |
-| `…-TEST-2` | **202** | Verificación `pending` — campos de ML en `null` |
+| `…-TEST-2` | **202** | Verificación `pending` — flags de `verification` en `null` (aún no “terminó” el flujo simulado) |
 | `…-TEST-3` | **404** | Usuario no encontrado |
 
 ### Bloques dinámicos (`TEST-1`)
@@ -97,7 +117,7 @@ En el escenario **TEST-1**, cada llamada a `GET /identity/<user_id>` puede varia
 
 La persona simulada y los valores numéricos (`face_match_score`, etc.) también **rotan de forma aleatoria** entre llamadas.
 
-### TEST-1 — 200 Completed (ejemplo con bloques dinámicos activos)
+### Sufijo `…-TEST-1` — 200 Completada (ejemplo con bloques dinámicos activos)
 
 ```json
 {
@@ -217,7 +237,9 @@ La persona simulada y los valores numéricos (`face_match_score`, etc.) también
 }
 ```
 
-### TEST-2 — 202 Pending (campos de ML en `null`)
+### Sufijo `…-TEST-2` — 202 Pendiente
+
+Este escenario **simula** una verificación aún en curso: en el objeto `verification`, los indicadores (`face_match`, `template`, `alteration`, etc.) van en `null` porque en producción aún no habrían resultado los chequeos; cuando el estado pasa a `completed`, esos mismos campos traen `true` o `false`.
 
 ```json
 {
@@ -251,7 +273,7 @@ La persona simulada y los valores numéricos (`face_match_score`, etc.) también
 }
 ```
 
-### TEST-3 — 404 No encontrado
+### Sufijo `…-TEST-3` — 404 No encontrado
 
 ```json
 {
@@ -265,6 +287,7 @@ La persona simulada y los valores numéricos (`face_match_score`, etc.) también
 
 ## Referencias
 
-- [Crear verificación — POST `/newIdentity`](endpoints/verification-add.md)
-- [Consultar resultados — GET `/identity/<user_id>`](endpoints/verification-results.md)
-- [Autenticación](authentication.md)
+- [POST `/auth` — Autenticación JWT](endpoints/auth.md)
+- [POST `/newIdentity` — Crear verificación](endpoints/verification-add.md)
+- [GET `/identity/<user_id>` — Consultar resultados](endpoints/verification-results.md)
+- [Credenciales y acceso](authentication.md)
