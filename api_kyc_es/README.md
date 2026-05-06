@@ -13,8 +13,8 @@
 
 ## URLs base
 
-- **Producción:** `https://api.svi.becomedigital.net/api/v1`
-- **Sandbox:** URL y credenciales las proporciona Become Digital. Comportamiento de prueba sin procesamiento real de archivos: ver [Ambiente Sandbox](sandbox.md).
+- **API:** `https://api.svi.becomedigital.net/api/v1` — misma URL para **producción** y para **sandbox** (pruebas).
+- En sandbox usas **credenciales de prueba** y el sufijo `-TEST-1` / `-TEST-2` / `-TEST-3` en `user_id`; el comportamiento simulado está descrito en [Ambiente Sandbox](sandbox.md).
 
 ## Métodos de Verificación
 

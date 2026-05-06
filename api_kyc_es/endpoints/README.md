@@ -28,12 +28,11 @@ La API de Verificación KYC de Become Digital proporciona los siguientes grupos 
 ### Email
 - **POST** `/email` - Validar correo electrónico
 
-## URLs base por ambiente
+## URL base
 
-| Ambiente | URL Base |
-|----------|----------|
-| Producción | `https://api.svi.becomedigital.net/api/v1` |
-| Sandbox | La indica Become Digital (ejemplo de respuestas: `https://api.become-digital.com/v2`). Detalle en [Ambiente Sandbox](../sandbox.md). |
+`https://api.svi.becomedigital.net/api/v1`
+
+Producción y sandbox comparten esta misma URL base y rutas (`/auth`, `/newIdentity`, `/identity/…`). En sandbox usas **credenciales de prueba** y sufijos `-TEST-*` en `user_id`. Detalle en [Ambiente Sandbox](../sandbox.md).
 
 ## Headers requeridos
 

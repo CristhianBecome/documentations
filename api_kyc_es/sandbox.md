@@ -15,25 +15,23 @@ Use el siguiente UUID como prefijo y añada `-TEST-1`, `-TEST-2` o `-TEST-3` seg
 
 **Ejemplo:** `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1`
 
-## URL base (Sandbox)
+## URL base (misma que producción)
 
-Las respuestas de ejemplo utilizan esta base:
+Las rutas y el host son **los mismos** que en producción. Lo que distingue el sandbox son las **credenciales de prueba** y el sufijo **`-TEST-N`** en el `user_id` (sin otro host ni versión distinta).
 
-`https://api.become-digital.com/v2`
+**URL base:** `https://api.svi.becomedigital.net/api/v1`
 
-Ajuste la URL base si su proyecto Sandbox usa otro host o versión indicado por el equipo de soporte.
+### Rutas de los endpoints
 
-### Rutas de los endpoints (iguales en forma que la API real)
+La definición completa de cada ruta está en los enlaces de la columna **Ruta**.
 
-Los mismos paths que en la documentación general de KYC; solo cambia el **origen** (host + prefijo de versión) que le asigne Become Digital. La definición completa de cada uno está en los enlaces de la columna **Ruta**.
+| Método | Ruta (definición) | URL completa de ejemplo |
+|--------|-------------------|-------------------------|
+| **POST** | [`/auth`](endpoints/auth.md) | `https://api.svi.becomedigital.net/api/v1/auth` |
+| **POST** | [`/newIdentity`](endpoints/verification-add.md) | `https://api.svi.becomedigital.net/api/v1/newIdentity` |
+| **GET** | [`/identity/<user_id>`](endpoints/verification-results.md) | `https://api.svi.becomedigital.net/api/v1/identity/<user_id>` |
 
-| Método | Ruta (definición) | Producción (referencia) | Sandbox (ejemplo con base anterior) |
-|--------|-------------------|-------------------------|--------------------------------------|
-| **POST** | [`/auth`](endpoints/auth.md) | `https://api.svi.becomedigital.net/api/v1/auth` | `https://api.become-digital.com/v2/auth` |
-| **POST** | [`/newIdentity`](endpoints/verification-add.md) | `https://api.svi.becomedigital.net/api/v1/newIdentity` | `https://api.become-digital.com/v2/newIdentity` |
-| **GET** | [`/identity/<user_id>`](endpoints/verification-results.md) | `https://api.svi.becomedigital.net/api/v1/identity/<user_id>` | `https://api.become-digital.com/v2/identity/<user_id>` |
-
-Use **POST** [`/auth`](endpoints/auth.md) con la **URL base del mismo ambiente** (sandbox o producción); no mezcle credenciales entre ambientes. Flujo de credenciales: [Autenticación](authentication.md).
+Autentíquese con **POST** [`/auth`](endpoints/auth.md) usando las credenciales **de sandbox** cuando pruebe escenarios `-TEST-*`. No mezcle credenciales de producción con flujos de prueba. Flujo de acceso: [Autenticación](authentication.md).
 
 ---
 
@@ -41,7 +39,7 @@ Use **POST** [`/auth`](endpoints/auth.md) con la **URL base del mismo ambiente**
 
 **Definición del endpoint (parámetros, archivos, errores):** [Verificación de identidad — crear →](endpoints/verification-add.md)
 
-**URL completa (sandbox de ejemplo):** `POST https://api.become-digital.com/v2/newIdentity`
+**URL completa:** `POST https://api.svi.becomedigital.net/api/v1/newIdentity`
 
 Envíe `user_id` en **multipart/form-data** (igual que en producción). Los archivos pueden ser ficticios: **no se procesan**; la respuesta depende solo del sufijo `-TEST-N`.
 
@@ -59,7 +57,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 {
   "code": 201,
   "message": "El recurso fue creado",
-  "url_resource": "https://api.become-digital.com/v2/identity/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1",
+  "url_resource": "https://api.svi.becomedigital.net/api/v1/identity/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1",
   "user_id": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1"
 }
 ```
@@ -70,7 +68,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 {
   "code": 200,
   "message": "Ya existe un registro con el mismo ID para esta compañia",
-  "url_resource": "https://api.become-digital.com/v2/identity/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2"
+  "url_resource": "https://api.svi.becomedigital.net/api/v1/identity/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2"
 }
 ```
 
@@ -89,7 +87,7 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 
 **Definición del endpoint (respuestas, campos de la respuesta, errores):** [Consulta de resultados →](endpoints/verification-results.md)
 
-**URL completa (sandbox de ejemplo):** `GET https://api.become-digital.com/v2/identity/<user_id>`
+**URL completa:** `GET https://api.svi.becomedigital.net/api/v1/identity/<user_id>`
 
 Mismo contrato que producción: header `Authorization: Bearer <token>`. El resultado está determinado por el sufijo del `user_id`.
 
@@ -229,9 +227,9 @@ La persona simulada y los valores numéricos (`face_match_score`, etc.) también
   },
   "ip": "181.134.87.23",
   "media": {
-    "frontImgUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/frontImg",
-    "backImgUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/backImg",
-    "selfiImageUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/selfieImg"
+    "frontImgUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/frontImg",
+    "backImgUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/backImg",
+    "selfiImageUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1/selfieImg"
   },
   "uuid": "a3f8c2d1e9b047..."
 }
@@ -265,9 +263,9 @@ Este escenario **simula** una verificación aún en curso: en el objeto `verific
   },
   "inactive_status": null,
   "media": {
-    "frontImgUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/frontImg",
-    "backImgUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/backImg",
-    "selfiImageUrl": "https://api.become-digital.com/v2/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/selfieImg"
+    "frontImgUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/frontImg",
+    "backImgUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/backImg",
+    "selfiImageUrl": "https://api.svi.becomedigital.net/api/v1/media/5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2/selfieImg"
   },
   "uuid": "b7e1d4f2c8a093..."
 }
