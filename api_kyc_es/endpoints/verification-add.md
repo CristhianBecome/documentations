@@ -312,6 +312,5 @@ Recibirás un POST con el siguiente formato:
 ## Siguientes pasos
 
 - [Consultar resultados de verificación →](verification-results.md)
-- [Listar todas las verificaciones →](verification-getall.md)
 - [Re-verificación (autenticación) →](re-verification.md)
 

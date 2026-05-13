@@ -646,6 +646,5 @@ def esperar_resultado(user_id, token, max_intentos=12):
 
 ## Siguientes pasos
 
-* [Listar todas las verificaciones →](verification-getall.md)
 * [Re-verificación (autenticación) →](re-verification.md)
 * [Crear nueva verificación →](verification-add.md)
