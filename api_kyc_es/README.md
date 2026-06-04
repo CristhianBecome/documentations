@@ -14,7 +14,7 @@
 ## URLs base
 
 - **API:** `https://api.svi.becomedigital.net/api/v1` — misma URL para **producción** y para **sandbox** (pruebas).
-- En sandbox usas **credenciales de prueba** y el sufijo `-TEST-1` / `-TEST-2` / `-TEST-3` en `user_id`; el comportamiento simulado está descrito en [Ambiente Sandbox](sandbox.md).
+- En sandbox usas **credenciales de prueba** y el sufijo `-TEST-1` / `-TEST-2` / `-TEST-3` en `user_id` (o `executionId` en `/matches/check`). Los escenarios de `/newIdentity` y `/matches` son **solo vía API directa**; con el SDK la prueba de vida es obligatoria en producción. Detalle en [Ambiente Sandbox](sandbox.md).
 
 ## Métodos de Verificación
 

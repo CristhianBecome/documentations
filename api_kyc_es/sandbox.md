@@ -30,8 +30,21 @@ La definición completa de cada ruta está en los enlaces de la columna **Ruta**
 | **POST** | [`/auth`](endpoints/auth.md) | `https://api.svi.becomedigital.net/api/v1/auth` |
 | **POST** | [`/newIdentity`](endpoints/verification-add.md) | `https://api.svi.becomedigital.net/api/v1/newIdentity` |
 | **GET** | [`/identity/<user_id>`](endpoints/verification-results.md) | `https://api.svi.becomedigital.net/api/v1/identity/<user_id>` |
+| **POST** | [`/matches`](endpoints/re-verification.md) | `https://api.svi.becomedigital.net/api/v1/matches` |
+| **POST** | [`/matches/check`](endpoints/re-verification-results.md) | `https://api.svi.becomedigital.net/api/v1/matches/check` |
 
 Autentíquese con **POST** [`/auth`](endpoints/auth.md) usando las credenciales **de sandbox** cuando pruebe escenarios `-TEST-*`. No mezcle credenciales de producción con flujos de prueba. Flujo de acceso: [Autenticación](authentication.md).
+
+### Disponibilidad: API directa vs SDK
+
+Los escenarios sandbox de **POST** [`/newIdentity`](endpoints/verification-add.md) y **POST** [`/matches`](endpoints/re-verification.md) están pensados **solo para integración vía API REST** (consulta directa con `curl`, Postman o tu backend).
+
+| Canal | Sandbox (`-TEST-*`) | Prueba de vida (liveness) |
+|-------|---------------------|---------------------------|
+| **API REST directa** | ✅ Disponible con credenciales y token de sandbox | No aplica en sandbox (respuestas simuladas; `liveness` puede ser `null`) |
+| **SDK web / móvil** | ❌ No disponible | **Obligatoria** — el SDK ejecuta captura real de selfie y liveness en producción |
+
+Si integras con el **SDK**, debes usar credenciales y entorno de **producción**; el SDK no admite los `user_id` de prueba ni omite la prueba de vida. Para probar el flujo completo con liveness real, use el SDK contra producción con usuarios reales completados en onboarding.
 
 ---
 
@@ -42,6 +55,8 @@ Autentíquese con **POST** [`/auth`](endpoints/auth.md) usando las credenciales 
 **URL completa:** `POST https://api.svi.becomedigital.net/api/v1/newIdentity`
 
 Envíe `user_id` en **multipart/form-data** (igual que en producción). Los archivos pueden ser ficticios: **no se procesan**; la respuesta depende solo del sufijo `-TEST-N`.
+
+> **Solo API directa:** Este flujo sandbox no aplica al SDK. Ver [Disponibilidad: API directa vs SDK](#disponibilidad-api-directa-vs-sdk).
 
 ### Escenarios
 
@@ -283,9 +298,145 @@ Este escenario **simula** una verificación aún en curso: en el objeto `verific
 
 ---
 
+## POST `/matches`
+
+**Definición del endpoint (parámetros, archivos, errores):** [Re-verificación (autenticación biométrica) →](endpoints/re-verification.md)
+
+**URL completa:** `POST https://api.svi.becomedigital.net/api/v1/matches`
+
+**Grant JWT:** `reverification:create`
+
+En sandbox solo necesitas `user_id` en **multipart/form-data**. No hace falta `image`, `contract_id`, contrato activo ni registro en BD; la respuesta depende del sufijo `-TEST-N` (mismo patrón que `/newIdentity` y `/identity`).
+
+> **Solo API directa:** Este flujo sandbox no aplica al SDK. Con el SDK la prueba de vida es obligatoria y real; ver [Disponibilidad: API directa vs SDK](#disponibilidad-api-directa-vs-sdk).
+
+### IDs sandbox (`/matches` y `/matches/check`)
+
+Use estos identificadores **completos** (fijos). En sandbox, `executionId` devuelto por **POST** `/matches` coincide con el `user_id` enviado; en **POST** `/matches/check` use el mismo valor en `executionId`.
+
+| ID | Escenario |
+|----|-----------|
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` | Coincidencia facial exitosa |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` | Sin coincidencia facial |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` | Recurso no encontrado |
+
+### Escenarios (`POST /matches`)
+
+| ID | HTTP | Descripción |
+|----|------|-------------|
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` | **200** | Coincidencia facial exitosa — `result: true`, `confidence: 99.87` |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` | **200** | Sin coincidencia facial — `result: false`, `confidence: 32.15` |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` | **404** | `No se encontró una identidad válida para este usuario` |
+
+El campo `company` refleja el `client_id` del token JWT.
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` — 200 Match exitoso
+
+```bash
+curl -X POST "https://api.svi.becomedigital.net/api/v1/matches" \
+  -H "Authorization: Bearer <JWT>" \
+  -F "user_id=5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1"
+```
+
+```json
+{
+  "company": "<client_id_del_token>",
+  "user_id": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1",
+  "result": true,
+  "confidence": 99.87,
+  "liveness": null,
+  "executionId": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1"
+}
+```
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` — 200 Sin match
+
+Mismo request con `user_id=5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2`:
+
+```json
+{
+  "company": "<client_id_del_token>",
+  "user_id": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2",
+  "result": false,
+  "confidence": 32.15,
+  "liveness": null,
+  "executionId": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2"
+}
+```
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` — 404 Recurso no encontrado
+
+```json
+{
+  "msg": "No se encontró una identidad válida para este usuario"
+}
+```
+
+### Producción (cualquier otro `user_id`)
+
+Fuera de sandbox, **POST** `/matches` exige `user_id`, `contract_id`, `image` y una identidad completada en BD. Errores típicos: **400** sin parámetros obligatorios, **404** sin identidad previa.
+
+---
+
+## POST `/matches/check`
+
+**Definición del endpoint (respuestas, errores):** [Resultados de re-verificación →](endpoints/re-verification-results.md)
+
+**URL completa:** `POST https://api.svi.becomedigital.net/api/v1/matches/check`
+
+**Grant JWT:** `reverification:create`
+
+**Content-Type:** `application/json`. Campos: `contract_id`, `executionId`. En sandbox `contract_id` puede ser cualquier valor (p. ej. `"1"`).
+
+### Escenarios (`POST /matches/check`)
+
+Mismos IDs que en [IDs sandbox](#ids-sandbox-matches-y-matchescheck). El `contract_id` puede ser cualquier valor (p. ej. `"1"`).
+
+| `executionId` | HTTP | Descripción |
+|---------------|------|-------------|
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` | **200** | Validación encontrada — `result: true`, `confidence: 99.87`, `timestamp` = hora del servidor |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` | **200** | Validación encontrada — `result: false`, `confidence: 32.15` |
+| `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` | **404** | `No se encontró una validación con el executionId proporcionado` |
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` — 200
+
+```bash
+curl -X POST "https://api.svi.becomedigital.net/api/v1/matches/check" \
+  -H "Authorization: Bearer <JWT>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contract_id": "1",
+    "executionId": "5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1"
+  }'
+```
+
+Respuesta con `result: true`, `confidence: 99.87` y `timestamp` en la hora actual del servidor.
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` — 200
+
+Mismo body con `executionId`: `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` → `result: false`, `confidence: 32.15`.
+
+### `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` — 404
+
+```json
+{
+  "msg": "No se encontró una validación con el executionId proporcionado"
+}
+```
+
+### Flujo end-to-end recomendado (sandbox)
+
+1. **POST** `/matches` con `user_id=5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1`
+2. Tomar el `executionId` de la respuesta (en sandbox: `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1`)
+3. **POST** `/matches/check` con ese `executionId` y `contract_id` arbitrario (p. ej. `"1"`)
+
+---
+
 ## Referencias
 
 - [POST `/auth` — Autenticación JWT](endpoints/auth.md)
 - [POST `/newIdentity` — Crear verificación](endpoints/verification-add.md)
 - [GET `/identity/<user_id>` — Consultar resultados](endpoints/verification-results.md)
+- [POST `/matches` — Re-verificación (cotejo facial)](endpoints/re-verification.md)
+- [POST `/matches/check` — Consultar re-verificación](endpoints/re-verification-results.md)
 - [Credenciales y acceso](authentication.md)

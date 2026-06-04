@@ -31,7 +31,7 @@ La API de Verificación KYC de Become Digital proporciona los siguientes grupos 
 
 `https://api.svi.becomedigital.net/api/v1`
 
-Producción y sandbox comparten esta misma URL base y rutas (`/auth`, `/newIdentity`, `/identity/…`). En sandbox usas **credenciales de prueba** y sufijos `-TEST-*` en `user_id`. Detalle en [Ambiente Sandbox](../sandbox.md).
+Producción y sandbox comparten esta misma URL base y rutas (`/auth`, `/newIdentity`, `/identity/…`, `/matches`, `/matches/check`). En sandbox usas **credenciales de prueba** y sufijos `-TEST-*` en `user_id` o `executionId`. Los escenarios sandbox de `/newIdentity` y `/matches` son **solo para API REST directa** (no SDK). Detalle en [Ambiente Sandbox](../sandbox.md).
 
 ## Headers requeridos
 

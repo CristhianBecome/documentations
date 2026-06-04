@@ -19,6 +19,8 @@ API → [Busca resultado] → Retorna datos de validación
 
 ## POST `/matches/check`
 
+> **Sandbox:** `executionId` fijos: `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1`, `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2`, `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` (mismos que en **POST** `/matches`). `contract_id` puede ser cualquier valor. Escenarios y flujo en [Ambiente Sandbox](../sandbox.md). **Solo API directa** — el SDK no usa este modo de prueba.
+
 ### Descripción del servicio
 
 Este endpoint permite consultar el resultado de una validación facial previamente realizada. Es un endpoint de consulta que busca una validación específica usando el `executionId` que se generó durante el proceso de comparación facial.
