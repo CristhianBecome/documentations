@@ -233,30 +233,7 @@ Recibirás un POST con el siguiente formato:
 ```json
 {
   "event": "verification_completed",
-  "data": {
-    "timestamp": "2025-10-01T13:45:44.445711",
-    "created_at": "2025-10-01 02:33:12.774566",
-    "fullname": "JUAN PEREZ LOPEZ",
-    "first_name": "JUAN",
-    "last_name": "PEREZ LOPEZ",
-    "birth": "1990-01-15",
-    "document_type": "national-id",
-    "document_number": "123456789",
-    "verification": {
-      "face_match": true,
-      "template": true,
-      "alteration": false,
-      "watch_list": null,
-      "verification_status": "completed",
-      "liveness": null,
-      "liveness_doc": null,
-      "ubica": null,
-      "ip_validation": true
-    },
-    "ip": "123.45.67.89"
-  },
   "contract_id": 999,
-  "identity_id": 123456,
   "user_id": "TESTUSER123456"
 }
 ```
