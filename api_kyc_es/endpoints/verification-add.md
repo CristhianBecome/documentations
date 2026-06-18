@@ -6,6 +6,10 @@ Endpoint principal para crear y procesar verificaciones de identidad. Este servi
 
 ## POST `/newIdentity`
 
+**Grant type requerido:** `verification:create`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "verification:create"` antes de llamar a este endpoint.
+
 > **Sandbox (solo API directa):** En el ambiente de pruebas, los archivos no se procesan y el resultado depende del sufijo `-TEST-1`, `-TEST-2` o `-TEST-3` en `user_id`. Requiere credenciales y token JWT de sandbox. **No disponible desde el SDK** — con el SDK la prueba de vida es obligatoria y real (producción). Ver [Ambiente Sandbox](../sandbox.md).
 
 ### Headers requeridos

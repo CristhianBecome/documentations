@@ -6,6 +6,10 @@ Consulta el estado y resultado completo de una verificación de identidad previa
 
 ## GET `/identity/<user_id>`
 
+**Grant type requerido:** `verification:get`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "verification:get"` antes de llamar a este endpoint.
+
 ### Headers requeridos
 
 ```http

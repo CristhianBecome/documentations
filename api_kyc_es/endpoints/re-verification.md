@@ -20,6 +20,10 @@ Cliente → [Procesa resultado] → [Aplica lógica de negocio]
 
 ## POST `/matches`
 
+**Grant type requerido:** `reverification:create`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "reverification:create"` antes de llamar a este endpoint.
+
 > **Sandbox (solo API directa):** Solo se envía `user_id` (sin `image` ni `contract_id`). IDs fijos: `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1` (coincidencia facial exitosa), `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2` (sin coincidencia facial), `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` (recurso no encontrado). Requiere credenciales y token JWT de sandbox. **No disponible desde el SDK** — con el SDK la captura de selfie y la prueba de vida son obligatorias y reales (producción). Ver [Ambiente Sandbox](../sandbox.md).
 
 ### Descripción del servicio

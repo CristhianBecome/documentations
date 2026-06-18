@@ -8,10 +8,10 @@ La API de Verificación KYC de Become Digital proporciona los siguientes grupos 
 
 ## KYC - Verificación de Identidad
 
-- **POST** `/newIdentity` - Crear nueva verificación de identidad
-- **GET** `/identity/<user_id>` - Consultar resultado de verificación por user_id
-- **POST** `/matches` - Re-verificación mediante cotejo facial
-- **POST** `/matches/check` - Consultar resultados de re-verificación
+- **POST** `/newIdentity` - Crear nueva verificación de identidad (`grant_type`: `verification:create`)
+- **GET** `/identity/<user_id>` - Consultar resultado de verificación por user_id (`grant_type`: `verification:get`)
+- **POST** `/matches` - Re-verificación mediante cotejo facial (`grant_type`: `reverification:create`)
+- **POST** `/matches/check` - Consultar resultados de re-verificación (`grant_type`: `reverification:create`)
 - **GET** `/contract/<contract_id>` - Consultar configuración de contrato
 
 ## Gov Checks - Verificaciones Gubernamentales

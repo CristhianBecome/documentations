@@ -19,6 +19,10 @@ API → [Busca resultado] → Retorna datos de validación
 
 ## POST `/matches/check`
 
+**Grant type requerido:** `reverification:create`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "reverification:create"` antes de llamar a este endpoint.
+
 > **Sandbox:** `executionId` fijos: `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-1`, `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-2`, `5e24688f-6c7b-48ba-a144-86bb3b9667fc-TEST-3` (mismos que en **POST** `/matches`). `contract_id` puede ser cualquier valor. Escenarios y flujo en [Ambiente Sandbox](../sandbox.md). **Solo API directa** — el SDK no usa este modo de prueba.
 
 ### Descripción del servicio

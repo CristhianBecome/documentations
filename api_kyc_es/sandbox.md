@@ -54,6 +54,8 @@ Si integras con el **SDK**, debes usar credenciales y entorno de **producción**
 
 **URL completa:** `POST https://api.svi.becomedigital.net/api/v1/newIdentity`
 
+**Grant type (`grant_type`):** `verification:create`
+
 Envíe `user_id` en **multipart/form-data** (igual que en producción). Los archivos pueden ser ficticios: **no se procesan**; la respuesta depende solo del sufijo `-TEST-N`.
 
 > **Solo API directa:** Este flujo sandbox no aplica al SDK. Ver [Disponibilidad: API directa vs SDK](#disponibilidad-api-directa-vs-sdk).
@@ -103,6 +105,8 @@ Envíe `user_id` en **multipart/form-data** (igual que en producción). Los arch
 **Definición del endpoint (respuestas, campos de la respuesta, errores):** [Consulta de resultados →](endpoints/verification-results.md)
 
 **URL completa:** `GET https://api.svi.becomedigital.net/api/v1/identity/<user_id>`
+
+**Grant type (`grant_type`):** `verification:get`
 
 Mismo contrato que producción: header `Authorization: Bearer <token>`. El resultado está determinado por el sufijo del `user_id`.
 
@@ -304,7 +308,7 @@ Este escenario **simula** una verificación aún en curso: en el objeto `verific
 
 **URL completa:** `POST https://api.svi.becomedigital.net/api/v1/matches`
 
-**Grant JWT:** `reverification:create`
+**Grant type (`grant_type`):** `reverification:create`
 
 En sandbox solo necesitas `user_id` en **multipart/form-data**. No hace falta `image`, `contract_id`, contrato activo ni registro en BD; la respuesta depende del sufijo `-TEST-N` (mismo patrón que `/newIdentity` y `/identity`).
 
@@ -384,7 +388,7 @@ Fuera de sandbox, **POST** `/matches` exige `user_id`, `contract_id`, `image` y 
 
 **URL completa:** `POST https://api.svi.becomedigital.net/api/v1/matches/check`
 
-**Grant JWT:** `reverification:create`
+**Grant type (`grant_type`):** `reverification:create`
 
 **Content-Type:** `application/json`. Campos: `contract_id`, `executionId`. En sandbox `contract_id` puede ser cualquier valor (p. ej. `"1"`).
 
