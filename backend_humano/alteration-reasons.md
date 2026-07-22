@@ -1,123 +1,178 @@
-# Razones de Alteración y Templates
+# Razones de pending y asignación BH
 
-## Descripción General
+Inventario de razones por las que una identidad queda en `pending` y puede asignarse a un revisor BH.
 
-Este documento detalla las razones específicas de alteración que pueden causar que un caso sea enviado al Backend Humano, así como los templates de documentos reconocidos por el sistema.
+## Flujo relevante
 
-## 🚨 Razones de Alteración (AlterationReason)
+Al completar el flow, `ensure_completion` ejecuta `rules_validation`. Si las reglas fallan y está **fuera de horario desatendido**, la identidad permanece `pending` y se asigna con `assign_verification_equitably`.
 
-### 🔴 Razones de Alteración - Flag en Rojo
+---
 
-#### 🇨🇴 Registraduría (ANI = Registraduría)
-1. **`ani_status`** - Problema con el estado en la Registraduría
-2. **`ani_names_missing`** - Nombres faltantes en la Registraduría
-3. **`ani_names`** - Problema con los nombres en la Registraduría
+## 🚨 Razones de Alteración (`alteration_reasons`)
 
-#### 🚫 Lista Negra
-4. **`black_list`** - Usuario está en lista negra
+### 🇨🇴 Registraduría (ANI)
 
-#### 📄 Validación de Documento
-5. **`document_validation_number`** - Validación del número de documento falló
+| Razón | Origen |
+|---|---|
+| `ani_status` | ANI: estado inválido |
+| `ani_names_missing` | ANI: nombres faltantes |
+| `ani_names` | ANI: nombres no coinciden |
 
-#### 🔍 Revisión Manual
-6. **`Screen Check`** - Sospecha de pantalla
-7. **`Photocopy Check`** - Sospecha de fotocopia
+### 🛂 Migración
 
-#### 🤖 Modelo AI
-8. **`Model AI`** - Modelo de IA sospecha alteración en un 90%
+| Razón | Origen |
+|---|---|
+| `migration_status` | Migración: estado inválido |
+| `migration_expiration_date` | Migración: fecha de expiración |
+| `migration_names_missing` | Migración: nombres faltantes |
+| `migration_names` | Migración: nombres no coinciden |
 
-#### 📊 Data Match
-9. **`Data Match`** - No coincide información de frente con reverso (puede deberse a falla en OCR)
+### 🇪🇨 Ecuador (registro civil)
 
-## 📄 Razones de Template (Rev. tipo documento)
+| Razón | Origen |
+|---|---|
+| `ec_registry_status` | Ecuador: estado de registro |
+| `ec_registry_death` | Ecuador: fallecido |
+| `ec_names_missing` | Ecuador: nombres faltantes |
+| `ec_names` | Ecuador: nombres no coinciden |
 
-### 🔴 Razones de Template - Flag en Rojo
+### 🚫 Lista negra
 
-#### 📋 Problemas de OCR (2)
-1. **`datos OCR vacíos`** - Los datos del OCR están vacíos
-2. **`falla identificación de campos`** - No se pudieron identificar los campos del documento
+| Razón | Origen |
+|---|---|
+| `black_list` | Lista negra |
+| `black_list2` | Lista negra 2 |
 
-#### 🌍 Problemas de País (4)
-3. **`país no coincide`** - El país del documento no coincide
-4. **`país no es Colombia`** - El país no es Colombia
-5. **`País del documento no coincide con el declarado por el usuario`** - País del documento no coincide con el declarado
-6. **`País del documento no está en la lista de países aceptados del contrato`** - País no aceptado por el contrato
+### 📄 Validación de documento y checks
 
-#### 📄 Problemas de Tipo de Documento (3)
-7. **`tipo incorrecto`** - Tipo de documento incorrecto
-8. **`tipo de documento incorrecto`** - Tipo de documento incorrecto
-9. **`Tipo de documento no está en la lista de tipos aceptados del contrato`** - Tipo de documento no aceptado por el contrato
+| Razón | Origen |
+|---|---|
+| `document_validation_number` | Validación de número de documento |
+| `Screen Check` | Fallo screen check |
+| `Photocopy Check` | Fallo photocopy check |
+| `Model AI` | Modelo IA: rechazo automático (score 0–10) |
+| `Data Match` | `dataMatchResult` no es SUCCESS/NOT_PERFORMED |
 
-#### 🔧 Problemas de Template/Formato (4)
-10. **`template no reconocido`** - El template del documento no es reconocido
-11. **`documento no reconocido(permiso de protección temporal)`** - Documento no reconocido por permiso temporal
-12. **`Template del documento no válido - formato no reconocido`** - Template no válido, formato no reconocido
-13. **`Error en procesamiento OCR - falla en análisis del documento`** - Error en procesamiento OCR
+### 🔧 Overrides y revisión BH
 
-#### 📊 Problemas de Data Match (1)
-14. **`Data match fallido - información del documento inconsistente`** - Data match fallido, información inconsistente
-15. **`documento expirado`** -la fecha de vencimiento de el documento se encuentra en el paso respecto al dia de actual de la validacion.
+| Razón | Origen |
+|---|---|
+| `alterado por template` | Override: template falló → fuerza `alteration=False` (companies 1, 163, 186, 164) |
+| `Manual_revision` | Revisión manual del BH (al completar) |
 
-#### ⚠️ Problemas de Validación (2)
-16. **`Tipo de documento no especificado`** - No se especificó el tipo de documento
-17. **`Tipo de documento no reconocido`** - El tipo de documento no es reconocido por el sistema
+---
 
+## 📄 Razones de Template (`template_reasons`)
 
-## 📊 Resumen por Categorías
+### Problemas de OCR / procesamiento
 
-### 🔴 Razones de Alteración (9)
-- **Registraduría (3 tipos)** - ANI = Registraduría
-- **Blacklist (1 tipo)**
-- **Validación de documento (1 tipo)**
-- **Revisión manual (2 tipos)**
-- **Model AI (1 tipo)**
-- **Data Match (1 tipo)**
+| Razón | Origen |
+|---|---|
+| `Error en procesamiento OCR - falla en análisis del documento` | Error OCR |
+| `datos OCR vacíos` | OCR sin datos |
+| `falla identificación de campos` | `FIELD_IDENTIFICATION_FAILED` |
+| `error en la solicitud de procesamiento` | `RequestException` |
+| `imagen del lado incorrecto` | `SCANNING_WRONG_SIDE` |
 
-### 📄 Razones de Template (16)
-- **Problemas de OCR (2)**
-- **Problemas de país (4)**
-- **Problemas de tipo de documento (3)**
-- **Problemas de template/formato (4)**
-- **Problemas de data match (1)**
-- **Problemas de validación (2)**
+### País
 
-### 📊 **Total: 25 razones diferentes**
+| Razón | Origen |
+|---|---|
+| `país no coincide` | País OCR ≠ declarado (CO) |
+| `país no es Colombia` | Cédula con país ≠ CO |
+| `País del documento no coincide con el declarado por el usuario` | Caso general |
+| `País del documento no está en la lista de países aceptados del contrato` | País no permitido |
 
-## 🔍 Códigos de Error
+### Tipo de documento
 
-### Códigos de Alteración (AlterationReason)
+| Razón | Origen |
+|---|---|
+| `tipo incorrecto` | No es `TYPE_ALIEN_ID` |
+| `tipo de documento incorrecto` | No es `TYPE_ID` |
+| `Tipo de documento no especificado` | Sin document type |
+| `Tipo de documento no reconocido` | Tipo no reconocido |
+| `Tipo de documento no está en la lista de tipos aceptados del contrato` | Tipo no permitido |
 
-| Código | Descripción | Prioridad |
-|--------|-------------|-----------|
-| `ani_status` | Problema con el estado en la Registraduría | Alta |
-| `ani_names_missing` | Nombres faltantes en la Registraduría | Alta |
-| `ani_names` | Problema con los nombres en la Registraduría | Alta |
-| `black_list` | Usuario está en lista negra | Alta |
-| `document_validation_number` | Validación del número de documento falló | Media |
-| `Screen Check` | Sospecha de pantalla | Media |
-| `Photocopy Check` | Sospecha de fotocopia | Media |
-| `Model AI` | Modelo de IA sospecha alteración en un 90% | Alta |
-| `Data Match` | No coincide información de frente con reverso | Media |
+### Template / formato
 
-### Códigos de Template (TemplateReason)
+| Razón | Origen |
+|---|---|
+| `template no reconocido` | Template check fallido (CO) |
+| `template back no coincide con el front` | Front/back prediction distinta |
+| `documento no reconocido(permiso de protección temporal)` | PPT no detectado |
+| `Template del documento no válido - formato no reconocido` | Template inválido |
 
-| Código | Descripción | Prioridad |
-|--------|-------------|-----------|
-| `datos OCR vacíos` | Los datos del OCR están vacíos | Baja |
-| `falla identificación de campos` | No se pudieron identificar los campos | Baja |
-| `país no coincide` | El país del documento no coincide | Media |
-| `país no es Colombia` | El país no es Colombia | Media |
-| `País del documento no coincide con el declarado por el usuario` | País no coincide con el declarado | Media |
-| `País del documento no está en la lista de países aceptados del contrato` | País no aceptado por el contrato | Media |
-| `tipo incorrecto` | Tipo de documento incorrecto | Media |
-| `tipo de documento incorrecto` | Tipo de documento incorrecto | Media |
-| `Tipo de documento no está en la lista de tipos aceptados del contrato` | Tipo no aceptado por el contrato | Media |
-| `template no reconocido` | El template del documento no es reconocido | Alta |
-| `documento no reconocido(permiso de protección temporal)` | Documento no reconocido por permiso temporal | Media |
-| `Template del documento no válido - formato no reconocido` | Template no válido, formato no reconocido | Alta |
-| `Data match fallido - información del documento inconsistente` | Data match fallido, información inconsistente | Media |
-| `Tipo de documento no especificado` | No se especificó el tipo de documento | Baja |
-| `Tipo de documento no reconocido` | El tipo de documento no es reconocido por el sistema | Media |
-| `Error en procesamiento OCR - falla en análisis del documento` | Error en procesamiento OCR | Baja |
+### Data match, expiración y revisión BH
 
+| Razón | Origen |
+|---|---|
+| `Data match fallido - información del documento inconsistente` | Data match fallido (template flow) |
+| `documento expirado` | Documento vencido |
+| `Manual_revision` | Revisión manual del BH |
 
+---
+
+## ⚠️ Casos pending sin razón escrita
+
+Fallan `rules_validation` y dejan `pending` + asignación, pero **no** crean fila en `AlterationReason` / `TemplateReason`:
+
+1. **Zona manual del modelo IA** (score **10–82**) — pending sin razón `Model AI`
+   - **0–10**: rechazo automático
+   - **10–82**: BH
+   - **82–100**: aprobación automática
+2. **Sin resultado del modelo AI** en Colombia con `can_model_alteration`
+3. **Template prediction `"new"`** (cédula nueva colombiana) — fuerza pending siempre
+4. **Face match** fuera del rango auto-complete (score > 30 y falla threshold / score inválido)
+5. **Liveness** faltante cuando el contrato exige video
+6. **`processingStatus`** en `FIELD_IDENTIFICATION_FAILED` / `LOW_CONFIDENCE` / `MANDATORY_FIELD_MISSING` (a veces sin `TemplateReason`)
+7. **One-to-N fallido** (company 5)
+8. **Contrato `reviewed` sin `requires_partial_validation`** (nunca auto-completa)
+9. **OCR incompleto** (sin `full_name` / `document_number` / `birth`)
+
+---
+
+## ✅ Razones que auto-completan (no quedan pending asignadas)
+
+Aunque se guardan, disparan auto-complete en `rules_validation` y **no** se asignan a BH:
+
+### Alteration
+
+- `black_list`
+- `black_list2`
+
+### Template
+
+- `documento expirado`
+- `Error en procesamiento OCR - falla en análisis del documento`
+
+### Combos template
+
+- `País del documento no coincide con el declarado por el usuario` + `País del documento no está en la lista de países aceptados del contrato`
+- `País del documento no está en la lista de países aceptados del contrato` + `Tipo de documento no especificado`
+
+### Otros
+
+- Face match score **0–30** (sin template `"new"` de cédula nueva colombiana)
+- Modelo IA score **0–10**: rechazo automático (excepto company 5)
+- Modelo IA score **82–100**: aprobación automática
+
+---
+
+## 📊 Resumen
+
+| Categoría | Cantidad |
+|---|---|
+| AlterationReason | 20 |
+| TemplateReason | 21 |
+| Pending sin razón escrita | 9 |
+| **Total códigos / casos documentados** | **50** |
+
+---
+
+## Referencias de código
+
+- `app/v2/verification/verification_utils/utils.py` — `ensure_completion`, `rules_validation`, `has_auto_complete_*`
+- `app/webhook/routes.py` — razones de alteration (Screen/Photocopy/Model AI/Data Match, black_list, document_validation_number)
+- `app/webhook/utils2.py` — TemplateReason y ANI / black_list2
+- `app/v2/gov_checks/MIGRATION/utils.py` — migration_*
+- `app/v2/gov_checks/EC/utils.py` — ec_*

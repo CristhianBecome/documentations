@@ -8,16 +8,17 @@ Esta guía te explica **qué tipos de documentos** acepta el sistema y **cómo l
 
 | Categoría | Cantidad | Para qué sirve |
 |-----------|----------|----------------|
-| **Documentos de Identidad** | 10 | Identificación oficial |
+| **Documentos de Identidad** | 11 | Identificación oficial |
 | **Licencias de Conducir** | 4 | Permiso para conducir |
 | **Pasaportes** | 5 | Documento de viaje |
-| **Total** | **19** | **19 tipos diferentes** |
+| **Total** | **20** | **20 tipos diferentes** |
 
 ## 🆔 Documentos de Identidad Nacional
 
 | Código | Descripción | País | Para qué sirve |
 |--------|-------------|------|----------------|
 | `TYPE_ID` | Documento de Identidad General | Internacional | Identificación oficial estándar |
+| `TYPE_MINORS_ID` | Documento de Identidad de Menores | Internacional | Identificación para menores de edad |
 | `TYPE_ALIEN_ID` | Documento de Identidad de Extranjero | Internacional | Identificación para extranjeros |
 | `TYPE_RESIDENT_ID` | Documento de Identidad de Residente | Internacional | Identificación para residentes |
 | `TYPE_RESIDENCE_PERMIT` | Permiso de Residencia | Internacional | Permiso oficial de residencia |
@@ -49,17 +50,23 @@ Esta guía te explica **qué tipos de documentos** acepta el sistema y **cómo l
 
 ## 🇨🇴 Documentos Colombianos Específicos
 
+Aplica a las versiones **new** y **old** de cada tipo.
+
 ### Cédula de Ciudadanía (CC)
 - **Código**: `TYPE_ID` (cuando país = Colombia)
 - **Para**: Ciudadanos colombianos mayores de 18 años
+- **Variantes**: documento new y old
 
 ### Cédula de Extranjería (CE)
 - **Código**: `TYPE_ALIEN_ID` (cuando país = Colombia)
 - **Para**: Extranjeros residentes en Colombia
+- **Variantes**: documento new y old
 
 ### Tarjeta de Identidad (TI)
-- **Código**: `TYPE_ID` (cuando país = Colombia y edad < 18)
+- **Código**: `TYPE_ID` (cuando país = Colombia y edad < 18) **o** `TYPE_MINORS_ID`
 - **Para**: Ciudadanos colombianos menores de 18 años
+- **Nota**: El sistema puede detectarla como `TYPE_ID` o como `TYPE_MINORS_ID`
+- **Variantes**: documento new y old
 
 ## 🔍 ¿Por qué es importante saber esto?
 
@@ -78,4 +85,4 @@ Esta guía te explica **qué tipos de documentos** acepta el sistema y **cómo l
 ## Próximos Pasos
 
 - [Cuándo revisar un caso](escalation-rules.md)
-- [Qué buscar en los documentos](alteration-reasons.md)
+- [Razones de pending y asignación BH](alteration-reasons.md)

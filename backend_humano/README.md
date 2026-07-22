@@ -19,17 +19,15 @@ Backend Humano es el **equipo de revisores** que revisa los casos cuando la máq
 
 ### ⚠️ Casos que requieren Revisión Humana (BH):
 
-- **📄 Documento con anomalías** – El sistema no logra confirmar la autenticidad del documento (posible alteración, baja calidad o patrones fuera de lo esperado).
+- **📄 Documento con anomalías** – Alteración, template inválido, OCR incompleto o `processingStatus` crítico.
+- **👤 Desajuste en biometría facial** – Face match fuera del rango auto-complete (score > 30 / inválido).
+- **📱 Falla en prueba de vida** – Liveness faltante cuando el contrato exige video.
+- **🇨🇴 Modelo IA (Colombia)** – Score **10–82** (zona BH), o sin resultado del modelo. **0–10** rechaza y **82–100** aprueba en automático.
+- **🏛️ Checks gubernamentales** – ANI (Registraduría), Migración, Ecuador u otras razones en `alteration_reasons`.
+- **🏢 One-to-N / contrato reviewed** – Match one-to-N fallido (company 5) o contrato `reviewed` sin validación parcial.
+- **🔍 Otros flags** – Screen/Photocopy check, Data Match, template `"new"` (cédula nueva colombiana), etc.
 
-- **👤 Desajuste en biometría facial** – La imagen del documento no coincide con la selfie capturada.
-
-- **📱 Falla en prueba de vida** – No se validó satisfactoriamente que la persona esté presente y sea real.
-
-- **🚨 Historial con incidencias previas** – El usuario presenta alertas o reportes en procesos anteriores.
-
-- **🇨🇴 Excepción en documentos colombianos** – Para cédulas de Colombia aplican validaciones más estrictas; si alguna regla falla, se envía a BH.
-
-- **🔍 Detección de patrones sospechosos** – El sistema identifica señales de riesgo o comportamientos inusuales que generan duda en la validación automática.
+> Inventario completo (razones escritas, pending sin razón y auto-complete): [alteration-reasons.md](alteration-reasons.md).
 
 ## 📱 ¿Qué pasa cuando llega un caso?
 
@@ -64,5 +62,5 @@ Para evitar que pasen documentos falsos, personas que no son quienes dicen ser, 
 
 1. [Cuándo revisar un caso](escalation-rules.md)
 2. [Tipos de documentos aceptados](document-types.md)
-3. [Qué buscar en los documentos](alteration-reasons.md)
+3. [Razones de pending y asignación BH](alteration-reasons.md)
 
