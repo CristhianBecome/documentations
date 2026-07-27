@@ -3,10 +3,10 @@
 La API de Verificación ANI Compliance proporciona los siguientes endpoints principales:
 
 ## Autenticación
-- **POST** `/auth` - Obtener token de acceso JWT
+- **POST** `/auth` - Obtener token de acceso JWT (`grant_type`: `standalone:ani`)
 
 ## Verificación
-- **POST** `/aniCompliance` - Verificar identidad consultando registros oficiales
+- **POST** `/aniCompliance` - Verificar identidad consultando registros oficiales (`grant_type`: `standalone:ani`)
 
 ## URLs base por ambiente
 

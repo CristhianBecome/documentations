@@ -4,6 +4,10 @@ Endpoint para consulta de migración Colombia con comparación 1 a 1 de campos. 
 
 ## POST `/govchecks/co/migration/compliance`
 
+**Grant type requerido:** `standalone:migration_co`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "standalone:migration_co"` antes de llamar a este endpoint.
+
 ### Headers requeridos
 
 ```http
@@ -142,4 +146,4 @@ La respuesta devuelve un objeto con un booleano por cada campo de comparación: 
 
 - Todas las fechas en el body deben enviarse en formato **YYYY-MM-DD**.
 - Para campos sin valor, enviar la cadena **"N/A"**.
-- El token del header `Authorization` debe ser un JWT válido obtenido desde el endpoint `/auth`.
+- El token del header `Authorization` debe ser un JWT válido obtenido desde el endpoint `/auth` con `"grant_type": "standalone:migration_co"`.

@@ -5,6 +5,10 @@ Endpoint principal para consultar la identidad de una persona en los registros o
 
 ## POST `/aniValidation`
 
+**Grant type requerido:** `standalone:ani`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "standalone:ani"` antes de llamar a este endpoint.
+
 ### Headers requeridos
 
 ```http

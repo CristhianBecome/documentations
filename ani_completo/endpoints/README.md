@@ -3,10 +3,10 @@
 La API ANI (Registraduría) expone los siguientes endpoints principales:
 
 ## Autenticación
-- **POST** `/auth` - Obtener token de acceso JWT
+- **POST** `/auth` - Obtener token de acceso JWT (`grant_type`: `standalone:ani`)
 
 ## Verificación
-- **POST** `/aniValidation` - Consultar datos de cédula en registros oficiales (ANI / Registraduría)
+- **POST** `/aniValidation` - Consultar datos de cédula en registros oficiales (ANI / Registraduría) (`grant_type`: `standalone:ani`)
 
 ## URLs base por ambiente
 
