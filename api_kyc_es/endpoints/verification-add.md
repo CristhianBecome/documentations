@@ -245,10 +245,8 @@ Recibirás un POST con el siguiente formato:
 **Llaves principales:**
 - `event` - Siempre `"verification_completed"`
 - `user_id` - Tu identificador único
-- `identity_id` - ID interno de Become Digital
 - `contract_id` - ID del contrato
-- `data` - Información del documento y resultados
-- `data.verification` - Validaciones realizadas (face_match, liveness, alteration, etc.)
+
 
 > **Nota:** Descripción completa de campos en [GET /identity](verification-results.md)
 
