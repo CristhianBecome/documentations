@@ -12,7 +12,8 @@ La API de Verificación KYC de Become Digital proporciona los siguientes grupos 
 - **GET** `/identity/<user_id>` - Consultar resultado de verificación por user_id (`grant_type`: `verification:get`)
 - **POST** `/matches` - Re-verificación mediante cotejo facial (`grant_type`: `reverification:create`)
 - **POST** `/matches/check` - Consultar resultados de re-verificación (`grant_type`: `reverification:create`)
-- **GET** `/contract/<contract_id>` - Consultar configuración de contrato
+- **GET** `/contract/<contract_id>/webhook` - Consultar configuración de webhook (`grant_type`: `verification:get`)
+- **PUT** `/contract/<contract_id>/webhook` - Actualizar URL y configuración de webhook (`grant_type`: `verification:update`)
 
 ## Gov Checks - Verificaciones Gubernamentales
 
@@ -75,7 +76,7 @@ Authorization: Bearer <tu_jwt_token>
 - [Consultar resultado individual](verification-results.md)
 - [Re-verificación (autenticación)](re-verification.md)
 - [Resultados de re-verificación](re-verification-results.md)
-- [Consultar contrato](contract.md)
+- [Webhooks - Configuración por contrato](webhooks.md)
 
 ### Servicios Adicionales
 - [ANI Colombia](ani-compliance.md)

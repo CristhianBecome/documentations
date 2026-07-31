@@ -211,58 +211,7 @@ Una vez creada la verificación, tienes dos opciones para obtener los resultados
 
 **Opción 2: Webhook (Recomendado)**
 - Configura un webhook para recibir notificaciones automáticas cuando se complete la verificación
-- Ver configuración detallada en la sección [Webhooks](#webhooks) más abajo
-
-## Webhooks
-
-Los webhooks permiten recibir notificaciones automáticas cuando se completa una verificación, eliminando la necesidad de hacer polling constante.
-
-### Configuración
-
-1. **Proporciona tu URL** al equipo de soporte de Become Digital
-2. **Requisitos de la URL:**
-   - Método POST, protocolo HTTPS
-   - Accesible públicamente
-   - Responder con código 200 OK en menos de 30 segundos
-3. **Se configura** internamente en tu `contract_id`
-
-**Ejemplo:** `https://tusitio.com/api/webhooks/become-verification`
-
-### Payload del Webhook
-
-**⚠️ Importante:** El webhook se envía **únicamente cuando el proceso pasa a estado `completed`**.
-
-Recibirás un POST con el siguiente formato:
-
-```json
-{
-  "event": "verification_completed",
-  "contract_id": 999,
-  "user_id": "TESTUSER123456"
-}
-```
-
-**Llaves principales:**
-- `event` - Siempre `"verification_completed"`
-- `user_id` - Tu identificador único
-- `contract_id` - ID del contrato
-
-
-> **Nota:** Descripción completa de campos en [GET /identity](verification-results.md)
-
-### Flujo con Webhook
-
-**⚠️ Importante:** El webhook es una **notificación**. Después de recibirlo, **debes consultar** [GET /identity](verification-results.md) para obtener los datos completos.
-
-**Flujo:**
-1. Recibir webhook → Notificación de completado
-2. Consultar GET /identity/\<user_id\> → Datos completos (OBLIGATORIO)
-3. Procesar y almacenar
-
-**Si el webhook falla:**
-- ⚠️ No hay reintentos automáticos
-- Usar polling como respaldo
-- Implementar monitoreo de webhooks
+- Ver configuración detallada en: [Webhooks - Configuración por contrato →](webhooks.md)
 
 ## Mejores prácticas
 
@@ -291,5 +240,6 @@ Recibirás un POST con el siguiente formato:
 ## Siguientes pasos
 
 - [Consultar resultados de verificación →](verification-results.md)
+- [Configurar webhooks →](webhooks.md)
 - [Re-verificación (autenticación) →](re-verification.md)
 

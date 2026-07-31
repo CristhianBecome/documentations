@@ -616,7 +616,7 @@ Nuestro equipo comercial puede ayudarte a:
 
 ## Polling Request(Consulta periódica)
 
-Si no usas webhook, consulta el estado periódicamente:
+Si no usas [webhook](webhooks.md), consulta el estado periódicamente:
 
 **Estrategia:**
 
@@ -651,4 +651,5 @@ def esperar_resultado(user_id, token, max_intentos=12):
 ## Siguientes pasos
 
 * [Re-verificación (autenticación) →](re-verification.md)
+* [Configurar webhooks →](webhooks.md)
 * [Crear nueva verificación →](verification-add.md)

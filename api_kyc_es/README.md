@@ -55,6 +55,7 @@ Nuestra API está diseñada para ayudar a las empresas a:
 3. *(Opcional integración)* [Probar en Sandbox](sandbox.md) con `user_id` y sufijo `-TEST-1` / `-TEST-2` / `-TEST-3`
 4. [Realizar primera verificación de identidad](endpoints/verification-add.md)
 5. [Consultar resultados de verificación](endpoints/verification-results.md)
+6. *(Opcional)* [Configurar webhooks por contrato](endpoints/webhooks.md)
 
 ## Soporte
 

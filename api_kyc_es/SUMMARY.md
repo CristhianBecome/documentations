@@ -9,6 +9,7 @@
   * [KYC - Consulta de Resultados](endpoints/verification-results.md)
   * [KYC - Re-verificación (Autenticación)](endpoints/re-verification.md)
   * [KYC - Resultados de Re-verificación](endpoints/re-verification-results.md)
+  * [Webhooks - Configuración por contrato](endpoints/webhooks.md)
 
 
 
