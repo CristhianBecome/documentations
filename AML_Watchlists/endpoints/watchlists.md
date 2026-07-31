@@ -4,6 +4,10 @@ Endpoint para consultar si una persona se encuentra en listas restrictivas AML.
 
 ## POST `/watchlists`
 
+**Grant type requerido:** `standalone:AML`
+
+Solicite el token en **POST** [`/auth`](auth.md) con `"grant_type": "standalone:AML"` antes de llamar a este endpoint.
+
 ### Headers requeridos
 
 ```http
@@ -229,3 +233,7 @@ Con detalle de campos faltantes:
 ### 401 / 422 Unauthorized / Unprocessable Entity
 
 Retornados por el decorador `@jwt_required()` cuando el token JWT es inválido, está ausente o mal formado. El formato de respuesta es el estándar de `flask_jwt_extended`.
+
+### Notas
+
+- El token del header `Authorization` debe ser un JWT válido obtenido desde el endpoint `/auth` con `"grant_type": "standalone:AML"`.

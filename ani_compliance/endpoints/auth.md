@@ -114,3 +114,4 @@ La API sigue este flujo de validación:
 - El `grant_type` válido para los endpoints de esta API es `standalone:ani`
 - Solicita un token distinto para cada recurso; un token emitido para un `grant_type` no sirve para otro
 - Guarda el `access_token` para incluirlo en las solicitudes al endpoint asociado a ese `grant_type`
+- Si el `grant_type` solicitado no funciona o el token no autoriza la operación, notifica al equipo de soporte para habilitar la operación en el usuario solicitado

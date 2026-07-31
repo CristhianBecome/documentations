@@ -3,10 +3,10 @@
 La API AML Watchlists proporciona los siguientes endpoints principales:
 
 ## Autenticación
-- **POST** `/auth` - Obtener token de acceso JWT
+- **POST** `/auth` - Obtener token de acceso JWT (`grant_type`: `standalone:AML`)
 
 ## Verificación AML
-- **POST** `/watchlists` - Consultar listas restrictivas AML para una persona
+- **POST** `/watchlists` - Consultar listas restrictivas AML para una persona (`grant_type`: `standalone:AML`)
 
 ## URLs base por ambiente
 
