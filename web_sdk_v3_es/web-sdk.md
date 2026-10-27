@@ -115,8 +115,6 @@ Establecer una propiedad actualiza el atributo HTML correspondiente automáticam
 |--------|-------------|
 | `setConfig(publicConfig: Partial<PublicConfig>): void` | Actualiza la configuración pública de UI tras el mount. **Preferido: usa el Dashboard para personalizar tu contrato**; este método permite overrides programáticos para theming, branding, textos y comportamiento de UI. |
 | `getConfig(): PublicConfig \| null` | Obtiene la configuración pública resuelta |
-| `getConfigContract(): ConfigContractDescriptor` | Obtiene el esquema de configuración pública para editores. Disponible antes del mount. |
-| `getResolvedSteps(): ResolvedStepId[]` | Obtiene la lista de pasos resueltos para el flujo activo. Vacío antes del mount. |
 
 ## Configuración Pública
 

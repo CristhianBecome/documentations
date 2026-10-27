@@ -115,8 +115,6 @@ Setting a property updates the corresponding HTML attribute automatically.
 |--------|-------------|
 | `setConfig(publicConfig: Partial<PublicConfig>): void` | Update public UI configuration after mount. **Preferred: use the Dashboard to customize your contract**; this method allows programmatic overrides for theming, branding, texts, and UI behavior. |
 | `getConfig(): PublicConfig \| null` | Get the resolved public configuration |
-| `getConfigContract(): ConfigContractDescriptor` | Get the public configuration schema for editors. Available before mount. |
-| `getResolvedSteps(): ResolvedStepId[]` | Get the resolved step list for the active flow. Empty before mount. |
 
 ## Public Configuration
 
