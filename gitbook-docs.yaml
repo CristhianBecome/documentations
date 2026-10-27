@@ -12,7 +12,7 @@ site:
         - type: space
           key: space-v2-en
           title: "English"
-          path: en
+          path: v2-en
           default: true
           content:
             directory: ./web_sdks
@@ -20,7 +20,7 @@ site:
         - type: space
           key: space-v2-es
           title: "Español"
-          path: es
+          path: v2-es
           content:
             directory: ./web_sdks_es
             language: es
@@ -32,7 +32,7 @@ site:
         - type: space
           key: space-v3-en
           title: "English"
-          path: en
+          path: v3-en
           default: true
           content:
             directory: ./web_sdk_v3_en
@@ -40,7 +40,7 @@ site:
         - type: space
           key: space-v3-es
           title: "Español"
-          path: es
+          path: v3-es
           content:
             directory: ./web_sdk_v3_es
             language: es
