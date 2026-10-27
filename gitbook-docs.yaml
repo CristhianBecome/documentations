@@ -1,0 +1,46 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+version: 1
+site:
+  title: "Become KYC Web SDK"
+  structure:
+    - type: section
+      key: section-v2
+      title: "SDK v2"
+      path: v2
+      default: true
+      children:
+        - type: space
+          key: space-v2-en
+          title: "English"
+          path: en
+          default: true
+          content:
+            directory: ./web_sdks
+            language: en
+        - type: space
+          key: space-v2-es
+          title: "Español"
+          path: es
+          content:
+            directory: ./web_sdks_es
+            language: es
+    - type: section
+      key: section-v3
+      title: "SDK v3"
+      path: v3
+      children:
+        - type: space
+          key: space-v3-en
+          title: "English"
+          path: en
+          default: true
+          content:
+            directory: ./web_sdk_v3_en
+            language: en
+        - type: space
+          key: space-v3-es
+          title: "Español"
+          path: es
+          content:
+            directory: ./web_sdk_v3_es
+            language: es
