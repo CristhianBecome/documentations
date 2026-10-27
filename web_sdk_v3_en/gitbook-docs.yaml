@@ -1,0 +1,13 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+version: 1
+site:
+  title: "Become KYC Web SDK v3 — English"
+  structure:
+    - type: space
+      key: space-web-sdk-v3-en
+      title: Web SDK v3
+      path: web-sdk-v3-en
+      default: true
+      content:
+        directory: ./web_sdk_v3_en
+        language: en
