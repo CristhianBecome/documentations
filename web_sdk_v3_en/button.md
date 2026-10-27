@@ -105,7 +105,7 @@ The component supports custom button content via child elements. When child elem
 
 ## Events
 
-The button emits different events from `<become-kyc-sdk>`. These legacy events are dispatched on the button element (`bubbles: true`, `composed: true`). Payloads are also listed in [events.md](events.md). The button does not emit preview or editor events.
+The button emits different events from `<become-kyc-sdk>`. These legacy events are dispatched on the button element (`bubbles: true`, `composed: true`). Payloads are also listed in [events.md](events.md).
 
 | Event | When |
 |-------|------|

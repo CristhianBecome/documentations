@@ -105,7 +105,7 @@ El componente soporta contenido personalizado del botón vía elementos hijos. C
 
 ## Eventos
 
-El botón emite eventos diferentes a `<become-kyc-sdk>`. Estos eventos legacy se disparan en el elemento botón (`bubbles: true`, `composed: true`). Los payloads también se listan en [events.md](events.md). El botón no emite eventos de preview o editor.
+El botón emite eventos diferentes a `<become-kyc-sdk>`. Estos eventos legacy se disparan en el elemento botón (`bubbles: true`, `composed: true`). Los payloads también se listan en [events.md](events.md).
 
 | Evento | Cuándo |
 |--------|-------|

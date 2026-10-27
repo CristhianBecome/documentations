@@ -8,7 +8,7 @@ La página alojada no está en esta lista. No da a tu aplicación estos eventos.
 
 | Producto | Escuchar aquí | Eventos |
 |----------|---------------|---------|
-| `<become-kyc-sdk>` | El custom element, o `document` en la misma página | `become-kyc:ready`, `become-kyc:event`, `become-kyc:error`, `become-kyc:warning`, y, en preview, `become-kyc:preview-selection` |
+| `<become-kyc-sdk>` | El custom element, o `document` en la misma página | `become-kyc:ready`, `become-kyc:event`, `become-kyc:error`, `become-kyc:warning` |
 | `<become-button>` | El elemento botón | `become:result`, `become:userFinishedSdk`, `become:exitedSdk`, `become:errorSdk` |
 
 ```javascript
@@ -20,8 +20,6 @@ sdk.addEventListener('become-kyc:event', (event) => {
 ```
 
 Ese listener aplica solo a una página que incluye `<become-kyc-sdk>`. No recibe nada de la URL de verificación alojada, incluyendo cuando esa URL se muestra en un iframe.
-
-`<become-button>` no emite `become-kyc:preview-selection`. Usa los eventos `become:*` en el botón.
 
 ## Eventos de `<become-kyc-sdk>`
 
@@ -184,31 +182,6 @@ Emitido para warnings de inicialización no críticos.
   warnings: string[];
 }
 ```
-
----
-
-### `become-kyc:preview-selection`
-
-Emitido solo mientras preview está on, cuando el usuario selecciona un elemento semántico al hacer click. No es un evento de integración de producción y `<become-button>` no lo traduce.
-
-```typescript
-{
-  semanticId: string;
-  configPath: string;
-  configPaths: string[];
-  editableProperties: string[];
-  currentValue: unknown;
-  stepId: string;
-  substate: string | null;
-  errorScenario: string | null;
-  isShared: boolean;
-  bounds?: DOMRect;
-  locale: string;
-  kinds: string[];
-}
-```
-
----
 
 ## Eventos del Web Button (`<become-button>`)
 

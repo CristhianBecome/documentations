@@ -10,14 +10,13 @@ Guides for embedding Become KYC: which product to use, how to load it, and which
 | [Legacy button](button.md) | An existing integration already uses the button wrapper | `become-web-button.js` and `<become-button>` |
 | [Hosted web](hosted-web.md) | You send a verification link, including from WhatsApp or email | A URL on the hosted site. No script install |
 
-The web SDK is the product for new embeds. The button is a compatibility wrapper and does not include the preview/editor methods. The hosted page is a fullscreen link. It does not provide the custom element's browser events, including when the URL is placed in an iframe.
+The web SDK is the product for new embeds. The button is a compatibility wrapper. The hosted page is a fullscreen link. It does not provide the custom element's browser events, including when the URL is placed in an iframe.
 
 ## Documents
 
 | Document | Description |
 |----------|-------------|
-| [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: attributes, properties, configuration, production methods, and preview/editor methods |
-| [web-sdk-preview.md](web-sdk-preview.md) | Dashboard preview and inline-edit contract for `<become-kyc-sdk>` |
+| [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: attributes, properties, configuration, production methods |
 | [button.md](button.md) | `<become-button>`: legacy attributes, configuration, and `become:*` events |
 | [hosted-web.md](hosted-web.md) | Hosted URL parameters, redirect, and fullscreen behavior |
 | [events.md](events.md) | Event names and payloads for all three products |
