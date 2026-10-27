@@ -118,24 +118,6 @@ Setting a property updates the corresponding HTML attribute automatically.
 | `getConfigContract(): ConfigContractDescriptor` | Get the public configuration schema for editors. Available before mount. |
 | `getResolvedSteps(): ResolvedStepId[]` | Get the resolved step list for the active flow. Empty before mount. |
 
-## Preview and editor methods
-
-These methods exist on `<become-kyc-sdk>` for the Dashboard preview. They are not part of `<become-button>` or the hosted page.
-
-| Method | Description |
-|--------|-------------|
-| `getPreviewCapabilities(): PreviewCapabilities \| null` | Steps, states, and errors. `null` unless preview is enabled. Available before mount when the `preview` attribute is set. |
-| `getSemanticManifest(semanticId)` | One semantic catalog entry. Falls back to the static catalog before mount. |
-| `getSemanticManifestForStep(stepId)` | Catalog entries for one step. |
-| `getAllSemanticManifests()` | The full semantic catalog. |
-| `getRelatedElements(semanticId)` | Related catalog entries for the editor. |
-| `getAvailableEditors(semanticId)` | Editor kinds for a selection. |
-| `previewGoToStep(stepId)` | Open a step. No-op until the flow is mounted, and no-op when preview is off. |
-| `previewSetState(stepId, state, errorScenario?)` | Set a step state. Same no-op rules. |
-| `previewClearState()` | Clear the preview state override. |
-
-Call these methods on the `<become-kyc-sdk>` element. The script does not expose a separate module API. Listen for `become-kyc:preview-selection` as documented in [events.md](events.md). The preview/edit contract is [web-sdk-preview.md](web-sdk-preview.md).
-
 ## Public Configuration
 
 Update theming, branding, texts, and UI behavior at runtime:

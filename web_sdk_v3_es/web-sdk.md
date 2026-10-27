@@ -118,24 +118,6 @@ Establecer una propiedad actualiza el atributo HTML correspondiente automáticam
 | `getConfigContract(): ConfigContractDescriptor` | Obtiene el esquema de configuración pública para editores. Disponible antes del mount. |
 | `getResolvedSteps(): ResolvedStepId[]` | Obtiene la lista de pasos resueltos para el flujo activo. Vacío antes del mount. |
 
-## Métodos de Preview y Editor
-
-Estos métodos existen en `<become-kyc-sdk>` para el preview del Dashboard. No forman parte de `<become-button>` ni de la página alojada.
-
-| Método | Descripción |
-|--------|-------------|
-| `getPreviewCapabilities(): PreviewCapabilities \| null` | Pasos, estados y errores. `null` a menos que preview esté habilitado. Disponible antes del mount cuando el atributo `preview` está establecido. |
-| `getSemanticManifest(semanticId)` | Una entrada del catálogo semántico. Fallback al catálogo estático antes del mount. |
-| `getSemanticManifestForStep(stepId)` | Entradas del catálogo para un paso. |
-| `getAllSemanticManifests()` | El catálogo semántico completo. |
-| `getRelatedElements(semanticId)` | Entradas del catálogo relacionadas para el editor. |
-| `getAvailableEditors(semanticId)` | Tipos de editor para una selección. |
-| `previewGoToStep(stepId)` | Abre un paso. No-op hasta que el flujo esté montado, y no-op cuando preview está off. |
-| `previewSetState(stepId, state, errorScenario?)` | Establece un estado de paso. Mismas reglas de no-op. |
-| `previewClearState()` | Limpia el override de estado de preview. |
-
-Llama a estos métodos en el elemento `<become-kyc-sdk>`. El script no expone una API de módulo separada. Escucha `become-kyc:preview-selection` como se documenta en [events.md](events.md). El contrato de preview/editor está en [web-sdk-preview.md](web-sdk-preview.md).
-
 ## Configuración Pública
 
 Actualiza theming, branding, textos y comportamiento de UI en runtime:
