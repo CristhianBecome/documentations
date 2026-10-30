@@ -7,4 +7,4 @@
 * [Events](events.md) - Browser events for all embeddable products
 * [Hosted Web](hosted-web.md) - URL-based integration for WhatsApp, email, and direct links
 * [Troubleshooting](troubleshooting.md) - Common issues and solutions
-* [API Reference](api.md) - Complete API reference for `<become-kyc-sdk>`
+* [API Reference](api.md) - Complete API reference
