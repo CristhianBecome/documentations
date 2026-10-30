@@ -4,6 +4,8 @@ Eventos del navegador para los dos componentes embebibles. Cada evento abajo es 
 
 La página alojada no está en esta lista. No da a tu aplicación estos eventos. La completación para ese producto es `redirectUrl` y `webhookUrl`, documentados en [hosted-web.md](hosted-web.md).
 
+Un resumen de cada evento junto a los atributos y métodos está en la [referencia de API](api.md#eventos).
+
 ## Dónde escuchar
 
 | Producto | Escuchar aquí | Eventos |
@@ -85,9 +87,11 @@ Emitido para eventos de lógica de negocio. El campo `action` identifica el tipo
 - `error` — Paso falló con error no reintentable
 
 **Pasos que emiten eventos de ciclo de vida:**
-`intro`, `atdp`, `contactValidation`, `documentType`, `countrySelection`, `capture`, `preview` (reintentado en retry de holograma/retake), `liveness` (reintentado en error de liveness, retry de validación de selfie, retry de preview de selfie), `result` (reintentado en error 5xx, error en no reintentable).
+`intro`, `atdp`, `contactValidation`, `documentType`, `countrySelection`, `capture`, `liveness` (reintentado en error de liveness, retry de validación de selfie), `result` (reintentado en error 5xx, error en no reintentable).
 
 #### Payload de `stepChange`
+
+`stepId` está en `event.detail` directamente. Esta acción no tiene `payload`.
 
 ```typescript
 {
@@ -125,23 +129,29 @@ Emitido para eventos de lógica de negocio. El campo `action` identifica el tipo
 
 #### Payload de `exitedSdk`
 
+Se emite cuando la persona cierra el flujo (el control de cierre en modo `overlay`) y tras `atdpDeclined`. `data` es la respuesta del backend cuando la persona cierra tras un resultado exitoso, y `null` en otro caso.
+
 ```typescript
 {
   action: 'exitedSdk';
   payload: {
-    data: null;
+    data: unknown | null;
   };
 }
 ```
 
 #### Payload de `userFinished`
 
+Se emite cuando la persona cierra la pantalla de resultado. Cuando tu contrato cierra la pantalla de resultado automáticamente, se emite sin click. Si `redirect-url` está configurado, el navegador lo abre justo después de este evento.
+
 ```typescript
 {
   action: 'userFinished';
   payload: {
-    flow?: 'onboarding' | 'reverification';
-    data?: unknown;
+    flow: 'onboarding' | 'reverification';
+    userId?: string;
+    contractId: string;
+    data: unknown; // Respuesta del backend
   };
 }
 ```
@@ -163,7 +173,10 @@ Emitido para errores fatales o de bloqueo. Despachado como `CustomEvent` separad
 }
 ```
 
-**Códigos comunes:**
+<a id="codigos-de-error"></a>
+
+#### Códigos de error
+
 - `CONFIG_FETCH_FAILED` — Startup falló. Incluye falla HTTP de private-config y startup check rechazado (falta `contractId`, falta o malformado `accessToken`, o falta `userId` para reverificación). `message` es el diagnóstico (`HTTP 401`, `Missing contractId`, `Missing accessToken`, `Invalid or malformed accessToken`, `Request timeout`, etc). `status` es el status HTTP cuando la falla fue respuesta HTTP. `retryable` es true para timeouts, fallas de red, HTTP 429, y HTTP 5xx.
 - `PUBLIC_CONFIG_FETCH_FAILED` — Falló fetch de public config
 - `401` — La request de resultado no fue autorizada (HTTP 401). Esto no significa por sí solo que el usuario final escribió una credencial errónea. `data` es el cuerpo de respuesta cuando el transport lo proveyó.
@@ -183,6 +196,8 @@ Emitido para warnings de inicialización no críticos.
 }
 ```
 
+---
+
 ## Eventos del Web Button (`<become-button>`)
 
 Estos son **eventos legacy** emitidos por el elemento `<become-button>` mismo. Tienen diferentes nombres y payloads de los eventos del KYC Web Component.
@@ -196,14 +211,20 @@ Estos son **eventos legacy** emitidos por el elemento `<become-button>` mismo. T
 
 ### Payload de `become:result`
 
+El payload de `result` de `<become-kyc-sdk>`.
+
 ```typescript
 {
   flow: 'onboarding' | 'reverification';
-  data: unknown;
+  userId: string;
+  contractId: string;
+  data: unknown; // Respuesta completa del backend
 }
 ```
 
 ### Payload de `become:userFinishedSdk`
+
+`data` es la respuesta del backend de `become:result`, o `null` cuando no hubo.
 
 ```typescript
 {
@@ -214,9 +235,11 @@ Estos son **eventos legacy** emitidos por el elemento `<become-button>` mismo. T
 
 ### Payload de `become:exitedSdk`
 
+El payload de `exitedSdk` de `<become-kyc-sdk>`.
+
 ```typescript
 {
-  payload: unknown;
+  data: unknown | null;
 }
 ```
 
@@ -265,7 +288,7 @@ document.addEventListener('become-kyc:event', (event) => {
       console.log('Usuario terminó:', payload.flow);
       break;
     case 'stepChange':
-      console.log('Paso cambió a:', payload.stepId);
+      console.log('Paso cambió a:', event.detail.stepId);
       break;
   }
 });
@@ -344,7 +367,8 @@ Estas secuencias son para `<become-kyc-sdk>`. El botón usa los nombres `become:
 ### Usuario Declina ATDP
 
 1. `become-kyc:event` (action: `atdpDeclined`)
-2. Componente se auto-elimina del DOM
+2. `become-kyc:event` (action: `exitedSdk`)
+3. Componente se auto-elimina del DOM
 
 ### Token Expirado / Error Fatal
 
@@ -358,7 +382,11 @@ Estas secuencias son para `<become-kyc-sdk>`. El botón usa los nombres `become:
 |-----------|---------|
 | **Éxito** | `become-kyc:event` con `action: 'result'` → `action: 'userFinished'` |
 | **Usuario canceló** | `become-kyc:event` con `action: 'exitedSdk'` |
-| **ATDP declinado** | `become-kyc:event` con `action: 'atdpDeclined'` |
+| **ATDP declinado** | `become-kyc:event` con `action: 'atdpDeclined'`, luego `action: 'exitedSdk'` |
 | **Error fatal** | `become-kyc:error` (verificar `code` y `retryable`) |
 
-Para Web Button, verificar `become:result` (éxito), `become:userFinishedSdk`/`become:exitedSdk` (cancelado), `become:errorSdk` (error).
+Un ATDP declinado también termina con `exitedSdk`, así que verifica `atdpDeclined` antes de tratar `exitedSdk` como una cancelación.
+
+Para Web Button, verificar `become:result` (éxito), `become:userFinishedSdk` (terminado), `become:exitedSdk` (cancelado o declinado), `become:errorSdk` (error).
+
+Para ver qué ve la persona cuando el startup falla, consulta [Troubleshooting](troubleshooting.md).

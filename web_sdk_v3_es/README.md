@@ -12,14 +12,27 @@ Guías para integrar Become KYC: qué producto usar, cómo cargarlo y qué atrib
 
 El Web SDK es el producto para nuevas integraciones. El botón es un wrapper de compatibilidad. La página alojada es un enlace a pantalla completa. No proporciona los eventos del navegador del custom element, incluso cuando la URL se coloca en un iframe.
 
+## Pasos de integración
+
+1. **Elige un producto** de la tabla de arriba.
+2. **Cárgalo e inícialo** con tu ID de contrato y access token: [web-sdk.md](web-sdk.md), [button.md](button.md), o [hosted-web.md](hosted-web.md).
+3. **Configura tu contrato** en el Dashboard: colores, logo, textos y opciones de UI. Sobrescríbelos en una página con `setConfig()`: [customization.md](customization.md).
+4. **Maneja el resultado** con eventos, o con `redirectUrl` y `webhookUrl` en la página alojada: [events.md](events.md).
+5. **Revisa fallas y casos límite** antes de salir a producción: [troubleshooting.md](troubleshooting.md).
+
+Consulta cualquier atributo, método, campo de configuración o tipo en la [referencia de API](api.md).
+
 ## Documentos
 
 | Documento | Descripción |
 |-----------|-------------|
-| [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: atributos, propiedades, configuración, métodos de producción |
-| [button.md](button.md) | `<become-button>`: atributos legacy, configuración y eventos `become:*` |
+| [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: configuración inicial, modos de visualización, layout y ciclo de vida |
+| [button.md](button.md) | `<become-button>`: configuración inicial, etiqueta del botón y eventos `become:*` |
 | [hosted-web.md](hosted-web.md) | Parámetros de la URL alojada, redirect y comportamiento fullscreen |
-| [events.md](events.md) | Nombres y payloads de eventos para los tres productos |
+| [customization.md](customization.md) | Dashboard y `setConfig()`, theme mode, colores, apariencia, logo, textos e íconos de estado |
+| [events.md](events.md) | Nombres y payloads de eventos para el Web SDK y el botón |
+| [troubleshooting.md](troubleshooting.md) | Fallas de startup, errores durante el flujo y problemas comunes |
+| [api.md](api.md) | Referencia: atributos, propiedades, métodos, parámetros de URL, configuración, eventos y tipos |
 
 ## Inicio rápido
 

@@ -19,56 +19,21 @@ Todos los parámetros se pasan como query parameters de la URL.
 | `contractId` | Identificador del contrato |
 | `accessToken` | Token de acceso JWT |
 
-### Opcionales
+### Parámetros opcionales comunes
 
 | Parámetro | Descripción | Valores |
 |-----------|-------------|---------|
 | `userId` | Identificador de usuario | Opcional en onboarding, requerido en reverification |
 | `flow` | Tipo de flujo | `onboarding` (default), `reverification` |
-| `locale` | Locale de idioma | `es` (default), `en`, `pt` |
+| `locale` | Locale de idioma | `es` (default). Ver [Textos y locales](customization.md#textos-y-locales) |
 | `country` | Código de país ISO 3166 | Omite selección de país |
-| `state` | Código de estado/provincia | Se usa con country |
 | `docType` | Tipo de documento | `national-id`, `passport`, `driving-license` |
-| `nationalIdType` | Subtipo de ID nacional | ej. `CC`, `CE`, `TI` |
-| `nationalIdTypeChoices` | Lista de subtipos válidos | Separados por comas |
-| `documentNumber` | Número de documento | |
 | `redirectUrl` | URL tras completación | |
 | `webhookUrl` | URL de callback backend | |
-| `mode` | Modo de visualización | `fullscreen` (forzado para integración web) |
-| `environment` | Entorno de API | `prod` (default), `dev` |
-| `themeMode` | Qué paleta está activa | `light` (usado si se omite), `dark`, `system` |
+| `themeMode` | Qué paleta está activa | `light` (usado si se omite), `dark`, `system`. Ver [Theme mode](customization.md#theme-mode) |
 | `externaltxid` | ID de transacción externa | Para trazabilidad |
 
-### Razón del Theme Mode
-
-El parámetro `themeMode` es una **decisión explícita del cliente** porque el SDK debe respetar la identidad visual de cada cliente en lugar de imponer un esquema de color basado en suposiciones.
-
-Diferentes clientes tienen diferentes requisitos de branding:
-
-- **Solo light:** La marca del cliente define solo un tema visual claro.
-- **Solo dark:** La marca del cliente define solo un tema visual oscuro.
-- **Light y dark:** El cliente soporta ambos y puede seleccionar el tema según sus propias preferencias de usuario o configuración de la aplicación.
-- **Paletas personalizadas:** Una paleta puede contener colores de apariencia oscura mientras sigue siendo el tema claro intencionado del cliente. El SDK no debe inferir el tema desde los colores mismos.
-
-El SDK no puede determinar de forma fiable qué tema es apropiado a partir de la paleta, el sistema operativo del usuario, o suposiciones genéricas sobre modo oscuro. Imponer un tema automáticamente podría introducir colores que entren en conflicto con la identidad de marca del cliente.
-
-Por tanto, el cliente **debe** comunicar explícitamente el modo de theming intencionado a través del parámetro de consulta `themeMode`.
-
-El valor `system` es un **comportamiento opt-in** para clientes que quieren que el SDK siga la preferencia del sistema del usuario. No es el default universal para propósitos de branding. Si la marca de un cliente requiere un tema específico independientemente de la configuración del SO del usuario, el cliente debe pasar `light` o `dark` explícitamente.
-
-### Alias de Parámetros
-
-Los siguientes alias también se aceptan para compatibilidad hacia atrás:
-
-| Alias | Parámetro Canónico |
-|-------|---------------------|
-| `contract-id` | `contractId` |
-| `access-token` | `accessToken` |
-| `user-id` | `userId` |
-| `flow-type` | `flow` |
-| `theme-mode` | `themeMode` |
-| `redirect-url` | `redirectUrl` |
-| `webhook-url` | `webhookUrl` |
+Cada parámetro, y los nombres kebab-case que también se aceptan (`contract-id`, `theme-mode`, etc.), están en la [referencia de API](api.md#url-alojada).
 
 ## Comportamiento
 
@@ -78,7 +43,7 @@ Los siguientes alias también se aceptan para compatibilidad hacia atrás:
 - Cuando la verificación tiene éxito y `redirectUrl` está configurado, la página alojada navega el navegador a esa URL. Una falla de startup, un error fatal, o el usuario saliendo del flujo no navega allí. Si la página sigue abierta cuando el usuario termina, navega a `redirectUrl` de nuevo.
 - Si `webhookUrl` está configurado, se envía con la verificación para que tu servidor pueda ser llamado cuando el proceso complete. Esa llamada es un callback HTTP a tu backend. No es un evento del navegador, y `document.addEventListener()` en tu página no lo recibirá.
 - La persona pasa por el mismo flujo de verificación que en el web component.
-- Lenguaje visual, colores, y densidad vienen de la configuración pública del contrato, las mismas opciones que el web component. No son parámetros de URL. Ver [web-sdk.md](web-sdk.md).
+- Lenguaje visual, colores, y densidad vienen de la configuración pública del contrato en el Dashboard, las mismas opciones que el web component. No son parámetros de URL. Ver [customization.md](customization.md).
 
 ## Ejemplo
 
@@ -104,7 +69,7 @@ https://websdk.svi.becomedigital.net/?contractId=contract_123&accessToken=eyJhbG
 | Despliegue | App full-page alojada | Script que añades a tu página |
 | Cómo se usa | Abre un enlace alojado | Añade `<become-kyc-sdk>` a tu página |
 | Modo | Siempre `fullscreen` | `embed`, `overlay`, `fullscreen` |
-| Configuración | Solo query parameters | Atributos + `setConfig()` |
+| Configuración | Query parameters y la configuración del contrato | Atributos, la configuración del contrato y `setConfig()` |
 | Completación | `redirectUrl` en navegador, `webhookUrl` en tu servidor | Eventos DOM en `<become-kyc-sdk>`. Ver [events.md](events.md) |
 | Caso de uso | WhatsApp, email, enlaces directos | Embebido en tu aplicación |
 
