@@ -1,4 +1,4 @@
-# API reference
+﻿# API reference
 
 Everything an integration can use: the two custom elements, the hosted page URL, the configuration object, and the events. For how to put these together, start with the [integrator guide](README.md).
 
@@ -44,7 +44,7 @@ Set these as HTML attributes, or with `setAttribute()` before or after the eleme
 | `phone-number-enc` | | | Encrypted phone number, sent with the verification |
 | `redirect-url` | | | Page the browser opens when the person finishes a successful verification |
 | `webhook-url` | | | Your server's HTTP callback |
-| `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. See [Display modes](web-sdk.md#display-modes) |
+| `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. `overlay` and `fullscreen` paint on their own layer at the top of the page, not where the tag is placed. See [Display modes](web-sdk.md#display-modes) |
 | `environment` | | `prod` | `prod`, `dev` |
 | `theme-mode` | | `light` | `light`, `dark`, `system`. An invalid value uses `light` |
 | `loading-text` | | `Cargando...` | Text under the spinner while the configuration loads |
@@ -162,7 +162,7 @@ The button has no `getConfigContract()` or `getResolvedSteps()`.
 ### Lifecycle
 
 1. **Click.** The label changes to `loading-text` and the button loads the contract configuration.
-2. **Open.** The flow opens in a container fixed over the page (`z-index: 9999`).
+2. **Open.** The flow opens on its own layer above your page content, a direct child of `<body>`. The page does not scroll behind it.
 3. **Finish or exit.** On `userFinished` or `exitedSdk` the container closes. The button stays on the page and can open the flow again.
 4. **Startup failure.** See [Troubleshooting](troubleshooting.md#legacy-button).
 

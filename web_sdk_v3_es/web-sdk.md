@@ -1,4 +1,4 @@
-# KYC Web Component
+﻿# KYC Web Component
 
 Método principal de integración para Become KYC. Incrusta el flujo de verificación en tu aplicación usando el custom element `<become-kyc-sdk>`.
 
@@ -96,7 +96,7 @@ Si el startup falla, ver [Troubleshooting](troubleshooting.md#fallas-de-startup)
 |------|--------------|
 | `embed` | Rellena el contenedor host. Scroll interno cuando el contenido es más alto que el espacio. |
 | `overlay` | Modal centrado con backdrop. Muestra un control de cierre; cerrar emite `exitedSdk` |
-| `fullscreen` | Cobertura completa del viewport |
+| `fullscreen` | Cubre todo el viewport con el fondo del tema. Sin control de cierre |
 
 ## Layout
 
@@ -112,7 +112,7 @@ El ancho y el espaciado de la tarjeta son configuración: ver [Ancho de tarjeta 
 
 ### Overlay y fullscreen
 
-Estos modos cubren el viewport. La tarjeta se mantiene dentro del viewport y conserva un tamaño estable de paso a paso. El tamaño del elemento host no se usa.
+Estos modos cubren el viewport. El flujo se pinta en su propia capa, un hijo directo de `<body>` sobre el contenido de tu página, así que dónde colocas el tag, su tamaño y los estilos de sus ancestros no lo afectan. Mientras el flujo está abierto la página no hace scroll detrás, y el foco vuelve a donde estaba cuando el flujo se cierra. La tarjeta se mantiene dentro del viewport y conserva un tamaño estable de paso a paso.
 
 ### Qué ve la gente
 

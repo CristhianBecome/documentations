@@ -48,7 +48,7 @@ Una vez abierto el flujo, el SDK muestra los errores dentro de la tarjeta y la p
 | Síntoma | Causa y solución |
 |---------|------------------|
 | El flujo embebido está vacío o cortado | El host no tiene height. Da al elemento, o a un padre, un height definido de al menos 560px y un width de al menos 280px. Ver [Layout](web-sdk.md#layout) |
-| Mi listener no recibe nada del enlace alojado | La página alojada no emite eventos del navegador, tampoco dentro de un iframe. Usa `redirectUrl` y `webhookUrl` |
+| Mi listener no recibe nada del enlace alojado | Los eventos de la página alojada se quedan dentro de esa página y nunca llegan a la tuya, tampoco cuando está en un iframe. Usa `redirectUrl` y `webhookUrl`. `<become-kyc-sdk mode="fullscreen">` en tu propia página sí emite eventos |
 | Mi listener `become-kyc:*` no recibe nada del botón | El botón emite eventos `become:*` en el elemento botón. Ver [Eventos](events.md#eventos-del-web-button-become-button) |
 | El flujo vuelve a empezar solo | Cambió un atributo distinto de `theme-mode`, o el elemento se quitó y se volvió a añadir. Ambos reinician `<become-kyc-sdk>` |
 | El elemento desaparece | `<become-kyc-sdk>` se elimina tras `userFinished` y `exitedSdk`, lo que incluye declinar los términos de tratamiento de datos |

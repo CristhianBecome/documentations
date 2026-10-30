@@ -1,4 +1,4 @@
-# KYC Web Component
+﻿# KYC Web Component
 
 Primary integration method for Become KYC. Embed the verification flow in your application using the `<become-kyc-sdk>` custom element.
 
@@ -96,7 +96,7 @@ If startup fails, see [Troubleshooting](troubleshooting.md#startup-failures).
 |------|----------|
 | `embed` | Fills the host container. Scrolls inside that container when the content is taller than the space. |
 | `overlay` | Centered modal with backdrop. Shows a close control; closing emits `exitedSdk` |
-| `fullscreen` | Full viewport coverage |
+| `fullscreen` | Covers the whole viewport with the theme background. No close control |
 
 ## Layout
 
@@ -112,7 +112,7 @@ The card width and spacing are configuration: see [Card size and density](custom
 
 ### Overlay and fullscreen
 
-These modes cover the viewport. The card stays inside the viewport and keeps a stable size from step to step. The host element's size is not used.
+These modes cover the viewport. The flow is painted on its own layer, a direct child of `<body>` above your page content, so where you place the tag, its size, and the styles of its ancestors do not affect it. While the flow is open the page does not scroll behind it, and focus returns to where it was when the flow closes. The card stays inside the viewport and keeps a stable size from step to step.
 
 ### What people see
 

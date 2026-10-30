@@ -1,4 +1,4 @@
-# Referencia de API
+﻿# Referencia de API
 
 Todo lo que una integración puede usar: los dos custom elements, la URL de la página alojada, el objeto de configuración y los eventos. Para ver cómo combinarlos, empieza por la [guía para integradores](README.md).
 
@@ -44,7 +44,7 @@ Configúralos como atributos HTML, o con `setAttribute()` antes o después de a�
 | `phone-number-enc` | | | Número de teléfono cifrado, enviado con la verificación |
 | `redirect-url` | | | Página que abre el navegador cuando la persona termina una verificación exitosa |
 | `webhook-url` | | | Callback HTTP de tu servidor |
-| `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. Ver [web-sdk.md](web-sdk.md) |
+| `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. `overlay` y `fullscreen` se pintan en su propia capa en la parte superior de la página, no donde está el tag. Ver [web-sdk.md](web-sdk.md) |
 | `environment` | | `prod` | `prod`, `dev` |
 | `theme-mode` | | `light` | `light`, `dark`, `system`. Un valor inválido usa `light` |
 | `loading-text` | | `Cargando...` | Texto bajo el spinner mientras carga la configuración |
@@ -162,7 +162,7 @@ El botón no tiene `getConfigContract()` ni `getResolvedSteps()`.
 ### Ciclo de vida
 
 1. **Click.** La etiqueta cambia a `loading-text` y el botón carga la configuración del contrato.
-2. **Apertura.** El flujo se abre en un contenedor fijo sobre la página (`z-index: 9999`).
+2. **Apertura.** El flujo se abre en su propia capa sobre el contenido de tu página, un hijo directo de `<body>`. La página no hace scroll detrás.
 3. **Fin o salida.** Con `userFinished` o `exitedSdk` el contenedor se cierra. El botón permanece en la página y puede abrir el flujo de nuevo.
 4. **Falla de startup.** Ver [Troubleshooting](troubleshooting.md#web-button-legacy).
 

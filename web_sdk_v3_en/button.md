@@ -75,7 +75,7 @@ The button emits different events from `<become-kyc-sdk>`. These legacy events a
 ## Important Notes
 
 - The Web Button lazy-loads the SDK when clicked.
-- It opens the flow in a container fixed over the page (z-index: 9999). After `become:userFinishedSdk` or `become:exitedSdk` the container closes and the button can open the flow again.
+- It opens the flow on its own layer above your page content, a direct child of `<body>`, and the page does not scroll behind it. After `become:userFinishedSdk` or `become:exitedSdk` the container closes and the button can open the flow again.
 - Events are emitted on the button element, not on `document.documentElement`.
 - The event names and payloads differ from the KYC Web Component (`become-kyc:*` events).
 - Default mode is `overlay` (not `embed` like `<become-kyc-sdk>`).

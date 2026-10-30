@@ -48,7 +48,7 @@ Once the flow is open, the SDK shows errors inside the card and the person can r
 | Symptom | Cause and fix |
 |---------|---------------|
 | The embedded flow is empty or cut off | The host has no height. Give the element, or a parent, a definite height of at least 560px and a width of at least 280px. See [Layout](web-sdk.md#layout) |
-| My listener receives nothing from the hosted link | The hosted page does not emit browser events, also inside an iframe. Use `redirectUrl` and `webhookUrl` |
+| My listener receives nothing from the hosted link | The hosted page's events stay inside that page and never reach yours, also when it is in an iframe. Use `redirectUrl` and `webhookUrl`. `<become-kyc-sdk mode="fullscreen">` on your own page does emit events |
 | My `become-kyc:*` listener receives nothing from the button | The button emits `become:*` events on the button element. See [Events](events.md#web-button-become-button-events) |
 | The flow starts over by itself | An attribute other than `theme-mode` changed, or the element was removed and added back. Both restart `<become-kyc-sdk>` |
 | The element disappears | `<become-kyc-sdk>` removes itself after `userFinished` and `exitedSdk`, which includes declining the data treatment terms |

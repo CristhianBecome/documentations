@@ -75,7 +75,7 @@ El botón emite eventos diferentes a `<become-kyc-sdk>`. Estos eventos legacy se
 ## Notas Importantes
 
 - El Web Button carga el SDK perezosamente al hacer click.
-- Abre el flujo en un contenedor fijo sobre la página (z-index: 9999). Tras `become:userFinishedSdk` o `become:exitedSdk` el contenedor se cierra y el botón puede abrir el flujo de nuevo.
+- Abre el flujo en su propia capa sobre el contenido de tu página, un hijo directo de `<body>`, y la página no hace scroll detrás. Tras `become:userFinishedSdk` o `become:exitedSdk` el contenedor se cierra y el botón puede abrir el flujo de nuevo.
 - Los eventos se emiten en el elemento botón, no en `document.documentElement`.
 - Los nombres de eventos y payloads difieren del KYC Web Component (eventos `become-kyc:*`).
 - El modo por defecto es `overlay` (no `embed` como `<become-kyc-sdk>`).
