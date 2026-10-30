@@ -130,7 +130,7 @@ Los niveles de sombra usan los mismos nombres de tamaño que `radius`, desde sin
 
 Los botones tienen una escala propia más ligera que llega hasta `lg`. Sin `shadows.control` siguen a la tarjeta: tarjetas `xs` y `sm` dan botones `xs`, `md` da `md`, y `lg` y `xl` dan `lg`. Configura `shadows.control` para elegir la sombra de los botones por separado, incluso `none` para botones planos sobre una tarjeta elevada.
 
-Los nombres anteriores se siguen aceptando: `subtle` equivale a `xs`, `medium` a `md` y `elevated` a `lg`. Aplican a `shadows.card`, `shadows.modal`, `shadows.control` y `branding.logo.shadow`.
+También se aceptan `subtle`, `medium` y `elevated`, como `xs`, `md` y `lg`. Aplican a `shadows.card`, `shadows.modal`, `shadows.control` y `branding.logo.shadow`.
 
 ```js
 sdk.setConfig({
@@ -177,3 +177,49 @@ sdk.setConfig({
 ```
 
 La frase que se muestra cuando el startup falla también es un texto (`errors.startup`). Sobrescríbela antes de que el elemento inicie. Ver [Troubleshooting](troubleshooting.md#fallas-de-startup).
+
+### Pantalla de bienvenida
+
+La pantalla de bienvenida anticipa la verificación: una lista numerada de lo que hará la persona, construida a partir de los pasos que ejecuta tu contrato, y un panel corto de "antes de empezar". Los textos son:
+
+| Clave | Qué es |
+|-------|--------|
+| `intro.journey.lead` | Línea sobre la lista |
+| `intro.journey.document.title`, `.description` | Se muestra cuando el flujo incluye los pasos del documento |
+| `intro.journey.selfie.title`, `.description` | Se muestra cuando el flujo incluye la selfie |
+| `intro.journey.confirmation.title`, `.description` | La revisión final |
+| `intro.prepare.title` | Encabezado del panel |
+| `intro.prepare.items.document.title` | Se muestra cuando el flujo incluye los pasos del documento |
+| `intro.prepare.items.lighting.title` | Se muestra cuando el flujo incluye la captura del documento o la selfie |
+
+Una descripción vacía no se muestra.
+
+Las pantallas del documento y de la selfie abren con su propia lista corta de consejos para esa foto. Cada consejo tiene una etiqueta y una línea más corta debajo:
+
+| Clave | Qué es |
+|-------|--------|
+| `capture.intro.prepare.title`, `liveness.intro.prepare.title` | Línea sobre la lista |
+| `capture.intro.prepare.items.original`, `.uncovered`, `.reflections` (`.title`, `.description`) | Consejos del documento |
+| `liveness.intro.prepare.items.uncovered`, `.lighting`, `.camera` (`.title`, `.description`) | Consejos de la selfie |
+
+Las tres pantallas usan las mismas claves bajo `prepare`: un `title` e `items` con clave. Un encabezado, una etiqueta o una línea inferior vacíos no se muestran. Un consejo sin etiqueta no se muestra.
+
+### Revisión y rechazo de la foto
+
+Después de cada foto, la persona la revisa contra una lista corta de requisitos. Si la foto se rechaza, los mismos requisitos aparecen bajo una línea que introduce el siguiente intento.
+
+| Clave | Qué es |
+|-------|--------|
+| `capture.review.title`, `.subtitle` | Encabezado de la revisión del documento |
+| `liveness.review.title`, `.subtitle` | Encabezado de la revisión de la selfie |
+| `liveness.review.validating` | Se muestra mientras se revisa la selfie |
+| `capture.requirements.items.front`, `.legible`, `.reflections`, `.original` (`.title`, `.description`) | Requisitos del documento |
+| `liveness.requirements.items.complete`, `.single`, `.sharp`, `.uncovered` (`.title`, `.description`) | Requisitos de la selfie |
+| `capture.rejected.title`, `liveness.rejected.title` | Encabezado del rechazo. El motivo aparece debajo |
+| `capture.rejected.retryTitle`, `liveness.rejected.retryTitle` | Línea sobre los requisitos en un rechazo |
+| `capture.review.retake`, `.submit`; `liveness.recapture`, `liveness.confirm` | Botones de la revisión |
+| `liveness.accessoryError.*` | Rechazo por accesorios: encabezado, la línea inicial y el nombre de cada accesorio |
+
+Los requisitos son etiquetas con una línea más corta debajo de cada una. Cuando falta espacio, solo se muestran las etiquetas.
+
+El encabezado de cada lista también la nombra para los lectores de pantalla, así que una lista no tiene una etiqueta accesible aparte.

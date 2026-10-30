@@ -130,7 +130,7 @@ Shadow levels use the same size names as `radius`, from no elevation (`none`) to
 
 Buttons have a lighter scale of their own that stops at `lg`. Without `shadows.control` they follow the card: `xs` and `sm` cards give `xs` buttons, `md` gives `md`, and `lg` and `xl` give `lg`. Set `shadows.control` to choose the button shadow independently, including `none` for flat buttons on a raised card.
 
-The earlier names are still accepted: `subtle` means `xs`, `medium` means `md`, and `elevated` means `lg`. They apply to `shadows.card`, `shadows.modal`, `shadows.control`, and `branding.logo.shadow`.
+`subtle`, `medium`, and `elevated` are also accepted, as `xs`, `md`, and `lg`. They apply to `shadows.card`, `shadows.modal`, `shadows.control`, and `branding.logo.shadow`.
 
 ```js
 sdk.setConfig({
@@ -177,3 +177,49 @@ sdk.setConfig({
 ```
 
 The sentence shown when startup fails is also a text (`errors.startup`). Override it before the element starts. See [Troubleshooting](troubleshooting.md#startup-failures).
+
+### Welcome screen
+
+The welcome screen outlines the verification: a numbered list of what the person will do, built from the steps your contract runs, and a short "before you start" panel. The texts are:
+
+| Key | What it is |
+|-----|------------|
+| `intro.journey.lead` | Line above the list |
+| `intro.journey.document.title`, `.description` | Shown when the flow includes the document steps |
+| `intro.journey.selfie.title`, `.description` | Shown when the flow includes the selfie |
+| `intro.journey.confirmation.title`, `.description` | The final review |
+| `intro.prepare.title` | Panel heading |
+| `intro.prepare.items.document.title` | Shown when the flow includes the document steps |
+| `intro.prepare.items.lighting.title` | Shown when the flow includes the document capture or the selfie |
+
+An empty description is not shown.
+
+The document and selfie screens open with their own short list of tips for that photo. Each tip has a label and a shorter line under it:
+
+| Key | What it is |
+|-----|------------|
+| `capture.intro.prepare.title`, `liveness.intro.prepare.title` | Line above the list |
+| `capture.intro.prepare.items.original`, `.uncovered`, `.reflections` (`.title`, `.description`) | Document tips |
+| `liveness.intro.prepare.items.uncovered`, `.lighting`, `.camera` (`.title`, `.description`) | Selfie tips |
+
+The three screens use the same keys under `prepare`: a `title` and keyed `items`. An empty heading, label or line under it is not shown. A tip without a label is not shown.
+
+### Photo review and rejection
+
+After each photo, the person reviews it against a short list of requirements. If the photo is rejected, the same requirements appear under a line that introduces the next attempt.
+
+| Key | What it is |
+|-----|------------|
+| `capture.review.title`, `.subtitle` | Document review heading |
+| `liveness.review.title`, `.subtitle` | Selfie review heading |
+| `liveness.review.validating` | Shown while the selfie is being checked |
+| `capture.requirements.items.front`, `.legible`, `.reflections`, `.original` (`.title`, `.description`) | Document requirements |
+| `liveness.requirements.items.complete`, `.single`, `.sharp`, `.uncovered` (`.title`, `.description`) | Selfie requirements |
+| `capture.rejected.title`, `liveness.rejected.title` | Rejection heading. The reason appears below it |
+| `capture.rejected.retryTitle`, `liveness.rejected.retryTitle` | Line above the requirements on a rejection |
+| `capture.review.retake`, `.submit`; `liveness.recapture`, `liveness.confirm` | Review buttons |
+| `liveness.accessoryError.*` | Rejection for accessories: heading, the lead line and each accessory's name |
+
+The requirements are labels with a shorter line under each one. Where space is short, only the labels are shown.
+
+Each list's heading also names the list for screen readers, so a list has no separate accessible label.
