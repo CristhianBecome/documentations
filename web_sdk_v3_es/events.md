@@ -198,9 +198,9 @@ Emitido para warnings de inicialización no críticos.
 
 ---
 
-## Eventos del Web Button (`<become-button>`)
+## Eventos del Become Button
 
-Estos son **eventos legacy** emitidos por el elemento `<become-button>` mismo. Tienen diferentes nombres y payloads de los eventos del KYC Web Component.
+Estos eventos los emite el propio elemento `<become-button>`. Tienen diferentes nombres y payloads de los eventos del KYC Web Component.
 
 | Evento | Cuándo |
 |--------|-------|
@@ -309,7 +309,7 @@ document.addEventListener('become-kyc:warning', (event) => {
 });
 ```
 
-### Web Button
+### Become Button
 
 ```javascript
 const button = document.querySelector('become-button');
@@ -387,6 +387,6 @@ Estas secuencias son para `<become-kyc-sdk>`. El botón usa los nombres `become:
 
 Un ATDP declinado también termina con `exitedSdk`, así que verifica `atdpDeclined` antes de tratar `exitedSdk` como una cancelación.
 
-Para Web Button, verificar `become:result` (éxito), `become:userFinishedSdk` (terminado), `become:exitedSdk` (cancelado o declinado), `become:errorSdk` (error).
+Para el Become Button, verificar `become:result` (éxito), `become:userFinishedSdk` (terminado), `become:exitedSdk` (cancelado o declinado), `become:errorSdk` (error).
 
 Para ver qué ve la persona cuando el startup falla, consulta [Troubleshooting](troubleshooting.md).

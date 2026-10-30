@@ -1,11 +1,11 @@
-﻿# API reference
+# API reference
 
 Everything an integration can use: the two custom elements, the hosted page URL, the configuration object, and the events. For how to put these together, start with the [integrator guide](README.md).
 
 | Product | Script | Tag | Guide |
 |---------|--------|-----|-------|
 | Web SDK | `https://websdk.svi.becomedigital.net/sdk/become-kyc-sdk.js` | `<become-kyc-sdk>` | [web-sdk.md](web-sdk.md) |
-| Legacy button | `https://websdk.svi.becomedigital.net/sdk/become-web-button.js` | `<become-button>` | [button.md](button.md) |
+| Become Button | `https://websdk.svi.becomedigital.net/sdk/become-web-button.js` | `<become-button>` | [button.md](button.md) |
 | Hosted page | None. A URL on `https://websdk.svi.becomedigital.net/` | None | [hosted-web.md](hosted-web.md) |
 
 Each script is self-contained and registers its tag once. Nothing else is added to `window`. The two scripts are independent: the button does not need `become-kyc-sdk.js`.
@@ -45,11 +45,10 @@ Set these as HTML attributes, or with `setAttribute()` before or after the eleme
 | `redirect-url` | | | Page the browser opens when the person finishes a successful verification |
 | `webhook-url` | | | Your server's HTTP callback |
 | `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. `overlay` and `fullscreen` paint on their own layer at the top of the page, not where the tag is placed. See [Display modes](web-sdk.md#display-modes) |
-| `environment` | | `prod` | `prod`, `dev` |
 | `theme-mode` | | `light` | `light`, `dark`, `system`. An invalid value uses `light` |
 | `loading-text` | | `Cargando...` | Text under the spinner while the configuration loads |
 
-**Aliases.** Each attribute is also read under its camelCase name, for legacy integrations: `contractId`, `accessToken`, `userId`, `flowType`, `locale`, `redirectUrl`, `webhookUrl`, `phoneNumberEnc`, `country`, `state`, `docType`, `nationalIdType`, `nationalIdTypeChoices`, `documentNumber`, `mode`, `environment`, `themeMode`. HTML attribute names are case-insensitive, so `themeMode` and `thememode` are the same attribute. When the kebab-case attribute is present, it wins.
+**Aliases.** Each attribute is also read under its camelCase name: `contractId`, `accessToken`, `userId`, `flowType`, `locale`, `redirectUrl`, `webhookUrl`, `phoneNumberEnc`, `country`, `state`, `docType`, `nationalIdType`, `nationalIdTypeChoices`, `documentNumber`, `mode`, `themeMode`. HTML attribute names are case-insensitive, so `themeMode` and `thememode` are the same attribute. When the kebab-case attribute is present, it wins.
 
 **Changing attributes after start.** `theme-mode` switches the palette in place. Changing any other attribute above restarts the element: the open flow is closed and the verification starts again from the first step with the new values. Removing the element from the page and adding it back also starts over.
 
@@ -61,7 +60,6 @@ The element has no JavaScript properties for these values. Use attributes.
 |--------|---------|-------------|
 | `setConfig(config: Partial<PublicConfig>)` | `void` | Applies presentation overrides. Call it before or after the element starts. Calls accumulate: each one changes only the fields it sends. See [`PublicConfig`](#publicconfig) |
 | `getConfig()` | `PublicConfig \| null` | The resolved configuration in use: defaults, your contract, then `setConfig()`. `null` until the element has started |
-| `getConfigContract()` | `ConfigContractDescriptor` | A description of every `PublicConfig` field: type, allowed values, and default. Available before the element starts. See [Types](#configcontractdescriptor) |
 | `getResolvedSteps()` | `ResolvedStepId[]` | The steps of the active flow, in order, after your contract and the runtime values are applied. Empty until the element has started |
 
 The configuration for your contract is managed in the Dashboard. Use `setConfig()` for values that depend on your page at runtime.
@@ -107,22 +105,22 @@ Events are dispatched on the element and bubble to `document`.
 
 ## `<become-button>`
 
-Legacy wrapper. It renders a button and opens the flow when the button is clicked. New integrations should use `<become-kyc-sdk>`.
+Renders a button and opens the flow when the button is clicked. It runs the same flow as `<become-kyc-sdk>`, including reverification. To choose between them, see [Choose a product](README.md#choose-a-product).
 
 ### Attributes
 
-The button reads the same runtime attributes as `<become-kyc-sdk>` (`contract-id`, `access-token`, `user-id`, `flow`, `locale`, `country`, `state`, `doc-type`, `national-id-type`, `national-id-type-choices`, `document-number`, `phone-number-enc`, `redirect-url`, `webhook-url`, `environment`, `theme-mode`), with these differences and additions:
+The button reads the same runtime attributes as `<become-kyc-sdk>` (`contract-id`, `access-token`, `user-id`, `flow`, `locale`, `country`, `state`, `doc-type`, `national-id-type`, `national-id-type-choices`, `document-number`, `phone-number-enc`, `redirect-url`, `webhook-url`, `theme-mode`), with these differences and additions:
 
 | Attribute | Default | Description |
 |-----------|---------|-------------|
-| `mode` | `overlay` | `overlay` or `embed` |
+| `mode` | `overlay` | `overlay`, `embed`, or `fullscreen`. Every mode opens the flow over the page, not inside the button's container. See [Display modes](button.md#display-modes) |
 | `button-text` | `Iniciar verificación` | Button label |
 | `loading-text` | `Cargando...` | Button label while the flow opens |
 | `hide-icon` | | Boolean attribute. Hides the default shield icon |
 
 Values are read when the button is clicked, so changing an attribute takes effect on the next open.
 
-**Aliases.** Each runtime attribute is also read under its camelCase and lowercase names (`contractId`, `contractid`, and so on). The button also accepts these V2 names:
+**Aliases.** Each runtime attribute is also read under its camelCase and lowercase names (`contractId`, `contractid`, and so on). The button also accepts these names:
 
 | Alias | Same as |
 |-------|---------|
@@ -157,14 +155,14 @@ Setting a property writes the attribute. Reading a property returns the value th
 | `getConfig()` | `PublicConfig \| null` | The resolved configuration while the flow is open. `null` otherwise |
 | `click()` | `void` | Opens the flow, as a user click does |
 
-The button has no `getConfigContract()` or `getResolvedSteps()`.
+The button has no `getResolvedSteps()`.
 
 ### Lifecycle
 
 1. **Click.** The label changes to `loading-text` and the button loads the contract configuration.
 2. **Open.** The flow opens on its own layer above your page content, a direct child of `<body>`. The page does not scroll behind it.
 3. **Finish or exit.** On `userFinished` or `exitedSdk` the container closes. The button stays on the page and can open the flow again.
-4. **Startup failure.** See [Troubleshooting](troubleshooting.md#legacy-button).
+4. **Startup failure.** See [Troubleshooting](troubleshooting.md#become-button).
 
 Events are dispatched on the button and use the `become:*` names. See [Events](#events).
 
@@ -214,7 +212,6 @@ The hosted page reads the same runtime values as query parameters. Use the camel
 | `phoneNumberEnc` | | `phone-number-enc` |
 | `redirectUrl` | | `redirect-url` |
 | `webhookUrl` | | `webhook-url` |
-| `environment` | | `environment` |
 | `themeMode` | | `theme-mode` |
 | `externaltxid` | | Hosted page only. External transaction ID, for tracing |
 
@@ -388,7 +385,6 @@ type ResolvedStepId =
 interface BecomeKycSdkElement extends HTMLElement {
   setConfig(config: Partial<PublicConfig>): void;
   getConfig(): PublicConfig | null;
-  getConfigContract(): ConfigContractDescriptor;
   getResolvedSteps(): ResolvedStepId[];
 }
 
@@ -420,26 +416,4 @@ declare global {
     'become-button': BecomeButtonElement;
   }
 }
-```
-
-### `ConfigContractDescriptor`
-
-Returned by `getConfigContract()`. One node per field, nested the same way as `PublicConfig`.
-
-```typescript
-interface ConfigContractDescriptor {
-  type: string;                       // 'object', 'string', 'number', 'boolean', 'array', ...
-  enum?: unknown[];                   // allowed values
-  default?: unknown;
-  optional?: boolean;
-  properties?: Record<string, ConfigContractDescriptor>;
-  items?: ConfigContractDescriptor;
-  additionalProperties?: ConfigContractDescriptor;
-}
-```
-
-```javascript
-const contract = document.querySelector('become-kyc-sdk').getConfigContract();
-contract.properties.ui.properties.showStatusIcons;
-// { type: 'boolean', default: false, optional: true }
 ```

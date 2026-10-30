@@ -20,13 +20,13 @@ Startup loads your contract configuration and checks the runtime values. It fail
 
 `become-kyc:error` still carries the diagnostic (`CONFIG_FETCH_FAILED`, `message`, `status`, `retryable`). The sentence in the element is the SDK catalog sentence (`errors.startup`): it does not include tokens, status codes, or response bodies. Override it with `setConfig({ texts })` before the element starts. HTTP 401 and HTTP 403 use the authorization sentence, not a wrong end-user credential. The startup retry and close labels are `Reintentar` and `Cerrar`. Leaving the flow (`exitedSdk`, `userFinished`, `atdpDeclined`) is not a startup error.
 
-### Legacy button
+### Become Button
 
 The button loads the configuration when it is clicked, so a startup failure appears at that moment:
 
 | When | What the user sees |
 |------|--------------------|
-| `overlay` (default) | An alert dialog over the page, with close, and retry when the failure is `retryable`. |
+| `overlay` (default) or `fullscreen` | An alert dialog over the page, with close, and retry when the failure is `retryable`. |
 | `embed`, button visible | The message under the button. |
 | `embed`, button hidden (`hidden`, or `display: none` / `visibility: hidden` on the button or an ancestor) | A non-blocking page notice with the same sentence, and retry only when `retryable` is true. Closing or removing the button removes the notice. |
 | Failure is not `retryable` | The button is disabled. |
@@ -49,7 +49,7 @@ Once the flow is open, the SDK shows errors inside the card and the person can r
 |---------|---------------|
 | The embedded flow is empty or cut off | The host has no height. Give the element, or a parent, a definite height of at least 560px and a width of at least 280px. See [Layout](web-sdk.md#layout) |
 | My listener receives nothing from the hosted link | The hosted page's events stay inside that page and never reach yours, also when it is in an iframe. Use `redirectUrl` and `webhookUrl`. `<become-kyc-sdk mode="fullscreen">` on your own page does emit events |
-| My `become-kyc:*` listener receives nothing from the button | The button emits `become:*` events on the button element. See [Events](events.md#web-button-become-button-events) |
+| My `become-kyc:*` listener receives nothing from the button | The button emits `become:*` events on the button element. See [Events](events.md#become-button-events) |
 | The flow starts over by itself | An attribute other than `theme-mode` changed, or the element was removed and added back. Both restart `<become-kyc-sdk>` |
 | The element disappears | `<become-kyc-sdk>` removes itself after `userFinished` and `exitedSdk`, which includes declining the data treatment terms |
 | Texts show in Spanish with `locale="en"` | The SDK ships Spanish texts. Add texts for that locale in the Dashboard. See [Texts and locales](customization.md#texts-and-locales) |

@@ -1,10 +1,8 @@
-# Web Button (Legacy)
+# Become Button
 
-**Legacy integration.**
+The `<become-button>` custom element renders a button that opens the verification flow when it is clicked. It runs the same flow as `<become-kyc-sdk>`, onboarding and reverification, with the same contract configuration. To choose between them, see [Choose a product](README.md#choose-a-product).
 
-The `<become-button>` custom element provides an optional lightweight button that lazy-loads the SDK on click. It opens the SDK in an overlay or embedded container.
-
-> **Note**: The registered custom element name is `become-button`, not `become-web-button`. This is a legacy wrapper. For new integrations, use `<become-kyc-sdk>` directly. See [web-sdk.md](web-sdk.md).
+> **Note**: The registered custom element name is `become-button`, not `become-web-button`.
 
 ## Include the Bundle
 
@@ -25,18 +23,32 @@ The `<become-button>` bundle is self-contained. It does not require `<become-kyc
 ></become-button>
 ```
 
+For reverification, set `flow="reverification"` and `user-id`.
+
 ## Attributes
 
 The button reads the same verification attributes as `<become-kyc-sdk>` (`contract-id`, `access-token`, `user-id`, `flow`, `locale`, `country`, `doc-type`, `redirect-url`, `webhook-url`, `theme-mode`, and the rest), plus its own:
 
 | Attribute | Description |
 |-----------|-------------|
-| `mode` | `embed` or `overlay` (default: `overlay`) |
+| `mode` | `overlay` (default), `embed`, or `fullscreen`. See [Display modes](#display-modes) |
 | `button-text` | Button label text (default: "Iniciar verificación") |
 | `loading-text` | Loading text (default: "Cargando...") |
 | `hide-icon` | Hide the default shield icon (boolean attribute) |
 
-Values are read when the button is clicked. The full attribute list, the V2 aliases (`token`, `data-user-id`, `flowId`, `theme`, `language`, and others), and the JavaScript properties are in the [API reference](api.md#become-button).
+Values are read when the button is clicked. The full attribute list, the alternative names (`token`, `data-user-id`, `flowId`, `theme`, `language`, and others), and the JavaScript properties are in the [API reference](api.md#become-button).
+
+## Display Modes
+
+The flow always opens on its own layer above your page content, a direct child of `<body>`, wherever the button is placed. The page does not scroll behind it. The mode sets what is around the card:
+
+| Mode | Behavior |
+|------|----------|
+| `overlay` | Centered card on a dimmed backdrop, with a close control |
+| `embed` | The card over the page, without a backdrop |
+| `fullscreen` | Covers the whole viewport with the theme background |
+
+To show the flow inside a container of your own layout, use [`<become-kyc-sdk>`](web-sdk.md) in `embed` mode.
 
 ## Button Label and Icon
 
@@ -63,7 +75,7 @@ Colors, logo, and texts inside the flow come from your contract configuration, t
 
 ## Events
 
-The button emits different events from `<become-kyc-sdk>`. These legacy events are dispatched on the button element (`bubbles: true`, `composed: true`). Payloads are in [events.md](events.md#web-button-become-button-events).
+The button emits its own `become:*` events, different from the `become-kyc:*` events of `<become-kyc-sdk>`. They are dispatched on the button element (`bubbles: true`, `composed: true`). Payloads are in [events.md](events.md#become-button-events).
 
 | Event | When |
 |-------|------|
@@ -74,13 +86,13 @@ The button emits different events from `<become-kyc-sdk>`. These legacy events a
 
 ## Important Notes
 
-- The Web Button lazy-loads the SDK when clicked.
-- It opens the flow on its own layer above your page content, a direct child of `<body>`, and the page does not scroll behind it. After `become:userFinishedSdk` or `become:exitedSdk` the container closes and the button can open the flow again.
+- The button lazy-loads the SDK when clicked.
+- After `become:userFinishedSdk` or `become:exitedSdk` the flow closes and the button can open it again.
 - Events are emitted on the button element, not on `document.documentElement`.
 - The event names and payloads differ from the KYC Web Component (`become-kyc:*` events).
 - Default mode is `overlay` (not `embed` like `<become-kyc-sdk>`).
 - There is no `createBecomeButton()` function. Programmatic use is `document.createElement('become-button')`, property setters, and `click()`.
-- A startup failure appears when the button is clicked. Where it is shown depends on `mode`. See [Troubleshooting](troubleshooting.md#legacy-button).
+- A startup failure appears when the button is clicked. Where it is shown depends on `mode`. See [Troubleshooting](troubleshooting.md#become-button).
 
 ## Minimal Example
 

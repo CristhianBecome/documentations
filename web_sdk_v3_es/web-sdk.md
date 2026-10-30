@@ -1,4 +1,4 @@
-﻿# KYC Web Component
+# KYC Web Component
 
 Método principal de integración para Become KYC. Incrusta el flujo de verificación en tu aplicación usando el custom element `<become-kyc-sdk>`.
 
@@ -47,7 +47,7 @@ El script es autónomo. No se requiere instalación adicional.
 | `mode` | Modo de visualización | `embed` (default), `overlay`, `fullscreen` |
 | `theme-mode` | Qué paleta está activa | `light` (usado si se omite), `dark`, `system`. Ver [Theme mode](customization.md#theme-mode) |
 
-Todos los atributos, sus alias legacy y las reglas de cada valor están en la [referencia de API](api.md#become-kyc-sdk).
+Todos los atributos, sus nombres alternativos y las reglas de cada valor están en la [referencia de API](api.md#become-kyc-sdk).
 
 Configura los valores con atributos; el elemento no tiene propiedades de JavaScript para ellos. Cambiar `theme-mode` cambia la paleta en el lugar. Cambiar cualquier otro atributo reinicia la verificación desde el primer paso.
 

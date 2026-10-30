@@ -6,11 +6,21 @@ Guides for embedding Become KYC: which product to use, how to load it, and which
 
 | Product | Use it when | What you load |
 |---------|-------------|----------------|
-| [Web SDK](web-sdk.md) | You embed verification in your own page | `become-kyc-sdk.js` and `<become-kyc-sdk>` |
-| [Legacy button](button.md) | An existing integration already uses the button wrapper | `become-web-button.js` and `<become-button>` |
+| [Become Button](button.md) | You want a ready-made button that opens the verification when clicked | `become-web-button.js` and `<become-button>` |
+| [Web SDK](web-sdk.md) | You place the verification inside your own page layout | `become-kyc-sdk.js` and `<become-kyc-sdk>` |
 | [Hosted web](hosted-web.md) | You send a verification link, including from WhatsApp or email | A URL on the hosted site. No script install |
 
-The web SDK is the product for new embeds. The button is a compatibility wrapper. The hosted page is a fullscreen link. It does not provide the custom element's browser events, including when the URL is placed in an iframe.
+The button and the web SDK run the same flow, onboarding and reverification, with the same contract configuration and `setConfig()`. They differ in how the flow is placed and how much your page can follow:
+
+| | Become Button | Web SDK |
+|---|---|---|
+| Starts | When the button is clicked | When the element is added to the page |
+| Modes | `overlay` (default), `embed`, `fullscreen` | `embed` (default), `overlay`, `fullscreen` |
+| Where the flow shows | Always over the page, whatever the mode | In `embed`, inside your container |
+| Events | Result, finish, exit, and error | The same, plus ready, warnings, step changes, and step lifecycle |
+| Methods | `setConfig()`, `getConfig()`, `click()` | `setConfig()`, `getConfig()`, `getResolvedSteps()` |
+
+The hosted page is a fullscreen link. It does not provide the custom elements' browser events, including when the URL is placed in an iframe.
 
 ## Integration steps
 
@@ -50,7 +60,7 @@ Embed:
 ></become-kyc-sdk>
 ```
 
-Legacy button:
+Become Button:
 
 ```html
 <script src="https://websdk.svi.becomedigital.net/sdk/become-web-button.js"></script>

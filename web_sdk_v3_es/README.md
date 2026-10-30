@@ -6,11 +6,21 @@ Guías para integrar Become KYC: qué producto usar, cómo cargarlo y qué atrib
 
 | Producto | Úsalo cuando | Qué cargas |
 |----------|--------------|------------|
-| [Web SDK](web-sdk.md) | Incrustas la verificación en tu propia página | `become-kyc-sdk.js` y `<become-kyc-sdk>` |
-| [Botón legacy](button.md) | Una integración existente ya usa el botón wrapper | `become-web-button.js` y `<become-button>` |
+| [Become Button](button.md) | Quieres un botón listo que abre la verificación al hacer click | `become-web-button.js` y `<become-button>` |
+| [Web SDK](web-sdk.md) | Colocas la verificación dentro del layout de tu propia página | `become-kyc-sdk.js` y `<become-kyc-sdk>` |
 | [Hosted web](hosted-web.md) | Envías un enlace de verificación, incluyendo desde WhatsApp o email | Una URL en el sitio alojado. Sin instalación de script |
 
-El Web SDK es el producto para nuevas integraciones. El botón es un wrapper de compatibilidad. La página alojada es un enlace a pantalla completa. No proporciona los eventos del navegador del custom element, incluso cuando la URL se coloca en un iframe.
+El botón y el Web SDK ejecutan el mismo flujo, onboarding y reverificación, con la misma configuración de contrato y `setConfig()`. Se diferencian en cómo se coloca el flujo y cuánto puede seguir tu página:
+
+| | Become Button | Web SDK |
+|---|---|---|
+| Inicia | Al hacer click en el botón | Cuando el elemento se agrega a la página |
+| Modos | `overlay` (por defecto), `embed`, `fullscreen` | `embed` (por defecto), `overlay`, `fullscreen` |
+| Dónde se muestra el flujo | Siempre sobre la página, en cualquier modo | En `embed`, dentro de tu contenedor |
+| Eventos | Resultado, finalización, salida y error | Los mismos, más listo, advertencias, cambios de paso y ciclo de vida de los pasos |
+| Métodos | `setConfig()`, `getConfig()`, `click()` | `setConfig()`, `getConfig()`, `getResolvedSteps()` |
+
+La página alojada es un enlace a pantalla completa. No proporciona los eventos del navegador de los custom elements, incluso cuando la URL se coloca en un iframe.
 
 ## Pasos de integración
 
@@ -50,7 +60,7 @@ Incrustar:
 ></become-kyc-sdk>
 ```
 
-Botón legacy:
+Become Button:
 
 ```html
 <script src="https://websdk.svi.becomedigital.net/sdk/become-web-button.js"></script>
