@@ -2,7 +2,7 @@
 
 El recorrido completo de una integración de Become KYC, desde las credenciales hasta los resultados de la transacción. Léela una vez antes de empezar. Las guías de cada producto ([web-sdk.md](web-sdk.md), [button.md](button.md), [hosted-web.md](hosted-web.md)) los cubren en detalle.
 
-Los ejemplos usan el Web SDK (`<become-kyc-sdk>`). Las mismas etapas aplican al Become Button y a la página alojada.
+Los ejemplos usan el Web SDK (`<become-kyc-sdk>`), salvo el ejemplo de WhatsApp, que usa la página alojada. Las mismas etapas aplican a todos los productos.
 
 Contenido:
 
@@ -185,21 +185,63 @@ Ten en cuenta:
 
 ## Ejemplo: flujo por WhatsApp
 
-Una persona que conversa con tu empresa por WhatsApp recibe un enlace, verifica su identidad en el navegador y vuelve al chat. Después, tu sistema obtiene los resultados.
+La persona se queda en tu conversación de WhatsApp, salvo durante la verificación. Tu integración envía un enlace a la página alojada de Become, la página alojada devuelve a la persona al chat, y tu integración continúa la conversación cuando llega el webhook y se obtienen los resultados.
+
+```text
+Persona (WhatsApp)   Tu integración de WhatsApp   Página alojada (Become)   API de Become
+   │── conversa ────────────▶│                             │                    │
+   │                         │── 1. solicitud de token ────────────────────────▶│
+   │◀── 2. enlace de verificación                           │                    │
+   │── 3. abre el enlace ──────────────────────────────────▶│                    │
+   │                         │                             │── 4. envío ───────▶│
+   │◀── 5. redirección a wa.me ─────────────────────────────│                    │
+   │                         │◀──────────── 6. webhook: resultados disponibles ──│
+   │                         │── 7. obtiene los resultados ────────────────────▶│
+   │◀── 8. la conversación continúa                         │                    │
+```
 
 ### Pasos
 
-1. Tu integración de WhatsApp decide que la persona debe verificarse.
+1. La persona conversa con tu empresa por WhatsApp, y tu integración decide que debe verificarse.
 2. Tu backend solicita un access token. Ver [Generar el access token](#generar-el-access-token).
-3. Tu backend envía a la persona un enlace a una página de verificación en tu dominio.
-4. La persona abre el enlace. La página inicia `<become-kyc-sdk>` con `redirect-url` apuntando de vuelta a tu chat de WhatsApp.
-5. La persona completa el flujo. El navegador abre `redirect-url` y la persona vuelve a WhatsApp.
+3. Tu backend construye un enlace a la página alojada, con `redirectUrl` apuntando a tu chat de WhatsApp, y lo envía en la conversación.
+4. La persona abre el enlace y completa la verificación en la página alojada.
+5. La página alojada redirige el navegador a `redirectUrl`. WhatsApp se abre y la persona vuelve al chat.
 6. Tu servidor recibe la [notificación por webhook](#notificacion-por-webhook).
-7. Tu sistema [obtiene los resultados de la transacción](#obtener-los-resultados-de-la-transaccion) y continúa la conversación según tu proceso.
+7. Tu sistema [obtiene los resultados de la transacción](#obtener-los-resultados-de-la-transaccion) con la API.
+8. Tu integración continúa la conversación según los resultados.
 
-### La página de verificación
+### Construir el enlace
 
-`https://wa.me/<número>` es el formato de enlace de WhatsApp para abrir un chat. Usa el número de tu empresa en formato internacional, solo dígitos.
+`https://wa.me/<número>` es el formato de enlace de WhatsApp para abrir un chat. Usa el número de tu empresa en formato internacional, solo dígitos. Construye el enlace en tu backend para que cada valor quede codificado para URL:
+
+```javascript
+// Tu backend, después de solicitar el access token
+const link = new URL('https://websdk.svi.becomedigital.net/');
+link.search = new URLSearchParams({
+  contractId,
+  accessToken,
+  userId, // te permite relacionar la transacción con esta conversación
+  flow: 'onboarding',
+  locale: 'es',
+  redirectUrl: 'https://wa.me/15551234567',
+}).toString();
+// Envía link.toString() a la persona en la conversación de WhatsApp.
+```
+
+Para reverificación, usa `flow: 'reverification'` y el `userId` de la persona ya verificada. Todos los parámetros están en [hosted-web.md](hosted-web.md).
+
+### Qué esperar
+
+- La redirección solo devuelve a la persona al chat. No te dice el resultado: la página alojada redirige en cuanto la API acepta la verificación, y también cuando la persona cierra una pantalla de error final. Continúa la conversación a partir del webhook y de los resultados obtenidos, no del regreso de la persona.
+- La persona puede volver al chat antes de que llegue el webhook. Tu integración puede responder que la verificación se está procesando, y continuar cuando obtenga los resultados.
+- Si el startup falla o la persona declina los términos de tratamiento de datos, la página alojada no redirige. La persona vuelve a WhatsApp por su cuenta. Contempla a una persona que nunca termina, por ejemplo con un tiempo límite en tu conversación.
+- La página alojada no te emite eventos del navegador. Todo lo que tu integración necesita viene del webhook y de la API.
+- El enlace lleva el access token. Envíalo solo a la persona que se verifica.
+
+### Alternativa: tu propia página con el Web SDK
+
+Úsala cuando la página de verificación deba estar en tu dominio, o cuando quieras los eventos del navegador. El enlace del paso 3 apunta a tu página, y la página inicia `<become-kyc-sdk>` con `redirect-url` apuntando de vuelta al chat. Los pasos 5 a 8 no cambian.
 
 ```html
 <!DOCTYPE html>
@@ -249,29 +291,11 @@ Una persona que conversa con tu empresa por WhatsApp recibe un enlace, verifica 
 
 `fullscreen` se adapta a un enlace abierto en el teléfono: el flujo cubre el viewport y no tiene control de cierre. Con `overlay`, la persona puede cerrar el flujo, y `exitedSdk` no abre `redirect-url`.
 
-### Sin página propia: el enlace alojado
-
-Si no quieres alojar una página, envía un enlace a la página alojada. Ejecuta el mismo flujo en fullscreen. Construye el enlace en tu backend para que cada valor quede codificado para URL:
-
-```javascript
-// Tu backend
-const link = new URL('https://websdk.svi.becomedigital.net/');
-link.search = new URLSearchParams({
-  contractId,
-  accessToken,
-  userId,
-  flow: 'onboarding',
-  locale: 'es',
-  redirectUrl: 'https://wa.me/15551234567',
-}).toString();
-// Envía link.toString() a la persona en el chat.
-```
-
-La página alojada no te emite eventos del navegador. Tu sistema se entera de la finalización por el webhook. Ver [hosted-web.md](hosted-web.md).
+En tu página, el SDK abre `redirect-url` tras `userFinished`, cuando la persona cierra la pantalla de resultado o de error final, no en cuanto se acepta el envío.
 
 ### Otros canales
 
-El mismo enfoque aplica donde la persona reciba un enlace, como email o SMS. Solo cambia `redirect-url`: apúntalo a donde la persona deba continuar, por ejemplo una página de tu sitio o tu app. El webhook y la obtención de resultados no cambian.
+El mismo enfoque aplica donde la persona reciba un enlace, como email o SMS, con cualquiera de las dos opciones. Solo cambia el destino de la redirección: apúntalo a donde la persona deba continuar, por ejemplo una página de tu sitio o tu app. El webhook y la obtención de resultados no cambian.
 
 ---
 
