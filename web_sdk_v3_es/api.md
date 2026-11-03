@@ -31,7 +31,7 @@ Configúralos como atributos HTML, o con `setAttribute()` antes o después de a�
 | Atributo | Requerido | Default | Valores |
 |----------|-----------|---------|---------|
 | `contract-id` | Sí | | Identificador del contrato |
-| `access-token` | Sí | | Token de acceso JWT |
+| `access-token` | Sí | | Token de acceso JWT, generado por tu backend. Ver [Generar el access token](integration-guide.md#generar-el-access-token) |
 | `user-id` | En `reverification` | | Identificador de usuario |
 | `flow` | | `onboarding` | `onboarding`, `reverification` |
 | `locale` | | `es` | Locale de los textos. Ver [Textos y locales](customization.md#textos-y-locales) |
@@ -42,8 +42,8 @@ Configúralos como atributos HTML, o con `setAttribute()` antes o después de a�
 | `national-id-type-choices` | | | Subtipos ofrecidos en el paso de documento, separados por comas |
 | `document-number` | | | Número de documento |
 | `phone-number-enc` | | | Número de teléfono cifrado, enviado con la verificación |
-| `redirect-url` | | | Página que abre el navegador cuando la persona termina una verificación exitosa |
-| `webhook-url` | | | Callback HTTP de tu servidor |
+| `redirect-url` | | | Página que abre el navegador tras `userFinished`. Ver [Valores de runtime](#valores-de-runtime) |
+| `webhook-url` | | | Alternativa temporal al webhook configurado en el backend. No recomendado. Ver [Valores de runtime](#valores-de-runtime) |
 | `mode` | | `embed` | `embed`, `overlay`, `fullscreen`. `overlay` y `fullscreen` se pintan en su propia capa en la parte superior de la página, no donde está el tag. Ver [web-sdk.md](web-sdk.md) |
 | `theme-mode` | | `light` | `light`, `dark`, `system`. Un valor inválido usa `light` |
 | `loading-text` | | `Cargando...` | Texto bajo el spinner mientras carga la configuración |
@@ -69,10 +69,10 @@ La configuración de tu contrato se gestiona en el Dashboard. Usa `setConfig()` 
 1. **Inicio.** Al añadir el elemento a la página muestra un spinner con `loading-text`, carga la configuración del contrato y renderiza el flujo. Sigue `become-kyc:ready`.
 2. **Falla de startup.** Si el startup falla, el elemento muestra la falla él mismo y emite `become-kyc:error`. Ver [Troubleshooting](troubleshooting.md#fallas-de-startup).
 3. **Flujo.** La persona avanza por los pasos de `getResolvedSteps()`. Cada transición emite `become-kyc:event`.
-4. **Fin.** En una verificación exitosa el elemento emite `result`, y luego `userFinished` cuando la persona cierra la pantalla de resultado. Si `redirect-url` está configurado, el navegador abre esa URL a continuación.
+4. **Fin.** Cuando la API acepta el envío de la verificación, el elemento emite `result`, y luego `userFinished` cuando la persona cierra la pantalla de resultado. En un error final, cerrar la pantalla de error emite `become-kyc:error` con `RESULT_FAILED`, y luego `userFinished`. Si `redirect-url` está configurado, el navegador lo abre tras `userFinished`.
 5. **Eliminación.** El elemento se elimina de la página tras `userFinished` o `exitedSdk`. Declinar los términos de tratamiento de datos emite `atdpDeclined` seguido de `exitedSdk`, así que también se elimina.
 
-Los eventos se despachan en el elemento y burbujean hasta `document`.
+Los eventos se despachan en el elemento y burbujean hasta `document`. Estos eventos no entregan los resultados de la transacción. Ver [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 ### Ejemplo
 
@@ -95,7 +95,7 @@ Los eventos se despachan en el elemento y burbujean hasta `document`.
 
   sdk.addEventListener('become-kyc:event', (event) => {
     if (event.detail.action === 'result') {
-      console.log('Verificado:', event.detail.payload.data);
+      console.log('Verificación enviada para', event.detail.payload.userId);
     }
   });
 </script>
@@ -181,7 +181,7 @@ Los eventos se despachan en el botón y usan los nombres `become:*`. Ver [Evento
 <script>
   const button = document.querySelector('become-button');
   button.addEventListener('become:result', (event) => {
-    console.log('Verificado:', event.detail.data);
+    console.log('Verificación enviada para', event.detail.userId);
   });
 </script>
 ```
@@ -215,7 +215,7 @@ La página alojada lee los mismos valores de runtime como query parameters. Usa 
 | `themeMode` | | `theme-mode` |
 | `externaltxid` | | Solo página alojada. ID de transacción externa, para trazabilidad |
 
-`mode` es siempre `fullscreen` en la página alojada. La página no emite eventos del navegador a tu aplicación; la completación es `redirectUrl` y `webhookUrl`. Ver [hosted-web.md](hosted-web.md).
+`mode` es siempre `fullscreen` en la página alojada. La página no emite eventos del navegador a tu aplicación. El navegador sigue `redirectUrl`, y tu servidor se entera de la finalización por la [notificación por webhook](integration-guide.md#notificacion-por-webhook). Ver [hosted-web.md](hosted-web.md).
 
 ---
 
@@ -231,8 +231,8 @@ Reglas que aplican a los atributos y a los parámetros de la página alojada.
 | `doc-type` | Un tipo válido omite el paso de tipo de documento. Varios tipos limitan el paso a esos. Los tipos inválidos se descartan con un warning |
 | `state` | Se usa solo cuando el país es `US` y el código es un estado válido de EE. UU. En otro caso se descarta con un warning |
 | `national-id-type` | Un subtipo de `national-id` del país, por ejemplo `CC`, `CE`, `TI`, `PPT` en Colombia |
-| `redirect-url` | El navegador lo abre tras `userFinished` en una verificación exitosa. No se abre al salir, declinar o fallar |
-| `webhook-url` | Se envía con la verificación, para que tu servidor sea llamado cuando el proceso complete. Es un callback HTTP, no un evento del navegador |
+| `redirect-url` | El navegador lo abre tras `userFinished`: cuando la persona cierra la pantalla de resultado, o cierra la pantalla de error final. No se abre tras `exitedSdk`, lo que incluye declinar los términos. En la página alojada también se abre en cuanto se emite `result`. Llegar ahí no significa que la verificación tuvo éxito |
+| `webhook-url` | Opcional y temporal. El webhook se configura en el backend para tu contrato; prefiere eso. Cuando está configurado, el valor se envía con el envío de la verificación. El webhook es una notificación HTTP a tu servidor, no un evento del navegador, y no incluye datos de la transacción. Ver [Notificación por webhook](integration-guide.md#notificacion-por-webhook) |
 | `theme-mode` | Selecciona la paleta activa. No es un campo de `setConfig()`. Ver [Theme mode](customization.md#theme-mode) |
 
 ---

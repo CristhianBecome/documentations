@@ -2,6 +2,8 @@
 
 Método principal de integración para Become KYC. Incrusta el flujo de verificación en tu aplicación usando el custom element `<become-kyc-sdk>`.
 
+Antes de empezar, ten tu ID de contrato y un access token generado por tu backend. Ver [Requisitos previos](integration-guide.md#requisitos-previos). Esta página cubre la etapa 2 de la integración, la ejecución del SDK. El webhook y la obtención de resultados están en la [guía de integración](integration-guide.md).
+
 ## Incluir el Bundle
 
 ```html
@@ -32,18 +34,19 @@ El script es autónomo. No se requiere instalación adicional.
 | Atributo | Descripción |
 |----------|-------------|
 | `contract-id` | Identificador del contrato |
-| `access-token` | Token de acceso JWT |
+| `access-token` | Token de acceso JWT, generado por tu backend. Ver [Generar el access token](integration-guide.md#generar-el-access-token) |
 
 ### Atributos opcionales comunes
 
 | Atributo | Descripción | Valores |
 |----------|-------------|---------|
-| `user-id` | Identificador de usuario | Requerido para reverificación |
-| `flow` | Tipo de flujo | `onboarding` (default), `reverification` |
+| `user-id` | Identificador de usuario | Opcional en `onboarding`, requerido en `reverification` |
+| `flow` | Tipo de flujo | `onboarding` (default, verificación), `reverification` |
 | `locale` | Locale de idioma | `es` (default). Ver [Textos y locales](customization.md#textos-y-locales) |
 | `country` | Código de país ISO 3166 | Omite el paso de selección de país |
 | `doc-type` | Tipo de documento | `national-id`, `passport`, `driving-license` |
-| `redirect-url` | URL tras completación | |
+| `redirect-url` | Página que abre el navegador cuando la persona cierra la pantalla de resultado | También se abre tras un error final. Ver [Ciclo de Vida](#ciclo-de-vida) |
+| `webhook-url` | Alternativa temporal al webhook configurado en el backend | No recomendado. Ver [Notificación por webhook](integration-guide.md#notificacion-por-webhook) |
 | `mode` | Modo de visualización | `embed` (default), `overlay`, `fullscreen` |
 | `theme-mode` | Qué paleta está activa | `light` (usado si se omite), `dark`, `system`. Ver [Theme mode](customization.md#theme-mode) |
 
@@ -60,16 +63,26 @@ const sdk = document.querySelector('become-kyc-sdk');
 sdk.setConfig({ ui: { showStatusIcons: true } });
 ```
 
-Todas las opciones se describen en [customization.md](customization.md). Los métodos están en la [referencia de API](api.md#become-kyc-sdk).
+Todas las opciones se describen en [customization.md](customization.md).
+
+## Métodos
+
+| Método | Descripción |
+|--------|-------------|
+| `setConfig(config)` | Sobrescribe valores de presentación de tu contrato: `theming`, `components`, `branding`, `texts`, `ui`. Llámalo antes o después de añadir el elemento. Las llamadas se acumulan: cada una cambia solo los campos que envía. Un valor inválido restablece su grupo a los defaults y emite `become-kyc:warning` |
+| `getConfig()` | La configuración resuelta en uso. `null` hasta que el elemento ha iniciado |
+| `getResolvedSteps()` | Los pasos del flujo activo, en orden. Vacío hasta que el elemento ha iniciado |
+
+`setConfig()` no cambia la paleta (usa `theme-mode`) ni los valores de runtime (usa atributos). Las firmas y los tipos están en la [referencia de API](api.md#métodos).
 
 ## Manejar el Resultado
 
-El elemento despacha eventos `become-kyc:*`. Burbujean hasta `document`.
+El elemento despacha eventos `become-kyc:*`. Burbujean hasta `document`. Úsalos para seguir a la persona en el navegador, por ejemplo para actualizar tu página cuando el flujo se cierra.
 
 ```javascript
 sdk.addEventListener('become-kyc:event', (event) => {
   const { action, payload } = event.detail;
-  if (action === 'result') console.log('Verificado:', payload.data);
+  if (action === 'result') console.log('Verificación enviada');
   if (action === 'exitedSdk') console.log('La persona salió del flujo');
 });
 
@@ -78,6 +91,8 @@ sdk.addEventListener('become-kyc:error', (event) => {
 });
 ```
 
+`result` significa que la API aceptó el envío de la verificación. Su `payload.data` es la respuesta a ese envío, no el resultado de la transacción. Obtén los resultados de la transacción desde tu sistema con la API, tras la notificación por webhook. Ver [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
+
 Ver [events.md](events.md) para cada evento, payload y secuencia.
 
 ## Ciclo de Vida
@@ -85,8 +100,10 @@ Ver [events.md](events.md) para cada evento, payload y secuencia.
 1. **Load** — Incluye el bundle del SDK.
 2. **Mount** — Añade el custom element al DOM. Muestra `loading-text` mientras carga la configuración del contrato, luego renderiza el flujo y emite `become-kyc:ready`.
 3. **Flow** — El SDK renderiza los pasos del flujo resuelto secuencialmente.
-4. **Finish** — En caso de éxito el SDK emite `result`, y luego `userFinished` cuando la persona cierra la pantalla de resultado. Si `redirect-url` está configurado, el navegador lo abre a continuación.
-5. **Cleanup** — El componente se auto-elimina del DOM tras `userFinished` o `exitedSdk`. Declinar los términos de tratamiento de datos emite `atdpDeclined` seguido de `exitedSdk`.
+4. **Finish** — El SDK envía la verificación. Cuando la API la acepta, el SDK emite `result`, y luego `userFinished` cuando la persona cierra la pantalla de resultado. En un error final, cerrar la pantalla de error emite `become-kyc:error` con `RESULT_FAILED`, y luego `userFinished`. En ambos casos, si `redirect-url` está configurado, el navegador lo abre a continuación.
+5. **Cleanup** — El componente se auto-elimina del DOM tras `userFinished` o `exitedSdk`. Declinar los términos de tratamiento de datos emite `atdpDeclined` seguido de `exitedSdk`. `redirect-url` no se abre tras `exitedSdk`.
+
+Tras el cleanup, la responsabilidad del SDK está completa. Tu sistema continúa con la [notificación por webhook](integration-guide.md#notificacion-por-webhook) y la [obtención de resultados](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 Si el startup falla, ver [Troubleshooting](troubleshooting.md#fallas-de-startup).
 
@@ -158,6 +175,7 @@ El indicador de progreso aparece en los pasos por los que la persona avanza. La 
 
 ## Siguientes Pasos
 
+- [Guía de integración](integration-guide.md) — requisitos previos, ejemplo por WhatsApp, webhook y obtención de resultados.
 - [Personalización](customization.md) — colores, apariencia, logo, textos y opciones de UI.
 - [Eventos](events.md) — payloads y secuencias de eventos.
 - [Referencia de API](api.md) — cada atributo, método y tipo.

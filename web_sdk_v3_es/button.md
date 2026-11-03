@@ -4,6 +4,8 @@ El custom element `<become-button>` muestra un botón que abre el flujo de verif
 
 > **Nota**: El nombre del custom element registrado es `become-button`, no `become-web-button`.
 
+Antes de empezar, ten tu ID de contrato y un access token generado por tu backend. Ver [Requisitos previos](integration-guide.md#requisitos-previos). El webhook y la obtención de resultados son iguales para todos los productos: ver la [guía de integración](integration-guide.md).
+
 ## Incluir el Bundle
 
 ```html
@@ -79,15 +81,18 @@ El botón emite sus propios eventos `become:*`, diferentes a los eventos `become
 
 | Evento | Cuándo |
 |--------|-------|
-| `become:result` | Flujo completado exitosamente |
-| `become:userFinishedSdk` | Usuario terminó el flujo |
+| `become:result` | La API aceptó el envío de la verificación |
+| `become:userFinishedSdk` | La persona cerró la pantalla de resultado, tras éxito o un error final |
 | `become:exitedSdk` | Usuario cerró el SDK |
 | `become:errorSdk` | Errores fatales o de token |
+
+Estos eventos no entregan los resultados de la transacción. Obtenlos con la API: [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 ## Notas Importantes
 
 - El botón carga el SDK perezosamente al hacer click.
 - Tras `become:userFinishedSdk` o `become:exitedSdk` el flujo se cierra y el botón puede abrirlo de nuevo.
+- Si `redirect-url` está configurado, el navegador lo abre tras `become:userFinishedSdk`, que también sigue a un error final. No se abre tras `become:exitedSdk`.
 - Los eventos se emiten en el elemento botón, no en `document.documentElement`.
 - Los nombres de eventos y payloads difieren del KYC Web Component (eventos `become-kyc:*`).
 - El modo por defecto es `overlay` (no `embed` como `<become-kyc-sdk>`).
@@ -113,7 +118,7 @@ El botón emite sus propios eventos `become:*`, diferentes a los eventos `become
   <script>
     const button = document.querySelector('become-button');
     button.addEventListener('become:result', (e) => {
-      console.log('Verification completed:', e.detail);
+      console.log('Verificación enviada:', e.detail.flow);
     });
     button.addEventListener('become:errorSdk', (e) => {
       console.error('Verification error:', e.detail);

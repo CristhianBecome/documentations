@@ -24,18 +24,24 @@ The hosted page is a fullscreen link. It does not provide the custom elements' b
 
 ## Integration steps
 
-1. **Choose a product** from the table above.
-2. **Load and start it** with your contract ID and access token: [web-sdk.md](web-sdk.md), [button.md](button.md), or [hosted-web.md](hosted-web.md).
-3. **Configure your contract** in the Dashboard: colors, logo, texts, and UI options. Override them on one page with `setConfig()`: [customization.md](customization.md).
-4. **Handle the outcome** with events, or with `redirectUrl` and `webhookUrl` on the hosted page: [events.md](events.md).
-5. **Check failures and edge cases** before going live: [troubleshooting.md](troubleshooting.md).
+The [integration guide](integration-guide.md) walks through these steps end to end, with a WhatsApp example.
 
-Look up any attribute, method, configuration field, or type in the [API reference](api.md).
+1. **Get the prerequisites.** Your assigned credentials, contract ID, and user ID. Your backend requests the access token: [Prerequisites](integration-guide.md#prerequisites).
+2. **Choose a product** from the table above.
+3. **Load and start it** with your contract ID and access token: [web-sdk.md](web-sdk.md), [button.md](button.md), or [hosted-web.md](hosted-web.md).
+4. **Configure your contract** in the Dashboard: colors, logo, texts, and UI options. Override them on one page with `setConfig()`: [customization.md](customization.md).
+5. **Follow the person in the browser**, if you need to, with events: [events.md](events.md). When the person leaves the flow, the SDK's responsibility is complete.
+6. **Receive the webhook notification** on your server. It tells you the results are ready. It does not contain them: [Webhook notification](integration-guide.md#webhook-notification).
+7. **Retrieve the transaction results** from your system with the API: [Retrieve the transaction results](integration-guide.md#retrieve-the-transaction-results).
+8. **Check failures and edge cases** before going live: [troubleshooting.md](troubleshooting.md).
+
+Look up any attribute, method, configuration field, or type in the [API reference](api.md). Token generation and result retrieval are in the [API documentation](integration-guide.md#api-documentation).
 
 ## Documents
 
 | Document | Description |
 |----------|-------------|
+| [integration-guide.md](integration-guide.md) | End to end: prerequisites, access token, SDK execution, WhatsApp example, webhook, and result retrieval |
 | [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: setup, display modes, layout, and lifecycle |
 | [button.md](button.md) | `<become-button>`: setup, button label, and `become:*` events |
 | [hosted-web.md](hosted-web.md) | Hosted URL parameters, redirect, and fullscreen behavior |
@@ -45,6 +51,8 @@ Look up any attribute, method, configuration field, or type in the [API referenc
 | [api.md](api.md) | Reference: attributes, properties, methods, URL parameters, configuration, events, and types |
 
 ## Quick start
+
+Replace `contract_123` with your contract ID and the token with one your backend generated: [Generate the access token](integration-guide.md#generate-the-access-token).
 
 Embed:
 

@@ -41,14 +41,20 @@ La página muestra un mensaje para el `locale` que pasaste, con retry solo cuand
 
 ## Errores durante el flujo
 
-Una vez abierto el flujo, el SDK muestra los errores dentro de la tarjeta y la persona puede reintentar cuando es posible. Tu página recibe `become-kyc:error` para fallas bloqueantes: `401` cuando la request de resultado no está autorizada, y `RESULT_FAILED` cuando la persona termina en un error que no se puede reintentar. Ver [Códigos de error](events.md#codigos-de-error).
+Una vez abierto el flujo, el SDK muestra los errores dentro de la tarjeta y la persona puede reintentar cuando es posible. Tu página recibe `become-kyc:error` para fallas bloqueantes: `401` cuando el envío de la verificación no está autorizado, y `RESULT_FAILED` cuando la persona cierra la pantalla de error final. Ver [Códigos de error](events.md#codigos-de-error).
+
+La API valida el access token cuando recibe el envío de la verificación, al final del flujo. Un token que expiró mientras la persona completaba el flujo se reporta ahí como `401`. Ver [Validación del token y seguridad](integration-guide.md#validacion-del-token-y-seguridad).
 
 ## Problemas comunes
 
 | Síntoma | Causa y solución |
 |---------|------------------|
 | El flujo embebido está vacío o cortado | El host no tiene height. Da al elemento, o a un padre, un height definido de al menos 560px y un width de al menos 280px. Ver [Layout](web-sdk.md#layout) |
-| Mi listener no recibe nada del enlace alojado | Los eventos de la página alojada se quedan dentro de esa página y nunca llegan a la tuya, tampoco cuando está en un iframe. Usa `redirectUrl` y `webhookUrl`. `<become-kyc-sdk mode="fullscreen">` en tu propia página sí emite eventos |
+| Mi listener no recibe nada del enlace alojado | Los eventos de la página alojada se quedan dentro de esa página y nunca llegan a la tuya, tampoco cuando está en un iframe. Usa `redirectUrl` en el navegador y la [notificación por webhook](integration-guide.md#notificacion-por-webhook) en tu servidor. `<become-kyc-sdk mode="fullscreen">` en tu propia página sí emite eventos |
+| `become-kyc:error` con `401` al final del flujo | La API rechazó el access token en el envío, por ejemplo porque expiró. Genera el token poco antes de que la persona empiece. Ver [Validación del token y seguridad](integration-guide.md#validacion-del-token-y-seguridad) |
+| El webhook llega sin datos de la transacción | Es lo esperado. El webhook solo avisa de que los resultados están listos. Obtenlos con la API. Ver [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion) |
+| Se emitió `result`, pero `payload.data` no es el resultado de la transacción | Es lo esperado. `data` es la respuesta al envío de la verificación. Obtén los resultados de la transacción con la API |
+| El navegador abrió `redirect-url` tras un error | Es lo esperado. `redirect-url` se abre tras `userFinished`, que también sigue a un error final. No trates la redirección como señal de éxito |
 | Mi listener `become-kyc:*` no recibe nada del botón | El botón emite eventos `become:*` en el elemento botón. Ver [Eventos](events.md#eventos-del-become-button) |
 | El flujo vuelve a empezar solo | Cambió un atributo distinto de `theme-mode`, o el elemento se quitó y se volvió a añadir. Ambos reinician `<become-kyc-sdk>` |
 | El elemento desaparece | `<become-kyc-sdk>` se elimina tras `userFinished` y `exitedSdk`, lo que incluye declinar los términos de tratamiento de datos |

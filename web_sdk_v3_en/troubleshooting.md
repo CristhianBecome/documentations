@@ -41,14 +41,20 @@ The page shows a message for the `locale` you passed, with retry only when the f
 
 ## Errors during the flow
 
-Once the flow is open, the SDK shows errors inside the card and the person can retry where that is possible. Your page receives `become-kyc:error` for blocking failures: `401` when the result request is not authorized, and `RESULT_FAILED` when the person finishes on an error that cannot be retried. See [Error codes](events.md#error-codes).
+Once the flow is open, the SDK shows errors inside the card and the person can retry where that is possible. Your page receives `become-kyc:error` for blocking failures: `401` when the verification submission is not authorized, and `RESULT_FAILED` when the person closes the final error screen. See [Error codes](events.md#error-codes).
+
+The API validates the access token when it receives the verification submission, at the end of the flow. A token that expired while the person completed the flow is reported there as `401`. See [Token validation and security](integration-guide.md#token-validation-and-security).
 
 ## Common issues
 
 | Symptom | Cause and fix |
 |---------|---------------|
 | The embedded flow is empty or cut off | The host has no height. Give the element, or a parent, a definite height of at least 560px and a width of at least 280px. See [Layout](web-sdk.md#layout) |
-| My listener receives nothing from the hosted link | The hosted page's events stay inside that page and never reach yours, also when it is in an iframe. Use `redirectUrl` and `webhookUrl`. `<become-kyc-sdk mode="fullscreen">` on your own page does emit events |
+| My listener receives nothing from the hosted link | The hosted page's events stay inside that page and never reach yours, also when it is in an iframe. Use `redirectUrl` in the browser and the [webhook notification](integration-guide.md#webhook-notification) on your server. `<become-kyc-sdk mode="fullscreen">` on your own page does emit events |
+| `become-kyc:error` with `401` at the end of the flow | The API rejected the access token at submission, for example because it expired. Generate the token shortly before the person starts. See [Token validation and security](integration-guide.md#token-validation-and-security) |
+| The webhook arrives without transaction data | Expected. The webhook only says the results are ready. Retrieve them with the API. See [Retrieve the transaction results](integration-guide.md#retrieve-the-transaction-results) |
+| `result` was emitted, but `payload.data` is not the transaction result | Expected. `data` is the response to the verification submission. Retrieve the transaction results with the API |
+| The browser opened `redirect-url` after an error | Expected. `redirect-url` opens after `userFinished`, which also follows a final error. Do not treat the redirect as a success signal |
 | My `become-kyc:*` listener receives nothing from the button | The button emits `become:*` events on the button element. See [Events](events.md#become-button-events) |
 | The flow starts over by itself | An attribute other than `theme-mode` changed, or the element was removed and added back. Both restart `<become-kyc-sdk>` |
 | The element disappears | `<become-kyc-sdk>` removes itself after `userFinished` and `exitedSdk`, which includes declining the data treatment terms |

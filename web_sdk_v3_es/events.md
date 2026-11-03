@@ -2,7 +2,9 @@
 
 Eventos del navegador para los dos componentes embebibles. Cada evento abajo es un `CustomEvent` con `bubbles: true` y `composed: true`.
 
-La página alojada no está en esta lista. No da a tu aplicación estos eventos. La completación para ese producto es `redirectUrl` y `webhookUrl`, documentados en [hosted-web.md](hosted-web.md).
+La página alojada no está en esta lista. No da a tu aplicación estos eventos. En ese producto el navegador sigue `redirectUrl`, documentado en [hosted-web.md](hosted-web.md).
+
+Los eventos le cuentan a tu página qué ocurre en el navegador mientras el SDK se ejecuta. No entregan los resultados de la transacción. Tu servidor recibe la [notificación por webhook](integration-guide.md#notificacion-por-webhook) y obtiene los resultados con la API: [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 Un resumen de cada evento junto a los atributos y métodos está en la [referencia de API](api.md#eventos).
 
@@ -60,10 +62,10 @@ Emitido para eventos de lógica de negocio. El campo `action` identifica el tipo
 |--------|-----------------|
 | `stepLifecycleEvent` | Transición de ciclo de vida de paso |
 | `stepChange` | Paso actual cambió |
-| `result` | Flujo completado exitosamente |
+| `result` | La API aceptó el envío de la verificación |
 | `atdpDeclined` | Usuario declinó términos de tratamiento de datos |
 | `exitedSdk` | SDK salió/cerró |
-| `userFinished` | Usuario terminó el flujo |
+| `userFinished` | La persona cerró la pantalla de resultado, tras `result` o tras un error final |
 
 #### Payload de `stepLifecycleEvent`
 
@@ -102,6 +104,8 @@ Emitido para eventos de lógica de negocio. El campo `action` identifica el tipo
 
 #### Payload de `result`
 
+Se emite cuando la API acepta el envío de la verificación. `data` es la respuesta a ese envío. No es el resultado de la transacción: obtenlo con la API. Ver [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
+
 ```typescript
 {
   action: 'result';
@@ -109,7 +113,7 @@ Emitido para eventos de lógica de negocio. El campo `action` identifica el tipo
     flow: 'onboarding' | 'reverification';
     userId: string;
     contractId: string;
-    data: unknown; // Respuesta completa del backend
+    data: unknown; // Respuesta al envío de la verificación
   };
 }
 ```
@@ -142,7 +146,7 @@ Se emite cuando la persona cierra el flujo (el control de cierre en modo `overla
 
 #### Payload de `userFinished`
 
-Se emite cuando la persona cierra la pantalla de resultado. Cuando tu contrato cierra la pantalla de resultado automáticamente, se emite sin click. Si `redirect-url` está configurado, el navegador lo abre justo después de este evento.
+Se emite cuando la persona cierra la pantalla de resultado, tras `result`, o cierra la pantalla de error final, tras `become-kyc:error` con `RESULT_FAILED`. Cuando tu contrato cierra la pantalla de resultado automáticamente, se emite sin click. Si `redirect-url` está configurado, el navegador lo abre justo después de este evento. `userFinished` por sí solo no significa éxito: comprueba si `result` llegó antes.
 
 ```typescript
 {
@@ -151,7 +155,7 @@ Se emite cuando la persona cierra la pantalla de resultado. Cuando tu contrato c
     flow: 'onboarding' | 'reverification';
     userId?: string;
     contractId: string;
-    data: unknown; // Respuesta del backend
+    data: unknown; // Respuesta al envío de la verificación, cuando la hubo
   };
 }
 ```
@@ -179,8 +183,8 @@ Emitido para errores fatales o de bloqueo. Despachado como `CustomEvent` separad
 
 - `CONFIG_FETCH_FAILED` — Startup falló. Incluye falla HTTP de private-config y startup check rechazado (falta `contractId`, falta o malformado `accessToken`, o falta `userId` para reverificación). `message` es el diagnóstico (`HTTP 401`, `Missing contractId`, `Missing accessToken`, `Invalid or malformed accessToken`, `Request timeout`, etc). `status` es el status HTTP cuando la falla fue respuesta HTTP. `retryable` es true para timeouts, fallas de red, HTTP 429, y HTTP 5xx.
 - `PUBLIC_CONFIG_FETCH_FAILED` — Falló fetch de public config
-- `401` — La request de resultado no fue autorizada (HTTP 401). Esto no significa por sí solo que el usuario final escribió una credencial errónea. `data` es el cuerpo de respuesta cuando el transport lo proveyó.
-- `RESULT_FAILED` — Falla de flujo no reintentable (usuario clicó finish en error terminal)
+- `401` — El envío de la verificación no fue autorizado (HTTP 401). La API valida el access token en esta etapa, así que un token expirado o inválido se reporta aquí. Esto no significa por sí solo que el usuario final escribió una credencial errónea. `data` es el cuerpo de respuesta cuando el transport lo proveyó. Ver [Validación del token y seguridad](integration-guide.md#validacion-del-token-y-seguridad).
+- `RESULT_FAILED` — El flujo terminó en un error. Se emite cuando la persona cierra la pantalla de error final, justo antes de `userFinished`.
 
 La frase de usuario final no es este payload. `<become-kyc-sdk>` muestra la frase del catálogo (`errors.startup`). HTTP 401 y HTTP 403 usan la frase de autorización. El número de status y cuerpo de respuesta se quedan en este evento. Override la frase con `setConfig({ texts })` antes de que el elemento empiece.
 
@@ -204,27 +208,27 @@ Estos eventos los emite el propio elemento `<become-button>`. Tienen diferentes 
 
 | Evento | Cuándo |
 |--------|-------|
-| `become:result` | Flujo completado exitosamente |
-| `become:userFinishedSdk` | Usuario terminó el flujo |
+| `become:result` | La API aceptó el envío de la verificación |
+| `become:userFinishedSdk` | La persona cerró la pantalla de resultado, tras éxito o un error final |
 | `become:exitedSdk` | Usuario cerró el SDK |
 | `become:errorSdk` | Errores fatales o de token |
 
 ### Payload de `become:result`
 
-El payload de `result` de `<become-kyc-sdk>`.
+El payload de `result` de `<become-kyc-sdk>`. `data` es la respuesta al envío de la verificación, no el resultado de la transacción.
 
 ```typescript
 {
   flow: 'onboarding' | 'reverification';
   userId: string;
   contractId: string;
-  data: unknown; // Respuesta completa del backend
+  data: unknown; // Respuesta al envío de la verificación
 }
 ```
 
 ### Payload de `become:userFinishedSdk`
 
-`data` es la respuesta del backend de `become:result`, o `null` cuando no hubo.
+`data` es la respuesta de `become:result`, o `null` cuando no hubo, por ejemplo tras un error final.
 
 ```typescript
 {
@@ -276,7 +280,7 @@ document.addEventListener('become-kyc:event', (event) => {
       console.log('Paso:', payload.step, 'Status:', payload.status);
       break;
     case 'result':
-      console.log('Flujo completado:', payload.flow, payload.data);
+      console.log('Verificación enviada:', payload.flow);
       break;
     case 'atdpDeclined':
       console.log('Usuario declinó ATDP');
@@ -315,7 +319,7 @@ document.addEventListener('become-kyc:warning', (event) => {
 const button = document.querySelector('become-button');
 
 button.addEventListener('become:result', (event) => {
-  console.log('Verificación completada:', event.detail);
+  console.log('Verificación enviada:', event.detail.flow);
 });
 
 button.addEventListener('become:errorSdk', (event) => {
@@ -370,23 +374,30 @@ Estas secuencias son para `<become-kyc-sdk>`. El botón usa los nombres `become:
 2. `become-kyc:event` (action: `exitedSdk`)
 3. Componente se auto-elimina del DOM
 
-### Token Expirado / Error Fatal
+### Token Rechazado / Error Final
 
-1. `become-kyc:error` (code: `401` o `RESULT_FAILED`)
+1. `become-kyc:error` (code: `401`) — solo cuando la API rechazó el token en el envío
+2. La persona cierra la pantalla de error
+3. `become-kyc:error` (code: `RESULT_FAILED`)
+4. `become-kyc:event` (action: `userFinished`)
+5. El navegador abre `redirect-url`, si está configurado. Componente se auto-elimina del DOM
 
 ---
 
-## Distinguiendo Éxito, Cancelación y Falla
+## Distinguiendo Envío, Cancelación y Falla
+
+Estos finales describen cómo terminó el SDK, no el resultado de la transacción. Tras cualquiera de ellos la responsabilidad del SDK está completa. Obtén los resultados de la transacción con la API: [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 | Resultado | Eventos |
 |-----------|---------|
-| **Éxito** | `become-kyc:event` con `action: 'result'` → `action: 'userFinished'` |
+| **Enviada** | `become-kyc:event` con `action: 'result'` → `action: 'userFinished'` |
 | **Usuario canceló** | `become-kyc:event` con `action: 'exitedSdk'` |
 | **ATDP declinado** | `become-kyc:event` con `action: 'atdpDeclined'`, luego `action: 'exitedSdk'` |
-| **Error fatal** | `become-kyc:error` (verificar `code` y `retryable`) |
+| **Error final** | `become-kyc:error` con `code: 'RESULT_FAILED'` → `become-kyc:event` con `action: 'userFinished'` |
+| **Falla de startup** | `become-kyc:error` con `code: 'CONFIG_FETCH_FAILED'` (verificar `retryable`) |
 
-Un ATDP declinado también termina con `exitedSdk`, así que verifica `atdpDeclined` antes de tratar `exitedSdk` como una cancelación.
+Un ATDP declinado también termina con `exitedSdk`, así que verifica `atdpDeclined` antes de tratar `exitedSdk` como una cancelación. Un error final también termina con `userFinished`, así que verifica `result` antes de tratar `userFinished` como una verificación enviada.
 
-Para el Become Button, verificar `become:result` (éxito), `become:userFinishedSdk` (terminado), `become:exitedSdk` (cancelado o declinado), `become:errorSdk` (error).
+Para el Become Button, verificar `become:result` (enviada), `become:userFinishedSdk` (terminado, tras un envío o un error final), `become:exitedSdk` (cancelado o declinado), `become:errorSdk` (error).
 
 Para ver qué ve la persona cuando el startup falla, consulta [Troubleshooting](troubleshooting.md).

@@ -24,18 +24,24 @@ La página alojada es un enlace a pantalla completa. No proporciona los eventos 
 
 ## Pasos de integración
 
-1. **Elige un producto** de la tabla de arriba.
-2. **Cárgalo e inícialo** con tu ID de contrato y access token: [web-sdk.md](web-sdk.md), [button.md](button.md), o [hosted-web.md](hosted-web.md).
-3. **Configura tu contrato** en el Dashboard: colores, logo, textos y opciones de UI. Sobrescríbelos en una página con `setConfig()`: [customization.md](customization.md).
-4. **Maneja el resultado** con eventos, o con `redirectUrl` y `webhookUrl` en la página alojada: [events.md](events.md).
-5. **Revisa fallas y casos límite** antes de salir a producción: [troubleshooting.md](troubleshooting.md).
+La [guía de integración](integration-guide.md) recorre estos pasos de principio a fin, con un ejemplo por WhatsApp.
 
-Consulta cualquier atributo, método, campo de configuración o tipo en la [referencia de API](api.md).
+1. **Reúne los requisitos previos.** Tus credenciales asignadas, el ID de contrato y el ID de usuario. Tu backend solicita el access token: [Requisitos previos](integration-guide.md#requisitos-previos).
+2. **Elige un producto** de la tabla de arriba.
+3. **Cárgalo e inícialo** con tu ID de contrato y access token: [web-sdk.md](web-sdk.md), [button.md](button.md), o [hosted-web.md](hosted-web.md).
+4. **Configura tu contrato** en el Dashboard: colores, logo, textos y opciones de UI. Sobrescríbelos en una página con `setConfig()`: [customization.md](customization.md).
+5. **Sigue a la persona en el navegador**, si lo necesitas, con eventos: [events.md](events.md). Cuando la persona sale del flujo, la responsabilidad del SDK está completa.
+6. **Recibe la notificación por webhook** en tu servidor. Te avisa de que los resultados están listos. No los contiene: [Notificación por webhook](integration-guide.md#notificacion-por-webhook).
+7. **Obtén los resultados de la transacción** desde tu sistema con la API: [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
+8. **Revisa fallas y casos límite** antes de salir a producción: [troubleshooting.md](troubleshooting.md).
+
+Consulta cualquier atributo, método, campo de configuración o tipo en la [referencia de API](api.md). La generación del token y la obtención de resultados están en la [documentación de la API](integration-guide.md#documentacion-de-la-api).
 
 ## Documentos
 
 | Documento | Descripción |
 |-----------|-------------|
+| [integration-guide.md](integration-guide.md) | De principio a fin: requisitos previos, access token, ejecución del SDK, ejemplo por WhatsApp, webhook y obtención de resultados |
 | [web-sdk.md](web-sdk.md) | `<become-kyc-sdk>`: configuración inicial, modos de visualización, layout y ciclo de vida |
 | [button.md](button.md) | `<become-button>`: configuración inicial, etiqueta del botón y eventos `become:*` |
 | [hosted-web.md](hosted-web.md) | Parámetros de la URL alojada, redirect y comportamiento fullscreen |
@@ -45,6 +51,8 @@ Consulta cualquier atributo, método, campo de configuración o tipo en la [refe
 | [api.md](api.md) | Referencia: atributos, propiedades, métodos, parámetros de URL, configuración, eventos y tipos |
 
 ## Inicio rápido
+
+Reemplaza `contract_123` por tu ID de contrato y el token por uno generado por tu backend: [Generar el access token](integration-guide.md#generar-el-access-token).
 
 Incrustar:
 
