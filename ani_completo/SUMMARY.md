@@ -5,3 +5,4 @@
 * [Endpoints](endpoints/README.md)
   * [Autenticación JWT](endpoints/auth.md)
   * [Consulta ANI — aniValidation](endpoints/verification.md)
+  * [Sandbox — aniValidationSB](endpoints/sandbox.md)
