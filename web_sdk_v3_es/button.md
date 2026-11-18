@@ -81,16 +81,19 @@ El botón emite sus propios eventos `become:*`, diferentes a los eventos `become
 
 | Evento | Cuándo |
 |--------|-------|
+| `become:ready` | SDK montado exitosamente |
 | `become:result` | La API aceptó el envío de la verificación |
 | `become:userFinishedSdk` | La persona cerró la pantalla de resultado, tras éxito o un error final |
 | `become:exitedSdk` | Usuario cerró el SDK |
 | `become:errorSdk` | Errores fatales o de token |
+| `become:documentCaptured` | Se capturó un lado del documento |
+| `become:livenessResult` | Terminó un intento de validación de liveness |
 
 Estos eventos no entregan los resultados de la transacción. Obtenlos con la API: [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion).
 
 ## Notas Importantes
 
-- El botón carga el SDK perezosamente al hacer click.
+- El botón abre el frame de la verificación al hacer click. Ver la [Referencia de API](api.md) para los headers que necesita ese frame.
 - Tras `become:userFinishedSdk` o `become:exitedSdk` el flujo se cierra y el botón puede abrirlo de nuevo.
 - Si `redirect-url` está configurado, el navegador lo abre tras `become:userFinishedSdk`, que también sigue a un error final. No se abre tras `become:exitedSdk`.
 - Los eventos se emiten en el elemento botón, no en `document.documentElement`.

@@ -18,7 +18,7 @@ El startup carga la configuración de tu contrato y verifica los valores de runt
 | El SDK ya está montado | El SDK pinta la falla dentro de la experiencia abierta. El elemento no añade un segundo mensaje. |
 | El elemento se elimina mientras startup está en vuelo | No queda superficie de error. |
 
-`become-kyc:error` sigue llevando el diagnóstico (`CONFIG_FETCH_FAILED`, `message`, `status`, `retryable`). La frase en el elemento es la frase del catálogo del SDK (`errors.startup`): no incluye tokens, códigos de estado, o cuerpos de respuesta. Override con `setConfig({ texts })` antes de que el elemento empiece. HTTP 401 y HTTP 403 usan la frase de autorización, no una credencial errónea de usuario final. Las etiquetas de retry y close de startup son `Reintentar` y `Cerrar`. Salir del flujo (`exitedSdk`, `userFinished`, `atdpDeclined`) no es un error de startup.
+`become-kyc:error` sigue llevando el diagnóstico (`CONFIG_FETCH_FAILED` o `FRAME_UNAVAILABLE`, `message`, `status`, `retryable`). La frase en el elemento es la frase del catálogo del SDK (`errors.startup`): no incluye tokens, códigos de estado, o cuerpos de respuesta. Override con `setConfig({ texts })` antes de que el elemento empiece. HTTP 401 y HTTP 403 usan la frase de autorización, no una credencial errónea de usuario final. Las etiquetas de retry y close de startup son `Reintentar` y `Cerrar`. Salir del flujo (`exitedSdk`, `userFinished`, `atdpDeclined`) no es un error de startup.
 
 ### Become Button
 
@@ -31,7 +31,7 @@ El botón carga la configuración al hacer click, así que una falla de startup 
 | `embed`, botón oculto (`hidden`, o `display: none` / `visibility: hidden` en el botón o un ancestro) | Un notice de página no bloqueante con la misma frase, y retry solo cuando `retryable` es true. Cerrar o eliminar el botón elimina el notice. |
 | La falla no es `retryable` | El botón queda deshabilitado. |
 
-La falla se emite como `become:errorSdk` (`code`, `message`, `status`, `retryable`). La frase de usuario es la frase del catálogo del SDK (`errors.startup`) y no incluye el texto diagnóstico. Override con `setConfig({ texts })` antes de abrir el SDK. El SDK también emite `become-kyc:error` en `document` por la misma falla. Escucha un contrato.
+La falla se emite como `become:errorSdk` (`code`, `message`, `status`, `retryable`). La frase de usuario es la frase del catálogo del SDK (`errors.startup`) y no incluye el texto diagnóstico. Override con `setConfig({ texts })` antes de abrir el SDK.
 
 Después de que el SDK ha abierto, un error se reenvía una vez como `become:errorSdk`. El botón no pinta ese error de nuevo. La salida del usuario no es una falla de startup.
 
@@ -50,6 +50,9 @@ La API valida el access token cuando recibe el envío de la verificación, al fi
 | Síntoma | Causa y solución |
 |---------|------------------|
 | El flujo embebido está vacío o cortado | El host no tiene height. Da al elemento, o a un padre, un height definido de al menos 560px y un width de al menos 280px. Ver [Layout](web-sdk.md#layout) |
+| El flujo muestra "no hay espacio suficiente" y `become-kyc:error` trae `CONTAINER_TOO_SMALL` | La caja está por debajo del mínimo del flujo (240 × 240 px, o 280 × 400 px para un flujo embebido con captura de documento o prueba de vida facial). El evento trae `size`, `minimum` y `recommended`. Agranda el host y el paso continúa. Ver [Layout](web-sdk.md#layout) |
+| El elemento muestra "No pudimos cargar la verificación" y el código de error es `FRAME_UNAVAILABLE` | El frame de la verificación no arrancó. El `Content-Security-Policy` de tu página debe permitir `https://websdk.svi.becomedigital.net` en `frame-src`, y ningún proxy o extensión debe bloquear ese dominio. La consola del navegador muestra la violación de CSP. Ver [Referencia de API](api.md) |
+| La cámara no arranca, o el navegador nunca pide permiso de cámara | El `Permissions-Policy` de tu página no delega `camera` (ni `microphone` y `geolocation`) a `https://websdk.svi.becomedigital.net`. Ver [Referencia de API](api.md) |
 | Mi listener no recibe nada del enlace alojado | Los eventos de la página alojada se quedan dentro de esa página y nunca llegan a la tuya, tampoco cuando está en un iframe. Usa `redirectUrl` en el navegador y la [notificación por webhook](integration-guide.md#notificacion-por-webhook) en tu servidor. `<become-kyc-sdk mode="fullscreen">` en tu propia página sí emite eventos |
 | `become-kyc:error` con `401` al final del flujo | La API rechazó el access token en el envío, por ejemplo porque expiró. Genera el token poco antes de que la persona empiece. Ver [Validación del token y seguridad](integration-guide.md#validacion-del-token-y-seguridad) |
 | El webhook llega sin datos de la transacción | Es lo esperado. El webhook solo avisa de que los resultados están listos. Obtenlos con la API. Ver [Obtener los resultados de la transacción](integration-guide.md#obtener-los-resultados-de-la-transaccion) |

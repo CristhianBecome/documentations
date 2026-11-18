@@ -13,7 +13,7 @@ A summary of every event next to the attributes and methods is in the [API refer
 | Product | Listen here | Events |
 |---------|-------------|--------|
 | `<become-kyc-sdk>` | The custom element, or `document` on the same page | `become-kyc:ready`, `become-kyc:event`, `become-kyc:error`, `become-kyc:warning` |
-| `<become-button>` | The button element | `become:result`, `become:userFinishedSdk`, `become:exitedSdk`, `become:errorSdk` |
+| `<become-button>` | The button element | `become:ready`, `become:result`, `become:userFinishedSdk`, `become:exitedSdk`, `become:errorSdk`, `become:documentCaptured`, `become:livenessResult` |
 
 ```javascript
 const sdk = document.querySelector('become-kyc-sdk');
@@ -62,6 +62,8 @@ Emitted for business logic events. The `action` field identifies the event type.
 | Action | When Emitted |
 |--------|--------------|
 | `stepLifecycleEvent` | Step lifecycle transition |
+| `documentCaptured` | One document side was captured |
+| `livenessResult` | One liveness validation attempt finished |
 | `stepChange` | Current step changed |
 | `result` | The API accepted the verification submission |
 | `atdpDeclined` | User declined data treatment terms |
@@ -91,6 +93,39 @@ Emitted for business logic events. The `action` field identifies the event type.
 
 **Steps that emit lifecycle events:**
 `intro`, `atdp`, `contactValidation`, `documentType`, `countrySelection`, `capture`, `liveness` (retried on liveness error, selfie validation retry), `result` (retried on 5xx error, error on non-retryable).
+
+#### `documentCaptured` Payload
+
+Emitted once per document side, when that side is captured. It does not wait for the capture step to finish. Automatic and manual capture emit it the same way. A single-sided document or a passport emits only `front`. Capturing again after a retry emits it again.
+
+```typescript
+{
+  action: 'documentCaptured';
+  payload: {
+    side: 'front' | 'back';
+    userId?: string;
+    contractId: string;
+    timestamp: string; // ISO 8601
+  };
+}
+```
+
+#### `livenessResult` Payload
+
+Emitted for each automatic or redirect liveness attempt, with the validation outcome. It is separate from `stepLifecycleEvent` for `liveness`, which only reports that the step started or finished. Manual selfie capture does not emit it.
+
+```typescript
+{
+  action: 'livenessResult';
+  payload: {
+    status: 'success' | 'failed';
+    livenessType: 'active' | 'active-redirect';
+    userId?: string;
+    contractId: string;
+    timestamp: string; // ISO 8601
+  };
+}
+```
 
 #### `stepChange` Payload
 
@@ -182,6 +217,8 @@ Emitted for fatal or blocking errors. Dispatched as a separate `CustomEvent` (no
 
 - `CONFIG_FETCH_FAILED` — Startup failed. This includes a private-config HTTP failure and a rejected startup check (missing `contractId`, missing or malformed `accessToken`, or missing `userId` for reverification). `message` is the diagnostic (`HTTP 401`, `Missing contractId`, `Missing accessToken`, `Invalid or malformed accessToken`, `Request timeout`, and so on). `status` is the HTTP status when the failure was an HTTP response. `retryable` is true for timeouts, network failures, HTTP 429, and HTTP 5xx.
 - `PUBLIC_CONFIG_FETCH_FAILED` — Public config fetch failed
+- `FRAME_UNAVAILABLE` — The verification frame did not start within 15 seconds, usually because your page's `Content-Security-Policy` does not allow `https://websdk.svi.becomedigital.net` in `frame-src`, or the network blocked it. `retryable` is true. See [Troubleshooting](troubleshooting.md#common-issues).
+- `CONTAINER_TOO_SMALL` — The element is smaller than the flow can be shown in. The event also carries `size`, `minimum` and `recommended`, each `{ width, height }` in pixels. It is emitted once each time the element becomes too small, and the flow resumes by itself when it is large enough. See [Layout](web-sdk.md#layout).
 - `401` — The verification submission was not authorized (HTTP 401). The API validates the access token at this stage, so an expired or invalid token is reported here. This does not by itself mean the end user typed a wrong credential. `data` is the response body when the transport provided one. See [Token validation and security](integration-guide.md#token-validation-and-security).
 - `RESULT_FAILED` — The flow ended on an error. Emitted when the person closes the final error screen, right before `userFinished`.
 
@@ -207,10 +244,25 @@ These events are emitted by the `<become-button>` element itself. They have diff
 
 | Event | When |
 |-------|------|
+| `become:ready` | SDK mounted successfully |
 | `become:result` | The API accepted the verification submission |
 | `become:userFinishedSdk` | The person closed the result screen, after success or a final error |
 | `become:exitedSdk` | User closed the SDK |
 | `become:errorSdk` | Fatal or token errors |
+| `become:documentCaptured` | One document side was captured |
+| `become:livenessResult` | One liveness validation attempt finished |
+
+### `become:ready` Payload
+
+The `become-kyc:ready` payload of `<become-kyc-sdk>`. It is emitted each time the flow opens, after the SDK has resolved configuration and mounted.
+
+```typescript
+{
+  version: string;
+  contractId: string;
+  flow: 'onboarding' | 'reverification';
+}
+```
 
 ### `become:result` Payload
 
@@ -246,6 +298,33 @@ The `exitedSdk` payload of `<become-kyc-sdk>`.
 }
 ```
 
+### `become:documentCaptured` Payload
+
+The `documentCaptured` payload of `<become-kyc-sdk>`.
+
+```typescript
+{
+  side: 'front' | 'back';
+  userId?: string;
+  contractId: string;
+  timestamp: string; // ISO 8601
+}
+```
+
+### `become:livenessResult` Payload
+
+The `livenessResult` payload of `<become-kyc-sdk>`.
+
+```typescript
+{
+  status: 'success' | 'failed';
+  livenessType: 'active' | 'active-redirect';
+  userId?: string;
+  contractId: string;
+  timestamp: string; // ISO 8601
+}
+```
+
 ### `become:errorSdk` Payload
 
 ```typescript
@@ -259,7 +338,7 @@ The `exitedSdk` payload of `<become-kyc-sdk>`.
 }
 ```
 
-Startup failures include `code: 'CONFIG_FETCH_FAILED'`, the diagnostic `message`, `status` when the failure was HTTP, and `retryable`. The same failure also emits `become-kyc:error` from the SDK. Listen to one of those contracts. The button does not paint a second message for an error that happens after the SDK has opened.
+Startup failures include `code` (`CONFIG_FETCH_FAILED` or `FRAME_UNAVAILABLE`), the diagnostic `message`, `status` when the failure was HTTP, and `retryable`. The button does not paint a second message for an error that happens after the SDK has opened.
 
 ---
 

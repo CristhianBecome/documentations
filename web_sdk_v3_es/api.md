@@ -8,7 +8,16 @@ Todo lo que una integración puede usar: los dos custom elements, la URL de la p
 | Become Button | `https://websdk.svi.becomedigital.net/sdk/become-web-button.js` | `<become-button>` | [button.md](button.md) |
 | Página alojada | Ninguno. Una URL en `https://websdk.svi.becomedigital.net/` | Ninguno | [hosted-web.md](hosted-web.md) |
 
-Cada script es autónomo y registra su tag una sola vez. No añade nada más a `window`. Los dos scripts son independientes: el botón no necesita `become-kyc-sdk.js`.
+Cada script registra su tag una sola vez. Los dos scripts son independientes: el botón no necesita `become-kyc-sdk.js`.
+
+La verificación se ejecuta en un frame servido desde `https://websdk.svi.becomedigital.net`, ubicado donde el elemento muestra el flujo. La cámara, la captura de documento y el liveness se ejecutan en ese frame, así que tu página no carga su código. Si tu página envía estos headers, permite ese origen en ellos:
+
+| Header | Qué permitir |
+|--------|--------------|
+| `Content-Security-Policy` | `https://websdk.svi.becomedigital.net` en `script-src` (los scripts de los elementos) y en `frame-src` (el frame de la verificación) |
+| `Permissions-Policy` | `camera`, `microphone` y `geolocation` para `https://websdk.svi.becomedigital.net`, por ejemplo `camera=(self "https://websdk.svi.becomedigital.net")` |
+
+Una página que bloquea el frame muestra un error de inicio con reintento. Una página que niega la cámara al frame muestra el error de cámara.
 
 Contenido:
 
@@ -259,7 +268,7 @@ La guía de estas opciones, con ejemplos y el orden de resolución, es [customiz
 |-------|---------|---------|
 | `appearance` | `default`, `flat`, `material` | `default` |
 | `colors.light`, `colors.dark` | Objetos de paleta, ver abajo | Paletas del SDK |
-| `typography.fontFamily` | `Source Sans 3`, `Inter`, `Lora`, `JetBrains Mono` | `Source Sans 3` |
+| `typography.fontFamily` | `Source Sans 3`, `Inter`, `Lora`, `JetBrains Mono` (ver [customization.md](customization.md#fuente)) | `Source Sans 3` |
 | `typography.fontSizeBase` | `{ value: number, unit: 'px' \| 'rem' \| 'em' }`, 12–24px | 16px |
 | `density` | `compact`, `comfortable`, `spacious` | `comfortable` |
 | `radius.button` | `xs`, `sm`, `md`, `lg`, `xl`, `full` | Según `appearance` |
@@ -272,6 +281,7 @@ La guía de estas opciones, con ejemplos y el orden de resolución, es [customiz
 | `shadows.modal` | `none`, `xs`, `sm`, `md`, `lg`, `xl` | `md` |
 | `shadows.control` | `none`, `xs`, `sm`, `md`, `lg` | Sigue `shadows.card` |
 | `container.size` | `adaptive`, `sm`, `md`, `lg` | `adaptive` |
+| `paints.light`, `paints.dark` | `{ primary?: Paint }`, ver abajo | Ninguno. Se usa el color plano `primary` |
 
 **Claves de paleta.** Cada una de `colors.light` y `colors.dark` acepta strings hex para estas claves:
 
@@ -286,6 +296,17 @@ La guía de estas opciones, con ejemplos y el orden de resolución, es [customiz
 
 Todas las claves excepto `textError` y `shadow` tienen un default en ambas paletas, y una clave que omites conserva su default. Una paleta no se deriva de `primary`: cuando cambias `primary`, configura también `primaryHover`, `primaryActive` y `primaryText`. `textError` y `shadow` no tienen default: `textError` sin configurar sigue a `text`, y `shadow` sin configurar mantiene las sombras en negro.
 
+**Paints.** `paints.light.primary` y `paints.dark.primary` reemplazan el relleno plano de `primary` por un degradado en los botones rellenos y en las partes completadas del stepper. El texto, los bordes y el anillo de foco siguen usando `primary`.
+
+| Campo de `Paint` | Valores | Notas |
+|------------------|---------|-------|
+| `type` | `solid`, `gradient` | Obligatorio |
+| `color` | Color | Solo `solid` |
+| `angle` | Grados | Solo `gradient`. Default `90` (de izquierda a derecha) |
+| `stops` | `[{ color, at? }]`, dos o más | Solo `gradient`. `at` es una posición de 0 a 100 |
+
+Los colores son valores hex, nombres de color o funciones como `rgb()`, `hsl()`, `oklch()`. Un paint que no se puede dibujar (por ejemplo un degradado con una sola parada) se ignora y se usa el color plano `primary`. Configura `primaryText` para que las etiquetas se lean sobre todo el degradado.
+
 ### `components`
 
 | Campo | Valores | Default |
@@ -297,7 +318,9 @@ Todas las claves excepto `textError` y `shadow` tienen un default en ambas palet
 | `input.size` | `sm`, `md`, `lg` | `md` |
 | `stepper.show` | `boolean` | `true` |
 | `stepper.size` | `sm`, `md`, `lg` | `md` |
-| `stepper.variant` | `default`, `progress` | `default` |
+| `stepper.variant` | `default`, `progress`, `dots` | `default` |
+| `stepper.position` | `bottom`, `top` | `bottom` |
+| `closeButton.variant` | `close`, `back` | `close` |
 | `errorBox.variant` | `default`, `alert`, `danger` | `default` |
 
 ### `branding`
@@ -326,6 +349,7 @@ Textos por locale, y luego por namespace: `texts.<locale>.<namespace>.<key>`. Lo
 | `hideIntroHeader` | `boolean`. Oculta el bloque de encabezado de la pantalla de bienvenida | `false` |
 | `hideIntroStep` | `boolean`. Deja la pantalla de bienvenida fuera del flujo | `false` |
 | `showStatusIcons` | `boolean`. Muestra los íconos de Completado y Error | `false` |
+| `atdpVariant` | `inline`, `modal`. Cómo se muestran los términos de tratamiento de datos. Ver [Términos de tratamiento de datos](customization.md#términos-de-tratamiento-de-datos) | `inline` |
 | `presentation.contentAlignment` | `left`, `center`, `justify` | `center` |
 | `presentation.contentVerticalAlignment` | `top`, `center`, `bottom` | `top` |
 | `presentation.ctaAlignment` | `left`, `center`, `right` | `center` |
@@ -348,7 +372,7 @@ Se despachan en el elemento. Burbujean hasta `document`.
 | `become-kyc:error` | `{ code, message?, status?, retryable?, data?, flow? }` |
 | `become-kyc:warning` | `{ warnings: string[] }` |
 
-Acciones de `become-kyc:event`: `stepLifecycleEvent`, `stepChange`, `result`, `atdpDeclined`, `exitedSdk`, `userFinished`.
+Acciones de `become-kyc:event`: `stepLifecycleEvent`, `documentCaptured`, `livenessResult`, `stepChange`, `result`, `atdpDeclined`, `exitedSdk`, `userFinished`.
 
 ### `<become-button>`
 

@@ -49,10 +49,10 @@ sdk.setConfig({
 | Dominio | Descripción | Opciones Clave |
 |---------|-------------|----------------|
 | `theming` | Colores, fuentes, espaciado, lenguaje visual | `appearance`, `colors.light/dark`, `typography.fontFamily`, `density`, `radius`, `shadows`, `container.size` |
-| `components` | Presentación de controles | `button.size`, `input.labelStyle` (`outside`, `static-top`, `floating`), `input.size`, `stepper.variant`, `errorBox.variant` |
+| `components` | Presentación de controles | `button.size`, `input.labelStyle` (`outside`, `static-top`, `floating`), `input.size`, `stepper.variant`, `stepper.position`, `closeButton.variant`, `errorBox.variant` |
 | `branding` | Logo y assets de branding | `logo.url`, `logo.position`, `logo.size`, `logo.opacity`, `logo.shadow`, `logo.radius` |
 | `texts` | Strings de texto internacionalizados | Organizados por locale y namespace. Ver [Textos y locales](#textos-y-locales) |
-| `ui` | Toggles de presentación y confirmación | `confirmations`, `hideIntroHeader`, `hideIntroStep`, `showStatusIcons`, `presentation` |
+| `ui` | Toggles de presentación y confirmación | `confirmations`, `hideIntroHeader`, `hideIntroStep`, `showStatusIcons`, `atdpVariant`, `presentation` |
 
 ## Theme mode
 
@@ -86,6 +86,30 @@ Los colores no se derivan unos de otros. Cuando cambias `primary`, configura tam
 **Color del texto de error**: los mensajes de error usan `theming.colors.light.textError` y `theming.colors.dark.textError`. Si no los defines, los mensajes de error usan el color `text` de la paleta.
 
 `theming.colors.light.shadow` y `theming.colors.dark.shadow` tiñen todas las sombras con un color hex, por ejemplo el color de tu marca. Cada modo usa el valor de su propia paleta. Si los omites, las sombras quedan en negro neutro.
+
+## Rellenos con degradado
+
+`theming.paints.light.primary` y `theming.paints.dark.primary` dan a los botones rellenos y a las partes completadas del stepper un degradado en lugar del color plano `primary`. Si los omites, nada cambia.
+
+```js
+sdk.setConfig({
+  theming: {
+    paints: {
+      light: { primary: { type: 'gradient', angle: 90, stops: [{ color: '#07a8b8' }, { color: '#6d28d9' }] } },
+    },
+  },
+});
+```
+
+Configura `primaryText` con un color que se lea en ambos extremos. Los campos están en la [referencia de API](api.md#theming).
+
+## Stepper y control de cierre
+
+- `components.stepper.variant`: `default` (numerado), `progress` (barra con etiqueta) o `dots` (un punto por paso, el actual alargado).
+- `components.stepper.position`: `bottom` deja el indicador en el pie. `top` lo lleva a la parte superior de la tarjeta. Un stepper `dots` o `progress` se ubica en la barra superior, en el espacio que dejan libre el logo y el control de cierre. Los puntos se mantienen en esa línea y se reducen un poco en tarjetas angostas. Una barra `progress` pasa a una fila propia debajo cuando la tarjeta es demasiado angosta para mostrarla con su etiqueta. Un stepper numerado arriba siempre ocupa su propia fila y se dibuja un tamaño más pequeño que `stepper.size`, para no competir con el título del paso.
+- `components.closeButton.variant`: `close` muestra una X. `back` muestra una flecha de retroceso al inicio de la barra superior. Sale del flujo igual que la X, incluido el diálogo de confirmación cuando `ui.confirmations.close` está activo, y se anuncia como "Cerrar". Con un logo arriba a la izquierda, la flecha va primero y el logo la sigue.
+
+El control de cierre aparece solo en modo `overlay`, y no en la pantalla de éxito del paso de resultado: una vez enviada la verificación, el botón de finalizar es la única salida, así tu página siempre recibe `userFinished`. Sigue disponible mientras se envía y cuando el envío falla. Los defaults conservan el aspecto actual: stepper numerado en el pie y una X.
 
 ## Apariencia
 
@@ -123,6 +147,18 @@ Orden de resolución, de menor a mayor prioridad:
 `appearance: "material"` con `shadows.card: "none"` mantiene las esquinas material y la elevación de diálogos, y elimina la sombra de tarjeta y botón. `appearance: "default"` con `radius.card: "xs"` cambia la esquina de la tarjeta y deja el resto de la UI actual en su lugar.
 
 El tamaño de fuente base se mantiene dentro de 12px–24px. Un valor fuera de ese rango se ignora y el SDK usa 16px. El ancho de borde se mantiene dentro de 0–4px.
+
+### Fuente
+
+`typography.fontFamily` selecciona una de las fuentes incluidas en el SDK: `Source Sans 3` (la predeterminada), `Inter`, `Lora` o `JetBrains Mono`. El navegador descarga solo la fuente en uso.
+
+```javascript
+sdk.setConfig({ theming: { typography: { fontFamily: 'Inter' } } });
+```
+
+El SDK no usa la fuente de tu página: la verificación se ejecuta en su propio frame, que no ve las fuentes que carga tu página.
+
+Si tu marca tiene su propia fuente, Become puede configurarla para tu contrato. Tu contrato se muestra entonces en esa fuente, con el `typography.fontFamily` que selecciones mientras carga. No cargas la fuente en tu página, y ningún otro contrato puede usarla.
 
 ### Sombras
 
@@ -203,6 +239,35 @@ Las pantallas del documento y de la selfie abren con su propia lista corta de co
 | `liveness.intro.prepare.items.uncovered`, `.lighting`, `.camera` (`.title`, `.description`) | Consejos de la selfie |
 
 Las tres pantallas usan las mismas claves bajo `prepare`: un `title` e `items` con clave. Un encabezado, una etiqueta o una línea inferior vacíos no se muestran. Un consejo sin etiqueta no se muestra.
+
+### Términos de tratamiento de datos
+
+Si el paso de términos de tratamiento de datos se ejecuta depende de la configuración de tu contrato. `ui.atdpVariant` solo elige cómo se muestran:
+
+| `ui.atdpVariant` | En el paso | Política completa |
+|------------------|------------|-------------------|
+| `inline` (default, también si se omite) | `atdp.policy`, con scroll | En el paso |
+| `modal` | `atdp.shortPolicy` | En un diálogo, abierto desde un enlace `#atdp` del texto corto |
+
+Los dos textos son markdown. En `atdp.shortPolicy`, escribe el enlace que abre el diálogo como `[aviso de privacidad](#atdp)`; nunca cambia la URL de la página.
+
+```js
+sdk.setConfig({
+  ui: { atdpVariant: 'modal' },
+  texts: {
+    es: {
+      atdp: {
+        shortPolicy: 'Para continuar, autoriza el tratamiento de tus datos según nuestro [aviso de privacidad](#atdp).',
+        policy: '## Aviso de privacidad\n\n...',
+      },
+    },
+  },
+});
+```
+
+Cualquier otro enlace en esos textos (`https://`, `mailto:`, `tel:`, una dirección web o de correo escrita tal cual) se abre en una pestaña o ventana nueva, nunca en la página que ejecuta la verificación. Los demás tipos de enlace se muestran como texto.
+
+`atdp.markdown` es el nombre anterior de `atdp.policy` y se sigue leyendo como `atdp.policy`. Si se envían los dos, se usa `atdp.policy`.
 
 ### Revisión y rechazo de la foto
 

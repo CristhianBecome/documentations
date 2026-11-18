@@ -8,7 +8,16 @@ Everything an integration can use: the two custom elements, the hosted page URL,
 | Become Button | `https://websdk.svi.becomedigital.net/sdk/become-web-button.js` | `<become-button>` | [button.md](button.md) |
 | Hosted page | None. A URL on `https://websdk.svi.becomedigital.net/` | None | [hosted-web.md](hosted-web.md) |
 
-Each script is self-contained and registers its tag once. Nothing else is added to `window`. The two scripts are independent: the button does not need `become-kyc-sdk.js`.
+Each script registers its tag once. The two scripts are independent: the button does not need `become-kyc-sdk.js`.
+
+The verification runs in a frame served from `https://websdk.svi.becomedigital.net`, placed where the element shows the flow. The camera, document capture and liveness all run in that frame, so your page does not load their code. If your page sends these headers, allow that origin in them:
+
+| Header | What to allow |
+|--------|---------------|
+| `Content-Security-Policy` | `https://websdk.svi.becomedigital.net` in `script-src` (the element scripts) and in `frame-src` (the verification frame) |
+| `Permissions-Policy` | `camera`, `microphone`, and `geolocation` for `https://websdk.svi.becomedigital.net`, for example `camera=(self "https://websdk.svi.becomedigital.net")` |
+
+A page that blocks the frame shows a startup error with a retry. A page that denies the camera to the frame shows the camera error.
 
 Contents:
 
@@ -259,7 +268,7 @@ The guide for these options, with examples and resolution order, is [customizati
 |-------|--------|---------|
 | `appearance` | `default`, `flat`, `material` | `default` |
 | `colors.light`, `colors.dark` | Palette objects, see below | SDK palettes |
-| `typography.fontFamily` | `Source Sans 3`, `Inter`, `Lora`, `JetBrains Mono` | `Source Sans 3` |
+| `typography.fontFamily` | `Source Sans 3`, `Inter`, `Lora`, `JetBrains Mono` (see [customization.md](customization.md#font)) | `Source Sans 3` |
 | `typography.fontSizeBase` | `{ value: number, unit: 'px' \| 'rem' \| 'em' }`, 12–24px | 16px |
 | `density` | `compact`, `comfortable`, `spacious` | `comfortable` |
 | `radius.button` | `xs`, `sm`, `md`, `lg`, `xl`, `full` | From `appearance` |
@@ -272,6 +281,7 @@ The guide for these options, with examples and resolution order, is [customizati
 | `shadows.modal` | `none`, `xs`, `sm`, `md`, `lg`, `xl` | `md` |
 | `shadows.control` | `none`, `xs`, `sm`, `md`, `lg` | Follows `shadows.card` |
 | `container.size` | `adaptive`, `sm`, `md`, `lg` | `adaptive` |
+| `paints.light`, `paints.dark` | `{ primary?: Paint }`, see below | None. The flat `primary` color is used |
 
 **Palette keys.** Each of `colors.light` and `colors.dark` accepts hex strings for these keys:
 
@@ -286,6 +296,17 @@ The guide for these options, with examples and resolution order, is [customizati
 
 Every key except `textError` and `shadow` has a default in both palettes, and a key you leave out keeps its default. A palette is not derived from `primary`: when you change `primary`, set `primaryHover`, `primaryActive`, and `primaryText` too. `textError` and `shadow` have no default: unset `textError` follows `text`, and unset `shadow` keeps shadows black.
 
+**Paints.** `paints.light.primary` and `paints.dark.primary` replace the flat `primary` fill with a gradient on filled buttons and on the stepper's completed parts. Text, borders, and focus rings keep using `primary`.
+
+| `Paint` field | Values | Notes |
+|---------------|--------|-------|
+| `type` | `solid`, `gradient` | Required |
+| `color` | Color | `solid` only |
+| `angle` | Degrees | `gradient` only. Default `90` (left to right) |
+| `stops` | `[{ color, at? }]`, two or more | `gradient` only. `at` is a position from 0 to 100 |
+
+Colors are hex values, color names, or functions such as `rgb()`, `hsl()`, `oklch()`. A paint that cannot be drawn (for example a gradient with one stop) is ignored and the flat `primary` color is used. Set `primaryText` so labels stay readable over the whole gradient.
+
 ### `components`
 
 | Field | Values | Default |
@@ -297,7 +318,9 @@ Every key except `textError` and `shadow` has a default in both palettes, and a 
 | `input.size` | `sm`, `md`, `lg` | `md` |
 | `stepper.show` | `boolean` | `true` |
 | `stepper.size` | `sm`, `md`, `lg` | `md` |
-| `stepper.variant` | `default`, `progress` | `default` |
+| `stepper.variant` | `default`, `progress`, `dots` | `default` |
+| `stepper.position` | `bottom`, `top` | `bottom` |
+| `closeButton.variant` | `close`, `back` | `close` |
 | `errorBox.variant` | `default`, `alert`, `danger` | `default` |
 
 ### `branding`
@@ -326,6 +349,7 @@ Texts by locale, then by namespace: `texts.<locale>.<namespace>.<key>`. The name
 | `hideIntroHeader` | `boolean`. Hide the header block of the welcome screen | `false` |
 | `hideIntroStep` | `boolean`. Leave the welcome screen out of the flow | `false` |
 | `showStatusIcons` | `boolean`. Show the Completed and Error icons | `false` |
+| `atdpVariant` | `inline`, `modal`. How the data treatment terms are shown. See [Data treatment terms](customization.md#data-treatment-terms) | `inline` |
 | `presentation.contentAlignment` | `left`, `center`, `justify` | `center` |
 | `presentation.contentVerticalAlignment` | `top`, `center`, `bottom` | `top` |
 | `presentation.ctaAlignment` | `left`, `center`, `right` | `center` |
@@ -348,7 +372,7 @@ Dispatched on the element. They bubble to `document`.
 | `become-kyc:error` | `{ code, message?, status?, retryable?, data?, flow? }` |
 | `become-kyc:warning` | `{ warnings: string[] }` |
 
-`become-kyc:event` actions: `stepLifecycleEvent`, `stepChange`, `result`, `atdpDeclined`, `exitedSdk`, `userFinished`.
+`become-kyc:event` actions: `stepLifecycleEvent`, `documentCaptured`, `livenessResult`, `stepChange`, `result`, `atdpDeclined`, `exitedSdk`, `userFinished`.
 
 ### `<become-button>`
 

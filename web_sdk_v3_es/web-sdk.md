@@ -123,7 +123,16 @@ El componente se adapta al tamaño del elemento en el que lo colocas. En modo `e
 
 Establece un width y un height en el elemento host, o en un padre que ya tenga un height definido. Un height de `100%` no hace nada útil hasta que algún ancestro tenga uno.
 
-El componente rellena esa caja. No hará layout más estrecho que 280px ni más corto que 560px. Si le das menos, hace scroll dentro de su propio elemento en lugar de desbordar tu página. Dimensiona el host al menos ese tamaño para que la persona que completa la verificación no haga scroll dentro del componente.
+El componente rellena esa caja. Dale al menos **280px de ancho y 560px de alto** (el tamaño recomendado). Por debajo sigue funcionando: omite las partes secundarias del layout (el subtítulo del paso, el indicador de progreso, la línea de atribución) cuando la caja mide menos de unos 340px de alto, y hace scroll dentro de su propio elemento en lugar de desbordar tu página.
+
+Algunas cajas son demasiado pequeñas para usarlas. La decisión se toma una vez para todo el flujo, antes de que empiece, así que la persona nunca llega a la mitad y se la detiene después. El componente muestra un único mensaje con el tamaño requerido y el recomendado, y emite `become-kyc:error` con `code: 'CONTAINER_TOO_SMALL'`. Por debajo de 240 × 240 px eso ocurre antes de hacer cualquier solicitud. Si la caja se reduce por debajo del mínimo mientras el flujo corre, el mismo mensaje reemplaza al flujo, y este continúa donde estaba cuando la caja vuelve a ser lo bastante grande.
+
+| Flujo | Tamaño mínimo | Notas |
+|-------|---------------|-------|
+| Embebido, con captura de documento o prueba de vida facial | 280 × 400 px | La vista de cámara necesita espacio |
+| Cualquier otro flujo, y todos los flujos en `overlay` y `fullscreen` | 240 × 240 px | El título y la acción principal quedan a la vista; el resto hace scroll |
+
+Dimensiona el host al tamaño recomendado para que la persona que completa la verificación no haga scroll dentro del componente.
 
 El ancho y el espaciado de la tarjeta son configuración: ver [Ancho de tarjeta y densidad](customization.md#ancho-de-tarjeta-y-densidad).
 
@@ -141,7 +150,7 @@ El indicador de progreso aparece en los pasos por los que la persona avanza. La 
 
 - Navegador moderno con soporte de Custom Elements y Shadow DOM
 - Target JavaScript ES2020+
-- Acceso de red al bundle del SDK y endpoints de API
+- Acceso de red al bundle del SDK, al frame de la verificación en `https://websdk.svi.becomedigital.net` y a los endpoints de API. Ver la [Referencia de API](api.md) para los headers que tu página debe permitir
 
 ## Ejemplo Mínimo
 

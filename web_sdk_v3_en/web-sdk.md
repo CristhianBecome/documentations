@@ -123,7 +123,16 @@ The component adapts to the size of the element you place it in. In `embed` mode
 
 Set a width and a height on the host element, or on a parent that already has a definite height. A height of `100%` does nothing useful until some ancestor has one.
 
-The component fills that box. It will not lay out narrower than 280px or shorter than 560px. If you give it less, it scrolls inside its own element instead of overflowing your page. Size the host at least that large so the person completing verification is not scrolling inside the component.
+The component fills that box. Give it at least **280px wide and 560px tall** (the recommended size). Below that it still works: it drops secondary parts of the layout (the step subtitle, the progress indicator, the attribution line) once the box is shorter than about 340px, and scrolls inside its own element instead of overflowing your page.
+
+Some boxes are too small to use at all. The decision is made once for the whole flow, before the flow starts, so the person never gets halfway and is then stopped. The component shows one message with the required and the recommended size and emits `become-kyc:error` with `code: 'CONTAINER_TOO_SMALL'`. Below 240 × 240 px that happens before any request is made. If the box is resized below the minimum while the flow runs, the same message replaces the flow, and the flow continues where it was when the box is large enough again.
+
+| Flow | Minimum size | Notes |
+|------|--------------|-------|
+| Embedded, with document capture or face liveness | 280 × 400 px | The camera view needs room |
+| Any other flow, and every flow in `overlay` and `fullscreen` | 240 × 240 px | Title and primary action stay in view; the rest scrolls |
+
+Size the host at the recommended size so the person completing verification is not scrolling inside the component.
 
 The card width and spacing are configuration: see [Card size and density](customization.md#card-size-and-density).
 
@@ -141,7 +150,7 @@ The progress indicator appears on the steps the person moves through. The openin
 
 - Modern browser with Custom Elements and Shadow DOM support
 - ES2020+ JavaScript target
-- Network access to the SDK bundle and API endpoints
+- Network access to the SDK bundle, the verification frame on `https://websdk.svi.becomedigital.net`, and API endpoints. See the [API reference](api.md) for the headers your page must allow
 
 ## Minimal Example
 

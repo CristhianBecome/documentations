@@ -81,16 +81,19 @@ The button emits its own `become:*` events, different from the `become-kyc:*` ev
 
 | Event | When |
 |-------|------|
+| `become:ready` | SDK mounted successfully |
 | `become:result` | The API accepted the verification submission |
 | `become:userFinishedSdk` | The person closed the result screen, after success or a final error |
 | `become:exitedSdk` | User closed the SDK |
 | `become:errorSdk` | Fatal or token errors |
+| `become:documentCaptured` | One document side was captured |
+| `become:livenessResult` | One liveness validation attempt finished |
 
 These events do not deliver the transaction results. Retrieve them with the API: [Retrieve the transaction results](integration-guide.md#retrieve-the-transaction-results).
 
 ## Important Notes
 
-- The button lazy-loads the SDK when clicked.
+- The button opens the verification frame when clicked. See the [API reference](api.md) for the headers that frame needs.
 - After `become:userFinishedSdk` or `become:exitedSdk` the flow closes and the button can open it again.
 - If `redirect-url` is set, the browser opens it after `become:userFinishedSdk`, which also follows a final error. It does not open after `become:exitedSdk`.
 - Events are emitted on the button element, not on `document.documentElement`.

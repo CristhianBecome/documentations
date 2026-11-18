@@ -49,10 +49,10 @@ sdk.setConfig({
 | Domain | Description | Key Options |
 |--------|-------------|-------------|
 | `theming` | Colors, fonts, spacing, visual language | `appearance`, `colors.light/dark`, `typography.fontFamily`, `density`, `radius`, `shadows`, `container.size` |
-| `components` | Control presentation | `button.size`, `input.labelStyle` (`outside`, `static-top`, `floating`), `input.size`, `stepper.variant`, `errorBox.variant` |
+| `components` | Control presentation | `button.size`, `input.labelStyle` (`outside`, `static-top`, `floating`), `input.size`, `stepper.variant`, `stepper.position`, `closeButton.variant`, `errorBox.variant` |
 | `branding` | Logo and branding assets | `logo.url`, `logo.position`, `logo.size`, `logo.opacity`, `logo.shadow`, `logo.radius` |
 | `texts` | Internationalized text strings | Organized by locale and namespace. See [Texts and locales](#texts-and-locales) |
-| `ui` | Presentation and confirmation toggles | `confirmations`, `hideIntroHeader`, `hideIntroStep`, `showStatusIcons`, `presentation` |
+| `ui` | Presentation and confirmation toggles | `confirmations`, `hideIntroHeader`, `hideIntroStep`, `showStatusIcons`, `atdpVariant`, `presentation` |
 
 ## Theme mode
 
@@ -86,6 +86,30 @@ Colors are not derived from each other. When you change `primary`, also set `pri
 **Error text color**: error messages use `theming.colors.light.textError` and `theming.colors.dark.textError`. When you don't set them, error messages use the palette's `text` color.
 
 `theming.colors.light.shadow` and `theming.colors.dark.shadow` tint every shadow with a hex color, for example your brand color. Each mode uses its own palette's value. Leave them out and shadows stay neutral black.
+
+## Gradient fills
+
+`theming.paints.light.primary` and `theming.paints.dark.primary` give filled buttons and the stepper's completed parts a gradient instead of the flat `primary` color. Leave them out and nothing changes.
+
+```js
+sdk.setConfig({
+  theming: {
+    paints: {
+      light: { primary: { type: 'gradient', angle: 90, stops: [{ color: '#07a8b8' }, { color: '#6d28d9' }] } },
+    },
+  },
+});
+```
+
+Set `primaryText` to a color that reads over both ends. The fields are listed in the [API reference](api.md#theming).
+
+## Stepper and close control
+
+- `components.stepper.variant`: `default` (numbered), `progress` (bar with a label), or `dots` (one dot per step, the current one stretched).
+- `components.stepper.position`: `bottom` keeps the indicator in the footer. `top` moves it to the top of the card. A `dots` or `progress` stepper sits in the top bar, in the space the logo and the close control leave free. Dots stay on that line and get slightly smaller on narrow cards. A `progress` bar moves to a row of its own under them when the card is too narrow to show it with its label. A numbered stepper on top always takes its own row and is drawn one size smaller than `stepper.size`, so it does not compete with the step title.
+- `components.closeButton.variant`: `close` shows an X. `back` shows a back arrow at the start of the top bar. It leaves the flow exactly like the X, including the confirmation dialog when `ui.confirmations.close` is on, and it is still announced as "Close". With a top-left logo, the arrow comes first and the logo follows it.
+
+The close control appears only in `overlay` mode, and not on the success screen of the result step: once the verification is sent, the finish button is the only way out, so your page always receives `userFinished`. It stays available while sending and when sending fails. The defaults keep the current look: numbered stepper in the footer and an X.
 
 ## Appearance
 
@@ -123,6 +147,18 @@ Resolution order, from lowest to highest:
 `appearance: "material"` with `shadows.card: "none"` keeps the material corners and dialog elevation, and removes the card and button shadow. `appearance: "default"` with `radius.card: "xs"` changes the card corner and leaves the rest of the current UI in place.
 
 The base font size stays within 12px–24px. A value outside that range is ignored and the SDK uses 16px. Border width stays within 0–4px.
+
+### Font
+
+`typography.fontFamily` selects one of the fonts that ship with the SDK: `Source Sans 3` (the default), `Inter`, `Lora`, or `JetBrains Mono`. The browser downloads only the font in use.
+
+```javascript
+sdk.setConfig({ theming: { typography: { fontFamily: 'Inter' } } });
+```
+
+The SDK does not use your page's font: the verification runs in its own frame, which cannot see fonts your page loads.
+
+If your brand has its own font, Become can configure it for your contract. Your contract then renders in that font, with the `typography.fontFamily` you select shown while it loads. You do not load the font on your page, and no other contract can use it.
 
 ### Shadows
 
@@ -203,6 +239,35 @@ The document and selfie screens open with their own short list of tips for that 
 | `liveness.intro.prepare.items.uncovered`, `.lighting`, `.camera` (`.title`, `.description`) | Selfie tips |
 
 The three screens use the same keys under `prepare`: a `title` and keyed `items`. An empty heading, label or line under it is not shown. A tip without a label is not shown.
+
+### Data treatment terms
+
+Whether the data treatment terms step runs is part of your contract configuration. `ui.atdpVariant` only chooses how the terms are shown:
+
+| `ui.atdpVariant` | On the step | Full policy |
+|------------------|-------------|-------------|
+| `inline` (default, also when omitted) | `atdp.policy`, scrollable | On the step |
+| `modal` | `atdp.shortPolicy` | In a dialog, opened from a `#atdp` link in the short text |
+
+Both texts are markdown. In `atdp.shortPolicy`, write the link that opens the dialog as `[aviso de privacidad](#atdp)`; it never changes the page URL.
+
+```js
+sdk.setConfig({
+  ui: { atdpVariant: 'modal' },
+  texts: {
+    es: {
+      atdp: {
+        shortPolicy: 'Para continuar, autoriza el tratamiento de tus datos según nuestro [aviso de privacidad](#atdp).',
+        policy: '## Aviso de privacidad\n\n...',
+      },
+    },
+  },
+});
+```
+
+Every other link in either text (`https://`, `mailto:`, `tel:`, a bare web or email address) opens in a new tab or window, never in the page that runs the verification. Other kinds of links are shown as text.
+
+`atdp.markdown` is the previous name of `atdp.policy` and is still read as `atdp.policy`. When both are sent, `atdp.policy` is used.
 
 ### Photo review and rejection
 
