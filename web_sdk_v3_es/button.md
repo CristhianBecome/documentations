@@ -86,6 +86,7 @@ El botón emite sus propios eventos `become:*`, diferentes a los eventos `become
 | `become:userFinishedSdk` | La persona cerró la pantalla de resultado, tras éxito o un error final |
 | `become:exitedSdk` | Usuario cerró el SDK |
 | `become:errorSdk` | Errores fatales o de token |
+| `become:stepLifecycleEvent` | Un paso empezó, terminó, se reintentó o falló |
 | `become:documentCaptured` | Se capturó un lado del documento |
 | `become:livenessResult` | Terminó un intento de validación de liveness |
 

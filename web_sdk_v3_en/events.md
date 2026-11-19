@@ -13,7 +13,7 @@ A summary of every event next to the attributes and methods is in the [API refer
 | Product | Listen here | Events |
 |---------|-------------|--------|
 | `<become-kyc-sdk>` | The custom element, or `document` on the same page | `become-kyc:ready`, `become-kyc:event`, `become-kyc:error`, `become-kyc:warning` |
-| `<become-button>` | The button element | `become:ready`, `become:result`, `become:userFinishedSdk`, `become:exitedSdk`, `become:errorSdk`, `become:documentCaptured`, `become:livenessResult` |
+| `<become-button>` | The button element | `become:ready`, `become:result`, `become:userFinishedSdk`, `become:exitedSdk`, `become:errorSdk`, `become:stepLifecycleEvent`, `become:documentCaptured`, `become:livenessResult` |
 
 ```javascript
 const sdk = document.querySelector('become-kyc-sdk');
@@ -249,6 +249,7 @@ These events are emitted by the `<become-button>` element itself. They have diff
 | `become:userFinishedSdk` | The person closed the result screen, after success or a final error |
 | `become:exitedSdk` | User closed the SDK |
 | `become:errorSdk` | Fatal or token errors |
+| `become:stepLifecycleEvent` | A step started, finished, was retried, or failed |
 | `become:documentCaptured` | One document side was captured |
 | `become:livenessResult` | One liveness validation attempt finished |
 
@@ -295,6 +296,20 @@ The `exitedSdk` payload of `<become-kyc-sdk>`.
 ```typescript
 {
   data: unknown | null;
+}
+```
+
+### `become:stepLifecycleEvent` Payload
+
+The `stepLifecycleEvent` payload of `<become-kyc-sdk>`. The steps and status values are the same: see [`stepLifecycleEvent` Payload](#steplifecycleevent-payload).
+
+```typescript
+{
+  step: string;
+  userId?: string;
+  contractId: string;
+  status: 'initiated' | 'completed' | 'retried' | 'error';
+  timestamp?: string; // ISO 8601
 }
 ```
 

@@ -86,6 +86,7 @@ The button emits its own `become:*` events, different from the `become-kyc:*` ev
 | `become:userFinishedSdk` | The person closed the result screen, after success or a final error |
 | `become:exitedSdk` | User closed the SDK |
 | `become:errorSdk` | Fatal or token errors |
+| `become:stepLifecycleEvent` | A step started, finished, was retried, or failed |
 | `become:documentCaptured` | One document side was captured |
 | `become:livenessResult` | One liveness validation attempt finished |
 
